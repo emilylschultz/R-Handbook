@@ -1,0 +1,10 @@
+name: "r-handbook"
+navbar:
+  title: "ESS 3500 R Handbook"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Lesson 1"
+      href: RHandbook_1.html
+    - text: "Lesson 2"
+      href: RHandbook_2.html
