@@ -1,4 +1,5 @@
 name: "r-handbook"
+output_dir: "."
 navbar:
   title: "ESS 3500 R Handbook"
   left:
