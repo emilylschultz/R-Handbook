@@ -47,6 +47,7 @@ The two panels on the right will not be used to write code, but they can help yo
 
 ### 1.3	R script files
 As described above, you will be running your code in RStudio’s console. However, when you type code directly into the console, you cannot save that code. Therefore, you can instead write your code in an R script file, which is essentially a text file for writing R code. You can run code directly from the R script files and save the files so you can continue to work on them and run them at a later time. They are also a good resource for future projects. Often, we will end up using similar programs for multiple projects, so if we save our code, we can use it as a starting point for future project, instead of starting from nothing. I recommend that you ALWAYS code in a script file, instead of the console, unless you know it’s just a one-off command.
+
 To open a script file, go to the file menu at the top of the window, hover over “New File”, and then select “R Script” from the new menu that appears. Now you will see a new panel on the top left-hand side of the screen where you can view and edit your script files. You can now type code into the script, save it, and run it. When you run the code, you will see it appear in the console.
 
 ### 1.4	Installing packages
@@ -54,6 +55,7 @@ One nice thing about R is that it is opensource software. This means it is free,
 
 #### Time to write your first piece of code in R!
 The two packages we will use in this class are the **tidyverse** package (useful for data management and visualization; it is actually a set of several packages) and the **lme4** package (useful for the type of statistical model we will use most in this class). We will install these two packages now.
+
 This is one of the rare cases where it is fine to type the code directly into the console because once you install the packages, you won’t need to install them again unless you update R. It will just take a single line of code to install both packages. Put your cursor in the console, next to the “>” symbol and type the following line of code:
 
 ```{r install_packages, eval=FALSE}
@@ -61,5 +63,6 @@ install.packages(“tidyverse”,”lme4”)
 ```
 
 Then hit enter. You should see a bunch of text pop up in the console as the packages install. Once the packages install, you should see the “>” in the console again, indicating that you can type more code into the console. Sometimes warnings will show up in the console when you install packages, but they are usually nothing to worry about. We can deal with them on a case-by-case basis if necessary. If, after you run the line of code, you see only a few lines of text show up in the console, and then it stops, check for a dialogue box asking if you want to install the package in your personal library. If you get this message, click “yes”, and the packages should continue to install.
+
 If you need to install other packages, you can just use the same `install.packages()` command and simply put the name of the package you need inside the parentheses.
 

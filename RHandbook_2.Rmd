@@ -27,19 +27,14 @@ Try them out! Type each of the following commands, shown in the grey boxes below
 ```{r basic_arithmetic}
 # Addition
 3+6
-
 # Subtraction
 4-9
-
 # Multiplication
 6*7
-
 # Division
 8/2
-
 # Exponentiation
 3^5
-
 ```
 
 
@@ -48,7 +43,6 @@ R also has built-in functions that can be used for other types of arithmetic cal
 ```{r arithmetic_functions,eval=FALSE}
 log(x) # natural logarithm of x
 log10(x) # logarithm base 10 of x
-
 sqrt(x) # square root of x
 abs(x) # absolute value of x
 ```
