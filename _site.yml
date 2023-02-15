@@ -1,5 +1,5 @@
 name: "r-handbook"
-output_dir: "."
+output_dir: "docs"
 navbar:
   title: "ESS 3500 R Handbook"
   left:
@@ -11,5 +11,5 @@ navbar:
       href: RHandbook_2.html
     - text: "Lesson 3"
       href: RHandbook_3.html
-    - text: "Lesson 3"
+    - text: "Lesson 4"
       href: RHandbook_4.html
