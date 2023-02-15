@@ -1,5 +1,5 @@
 ---
-title: "My Website"
+title: "ESS 3500 R Handbook"
 ---
 
-Hello, Website!
+This reference contains the lessons you will need to navigate R in ESS 355: Biostatistics and Quantitative Reasoning! Use the menu at the top to navigate to the different lessons.
