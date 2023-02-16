@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Emily Schultz" />
+
+<meta name="date" content="2023-01-29" />
+
+<title>ESS 3500 R Handbook, Lesson 2</title>
+
+<script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">ESS 3500 R Handbook</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="RHandbook_1.html">Lesson 1</a>
+</li>
+<li>
+  <a href="RHandbook_2.html">Lesson 2</a>
+</li>
+<li>
+  <a href="RHandbook_3.html">Lesson 3</a>
+</li>
+<li>
+  <a href="RHandbook_4.html">Lesson 4</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 2</h1>
+<h4 class="author">Emily Schultz</h4>
+<h4 class="date">2023-01-29</h4>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#lesson-2-r-basics" id="toc-lesson-2-r-basics">Lesson 2: R
+BASICS</a>
+<ul>
+<li><a href="#basic-r-commands" id="toc-basic-r-commands">2.1 Basic R
+commands</a></li>
+<li><a href="#saving-and-recalling-values"
+id="toc-saving-and-recalling-values">2.2 Saving and recalling
+values</a></li>
+<li><a href="#types-of-r-objects" id="toc-types-of-r-objects">2.3 Types
+of R objects</a></li>
+<li><a href="#functions" id="toc-functions">2.4 Functions</a></li>
+<li><a href="#getting-help-in-r" id="toc-getting-help-in-r">2.5 Getting
+help in R</a></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="lesson-2-r-basics" class="section level2">
+<h2>Lesson 2: R BASICS</h2>
+<div id="basic-r-commands" class="section level3">
+<h3>2.1 Basic R commands</h3>
+<p>At it’s most basic, R can function like a powerful calculator. You
+can use all of the basic arithmetic operators in R, as follows:</p>
+<ol style="list-style-type: decimal">
+<li>addition: +</li>
+<li>subtraction: -</li>
+<li>multiplication: *</li>
+<li>division: /</li>
+<li>exponentiation: ^</li>
+</ol>
+<p>Try them out! Type each of the following commands, shown in the grey
+boxes below, into the console in RStudio, and R will give you the answer
+in the console, just below your line of code!(Note: The words that come
+after the “#” symbol are comments, not code. They are just notes about
+the code, and R will ignore them when it runs the code.)</p>
+<pre class="r"><code># Addition
+3+6</code></pre>
+<pre><code>## [1] 9</code></pre>
+<pre class="r"><code># Subtraction
+4-9</code></pre>
+<pre><code>## [1] -5</code></pre>
+<pre class="r"><code># Multiplication
+6*7</code></pre>
+<pre><code>## [1] 42</code></pre>
+<pre class="r"><code># Division
+8/2</code></pre>
+<pre><code>## [1] 4</code></pre>
+<pre class="r"><code># Exponentiation
+3^5</code></pre>
+<pre><code>## [1] 243</code></pre>
+<p>R also has built-in functions that can be used for other types of
+arithmetic calculations. There are many, but a few examples are listed
+below. In the examples, “x” can be any number or set of numbers.</p>
+<pre class="r"><code>log(x) # natural logarithm of x
+log10(x) # logarithm base 10 of x
+sqrt(x) # square root of x
+abs(x) # absolute value of x</code></pre>
+<p>Go ahead and try out these functions. You can use any value you want
+in place of x!</p>
+</div>
+<div id="saving-and-recalling-values" class="section level3">
+<h3>2.2 Saving and recalling values</h3>
+<p>To start harnessing the full power of R, we want to be able to save
+our values, so we can use them in additional calculations. This section
+will cover how to save values as variables and how to use those
+variables in new calculations.</p>
+<p>Let’s say you are studying the population size of a plant. You go out
+and count the number of plants in three different plots. Then you also
+want to calculate the total number of plants across all three plots.</p>
+<p>First, lets save the number of plants each plot as three separate
+variables. Use <code>&lt;-</code> to assign a value to a variable. I
+recommend you give your variables names that are short but
+informative.</p>
+<pre class="r"><code>plot1 &lt;- 4
+plot2 &lt;- 7
+plot3 &lt;- 6</code></pre>
+<p>After you run these three lines of code, you should see your three
+variables listed in your Environment window in the upper right-hand
+corner of RStudio. This can help you keep track of the variables and
+other objects you create in R.</p>
+<p>Now let’s use our variables to calculate the total number of plants
+across all three plots and save that total as a new variable.</p>
+<pre class="r"><code>total &lt;- plot1 + plot2 + plot3</code></pre>
+<p>If you now want to view the value of the total plot count, just type
+in the variable name (Note that R is case-sensitive):</p>
+<pre class="r"><code>total</code></pre>
+<pre><code>## [1] 17</code></pre>
+<p>We could continue to use any of these variables in additional
+calculations.</p>
+</div>
+<div id="types-of-r-objects" class="section level3">
+<h3>2.3 Types of R objects</h3>
+<p>In the previous section we created a type of R object called a
+variable, which is just a single value. A variable is just one of many
+object types you can create in R. We will look at a couple other types
+here.</p>
+<div id="vectors" class="section level4">
+<h4>Vectors</h4>
+<p>A vector is a collection of multiple values stored together in a
+single object. Lets again work with our plant example from above. This
+time, instead of saving out plant counts as separate variables, we will
+store them together in a singe vector. To do so, we will use a new
+function, the concatenate function: <code>c()</code>.</p>
+<pre class="r"><code>plant_counts &lt;- c(4,7,6)</code></pre>
+<p>If you view this vector object, you will see all values listed.</p>
+<pre class="r"><code>plant_counts</code></pre>
+<pre><code>## [1] 4 7 6</code></pre>
+<p>Saving multiple values in a single object can help simplify our code
+and the calculations we do, especially if we are working with a lot of
+numbers. Let’s now take a look at some functions we can use to do
+calculations with the numbers stored in vectors.</p>
+<p>When we worked with variables above, we added our plot counts
+together to get the total numbers of plants across all plots. We can use
+a shortcut to calculate the total using our vector and the
+<code>sum</code> function:</p>
+<pre class="r"><code>sum(plant_counts)</code></pre>
+<pre><code>## [1] 17</code></pre>
+<p>We can also calculate things like the mean and standard deviation of
+the values in vectors:</p>
+<pre class="r"><code>mean(plant_counts)</code></pre>
+<pre><code>## [1] 5.666667</code></pre>
+<pre class="r"><code>sd(plant_counts)</code></pre>
+<pre><code>## [1] 1.527525</code></pre>
+<p>Okay, so we stored all these numbers in a vector, but what if we just
+want to work with one of the values from a vector? Well, we can do that
+by providing R with an index to tell it which of the values from the
+vector we want. For example, let’s say we want to save the plant counts
+from each plot as separate variables. We can do that as follows:</p>
+<pre class="r"><code>plot1 &lt;- plant_counts[1]
+plot2 &lt;- plant_counts[2]
+plot3 &lt;- plant_counts[3]</code></pre>
+<p>The indices are the numbers inside the brackets, telling R the
+position of the value we want from the vector.Single brackets are always
+used for indexing vectors.</p>
+<p>We can also select multiple values from a vector in various ways. If
+we want multiple adjacent values, we can use the colon symbol
+(<code>:</code>) to select the range of values we want. If we wanted to
+select the first two values from our <code>plant_counts</code> vector,
+we would do that as follows:</p>
+<pre class="r"><code>plot1_2 &lt;- plant_counts[1:2]</code></pre>
+<p>If we want to select non-adjacent values, we can again make use of
+our concatenate function to do that. We will essentially create a vector
+with the list of the indices of the values we want. To select the first
+and third values from our <code>plant_counts</code> vector, we could do
+the following:</p>
+<pre class="r"><code>plot1_3 &lt;- plant_counts[c(1,3)]</code></pre>
+<p>We can also tell R to remove values from a vector, which is useful if
+we want to include most of the values and only remove a few. Another way
+of creating the <code>plot1_3</code> vector would be to remove the
+second value. We do that using the minus symbol:</p>
+<pre class="r"><code>plot1_3 &lt;- plant_counts[-2]</code></pre>
+<p>We can also remove multiple values by combining the minus symbol with
+either the colon to tell R to remove a range of values or with the
+concatenate function to specify individuals values we want to remove.
+Here are examples of both:</p>
+<pre class="r"><code>plot1 &lt;- plant_counts[-(2:3)]
+plot2 &lt;- plant_counts[-c(1,3)]</code></pre>
+<p>What you might be starting to notice is that there are often multiple
+ways to do the same thing. Sometimes one strategy will be more efficient
+than other, but often multiple strategies will work! There is rarely one
+correct way to write code (but there are lots of wrong ways to write
+code).</p>
+</div>
+<div id="data-frames" class="section level4">
+<h4>Data frames</h4>
+<p>Another type of R object we will work with frequently in this class
+is a data frame. Think of a data frame as the R version of a
+spreadsheet. You can have columns for different variables, with rows for
+your observations of each variable. You can create data frames directly
+in R or you can import them from another file on your computer (or
+download them from the internet, in some cases). In the next lesson, we
+will cover data frames in more detail, including how to important them.
+Here, we will create a simple data frame in R, so you can see the basic
+structure of a data frame.</p>
+<p>Let’s continue with our plant count example from above. Previously,
+we stored the data either as variables or as vectors. Now, lets put it
+into a data frame instead. We will have one column with our plot numbers
+and one with our plot counts. To create the data frame, we will use the
+<code>date.frame()</code> function. Inside the parentheses of the
+function, we will tell R what variables we want and what data we want to
+add for each variable. Here is one way we could create our plant counts
+data frame:</p>
+<pre class="r"><code>plant_data &lt;- data.frame(Plot=c(1:3),Plant_count=plant_counts)
+plant_data</code></pre>
+<pre><code>##   Plot Plant_count
+## 1    1           4
+## 2    2           7
+## 3    3           6</code></pre>
+<p>When you view the data frame, you can now see two colums: the first
+with your plot numbers and the second with the plant count for each
+plot. Now let’s break down the code we used to create the data frame.
+First, note that we are saving this as a new object called
+<code>plant_data</code>. Because we are creating it with the
+<code>data.frame</code> function, it will be a data frame oject. Inside
+the parentheses of the <code>data.frame</code> function, we told R to
+create two different variable, one called “Plot” and one called
+“Plant_count”. We tell R these are two separate variable by separating
+them by a comma. If we wanted, we could add additional variable. We are
+not limited to two. To tell R what data to add to each variable, we
+first use the equals sign after the variable name and then tell R what
+numbers to add. For the Plot variable, I again used the concatenate
+function to tell R that the Plot variable should have the numbers 1
+through 3, in order. To create the Plant_counts variable, I simply told
+R to use the <code>plant_counts</code> vector we already created.</p>
+<p>Once we have created a data frame, it is possible to extract
+particular data from the data frame, if we don’t want to work with all
+of the data at once. If we want to extract a particular column of data,
+we can do that by telling R the name of the data frame, followed by the
+<code>$</code> symbol, followed by the name of the column we want:</p>
+<pre class="r"><code>plant_counts &lt;- plant_data$Plant_count
+plant_counts</code></pre>
+<pre><code>## [1] 4 7 6</code></pre>
+<p>Notice that the column we extracted is now in the form of a
+vector!</p>
+<p>We can also extract a single value using indexing, similar to the way
+we extracted values from a vector. When we are working with data frames,
+though, we will use double brackets, and we have to give R two indices,
+one for the row and one for the column, in that order.</p>
+<pre class="r"><code>plot1 &lt;- plant_data[[1,2]]
+plot1</code></pre>
+<pre><code>## [1] 4</code></pre>
+<p>Here we extracted the value in the first row and second column from
+the <code>plant_data</code> data frame, which is the plant count from
+plot 1.</p>
+<p>In the next lesson, we will look at several additional ways to
+manipulate data frames in R, specifically focusing on using the
+<strong>tidyverse</strong> family of packages, that includes packages
+designed for working with data frames.</p>
+</div>
+</div>
+<div id="functions" class="section level3">
+<h3>2.4 Functions</h3>
+<p>As you worked through the first three sections in this lesson, you
+practiced using a number of different functions. Now that you have seen
+and used a few examples, we will go some general aspects of
+functions.</p>
+<p>All functions in R have the same basic structure, which is helpful
+for learning new functions. Whenever you use a function, you will first
+type the name of the function (e.g., <code>mean</code> or
+<code>c</code>), followed by parentheses. Inside the parentheses, you
+will provide the “arguments” for the function. But what are arguments?
+The arguments are the inputs that R needs to carry out the function.
+Functions usually have at least one required argument, and they often
+have additional optional arguments as well.</p>
+<p>Let’s look at the <code>mean</code> function as an example. We used
+the mean function above to calculate the mean number of plants in our
+plant counts vector:</p>
+<pre class="r"><code>mean(plant_counts)</code></pre>
+<pre><code>## [1] 5.666667</code></pre>
+<p>The mean function has one required argument: x, which is the set of
+numbers for which you want to calculate the mean. We provided the
+<code>plant_counts</code> vector as the object for that argument. There
+are also additional optional arguments for the <code>mean</code>
+function. The optional arguments usually have default values that are
+used if you do not specify those arguments in your code. Often the
+defaults are what we want, but other times, we might want to change
+them. An example for our <code>mean</code> function is the “na.rm”
+argument. This argument tells R how to handle missing data points (NAs)
+in the data. The default if for this argument to be set to “FALSE”,
+meaning R will not remove NAs from the data, and, as a result, if you
+have any NAs in the data, you will get NA as your mean. This is useful
+for detecting places where you have missing data if you didn’t know they
+were missing. However, sometimes we might want R to remove the NAs and
+calculate the mean of the remaining data points. To do this, we would
+include the na.rm argument in our code and change its value to “TRUE”
+(or simply “T”). You can see the difference below, where I add an NA to
+our plant_counts vector, and then calculate the mean using both
+options.</p>
+<pre class="r"><code>plant_counts &lt;- c(plant_counts,NA)
+mean(plant_counts)</code></pre>
+<pre><code>## [1] NA</code></pre>
+<pre class="r"><code>mean(plant_counts, na.rm=T)</code></pre>
+<pre><code>## [1] 5.666667</code></pre>
+<p>Notice that when I provided the argument for x (the set of numbers),
+I didn’t include the name of the argument, I did not specify the name of
+the argument, but I did specify the name of the na.rm argument, followed
+by an equal sign before giving the value for that argument. If you give
+R the arguments in order, without skipping any, you do not need to
+specify the name of the argument. But if you list them in the wrong
+order or skip arguments, you do need to specify the name. In this
+example, I know that x is the first argument, but na.rm is the third. I
+could therefore get away with not giving the name of the first argument,
+but I had that one in the right position, but I did need to specify the
+name of the na.rm argument because I skipped an optional argument and
+had the na.rm argument in the second position instead of the third.</p>
+<p>But how do you know what a function does, what arguments you need in
+a function and what the correct order of the arguments is? We will cover
+that in the next section.</p>
+</div>
+<div id="getting-help-in-r" class="section level3">
+<h3>2.5 Getting help in R</h3>
+<p>If you forget how to use a function, need to learn a new function, or
+aren’t sure where to begin to carry out a procedure in R, never fear!
+There are a lot of ways to get help. You are always welcome to use any
+resources to help with your coding. This handbook will stay on the
+Canvas page, and you can return to it at any time to refresh your memory
+on the things it covers. Another excellent way to get help is to make
+use of the internet. There is a huge community of R users out there, so
+there are tons of resources online. If you do a search for a problem you
+are having or a procedure you need to carry out, I can almost guarantee
+you will find answers online. Are you on Twitter? Believe it or not,
+that is another great resource. Post your question with #rstats, and you
+might find a helpful R expert will answer it for you! I have heard the
+#rstats community is both helpful and friendly!</p>
+<p>R also has its own help pages for every function, both functions in
+base R and functions in packages you download. Sometimes they are a bit
+technical, but they can be helpful for reminding you what functions do
+and what arguments you need to include in the function. There are a
+couple of ways to access the help pages. In RStudio, there is a Help tab
+in the bottom right-hand corner. You can search for a function or a
+topic in this help tab. You can also type code directly into the console
+to access a help page. If you know the name of the function you want,
+type <code>?</code> followed by the function name. For example if you
+want information about the standard deviation function, you would type
+<code>?sd</code>. The help page will open in the bottom right-hand
+corner on RStudio. If you can’t remember the name of the function, you
+can search for a keyword instead, using <code>$$</code> followed by the
+keyword, and you will get a list of functions that are related to your
+keyword. If you knew you wanted to calculate the standard deviation, but
+didn’t remember the function was <code>sd</code>, for example, you could
+type <code>??standarddeviation</code>. Note that you can’t include a
+space in your keyword.</p>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
