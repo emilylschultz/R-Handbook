@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Emily Schultz" />
+
+<meta name="date" content="2023-02-15" />
+
+<title>ESS 3500 R Handbook, Lesson 4</title>
+
+<script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">ESS 3500 R Handbook</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="RHandbook_1.html">Lesson 1</a>
+</li>
+<li>
+  <a href="RHandbook_2.html">Lesson 2</a>
+</li>
+<li>
+  <a href="RHandbook_3.html">Lesson 3</a>
+</li>
+<li>
+  <a href="RHandbook_4.html">Lesson 4</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 4</h1>
+<h4 class="author">Emily Schultz</h4>
+<h4 class="date">2023-02-15</h4>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#lesson-4-descriptive-statistics"
+id="toc-lesson-4-descriptive-statistics">Lesson 4: DESCRIPTIVE
+STATISTICS</a>
+<ul>
+<li><a href="#central-tendency" id="toc-central-tendency">4.1: Central
+tendency</a></li>
+<li><a href="#variation" id="toc-variation">4.2 Variation</a></li>
+<li><a href="#exploratory-data-visualization"
+id="toc-exploratory-data-visualization">4.3 Exploratory data
+visualization</a></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="lesson-4-descriptive-statistics" class="section level2">
+<h2>Lesson 4: DESCRIPTIVE STATISTICS</h2>
+<p>In this lesson, we will cover how to calculate descriptive statistics
+in R and how to create some commons graphs used in exploratory analysis.
+The good news is, you have already learned some of the descriptive
+statistics functions, so they will be a review!</p>
+<p>We will work with the <strong>civu.csv</strong> file that you used in
+the data frame practice problems, so read in that file now (be sure to
+set your working directory first):</p>
+<pre class="r"><code>civu &lt;- read.csv(&quot;civu.csv&quot;)</code></pre>
+<div id="central-tendency" class="section level3">
+<h3>4.1: Central tendency</h3>
+<p>In class, we discussed three measures of central tendency: mean,
+median, and mode. Below, we will cover how to calculate each for the
+“density_2006” variable in the data frame.</p>
+<p>You have used the <code>mean</code> function before, but this time we
+will calculate the mean of a column in data frame instead of the mean of
+a vector:</p>
+<pre class="r"><code>mean_density &lt;- mean(civu$density_2006)
+mean_density</code></pre>
+<pre><code>## [1] 34.6</code></pre>
+<p>Calculating the median is similarly intuitive:</p>
+<pre class="r"><code>median_density &lt;- median(civu$density_2006)</code></pre>
+<p>Unfortunately, there is not a built-in function for calculating the
+mode in R, but we have a few options for determining the mode. Likely
+the easiest is to install <strong>DescTools</strong> package, which does
+have a mode function.</p>
+<pre class="r"><code>install.packages(&quot;DescTools&quot;)</code></pre>
+<p>You will only need to run the install packages command once, and then
+it will be installed on your computer.</p>
+<p>To load the package and calculate the mode, run</p>
+<pre class="r"><code>library(DescTools)
+mode_density &lt;- Mode(civu$density_2006)
+mode_density</code></pre>
+<pre><code>## [1] 37
+## attr(,&quot;freq&quot;)
+## [1] 20</code></pre>
+<p>In the output, the top number you will see is the mode. If there are
+multiple modes, you will see a vector listing all of the modes instead
+of a single number. The number on the bottom is the frequency of the
+mode (how often that value appeared in the data set).</p>
+<p>There is also a hack we can use to get the mode without downloading a
+new package. We will start by using the <code>table</code> function to
+create a table of the values in our data set and how frequently they
+appeared in the data.</p>
+<pre class="r"><code>table(civu$density_2006)</code></pre>
+<pre><code>## 
+## 17 20 23 24 26 30 31 34 36 37 43 46 52 63 
+## 10 10 10 10 10 10 10 10 10 20 10 10 10 10</code></pre>
+<p>In the output, the top row lists the different values in the data set
+and the bottom row tells you how frequently each of those values
+appears. With a small data set like ours, we can pretty easily find the
+value that appears most frequently: 37. With a large data set with many
+different values, it would be harder to find. To help, we can sort our
+table, so the most frequent value appears first:</p>
+<pre class="r"><code>sort(table(civu$density_2006),decreasing = TRUE)</code></pre>
+<pre><code>## 
+## 37 17 20 23 24 26 30 31 34 36 43 46 52 63 
+## 20 10 10 10 10 10 10 10 10 10 10 10 10 10</code></pre>
+<p>I’ll break down this code for you. The <code>sort</code> function
+with sort a set of values in either increasing or decreasing order. The
+first argument of the <code>sort</code> function is the set of values.
+In this case, the set of values we want is the frequency of the
+different values in our data set. Therefore I again used the
+<code>table</code> function to recreate our frequency table and used
+that as the first argument. The second argument determines whether the
+values are sorted in increasing or decreasing order. The default is
+increasing (decreasing = FALSE), but we wanted to sort in decreasing
+order, so I changed the argument to decreasing = TRUE.</p>
+<p>Now when we look at the table, the mode will be the first value(s) in
+the table, so it is easy to find even with a large data set.</p>
+<p>Luckily, the mode is the measure of central tendency we will use the
+least in this class, and it is often enough to infer it visually from a
+frequency histogram, which we will learn to make in section 4.3.</p>
+</div>
+<div id="variation" class="section level3">
+<h3>4.2 Variation</h3>
+<p>In this section, you will practice calculating measures of
+variability in a data set: standard deviation (which you have already
+learned) and variance (which is just as easy).</p>
+<p>We’ll continue working with the “density_2006” variable in our data
+frame.</p>
+<p>Calculate the standard deviation and variance as follows:</p>
+<pre class="r"><code>sd_density &lt;- sd(civu$density_2006)
+sd_density</code></pre>
+<pre><code>## [1] 12.15559</code></pre>
+<pre class="r"><code>var_density &lt;- var(civu$density_2006)
+var_density</code></pre>
+<pre><code>## [1] 147.7584</code></pre>
+<p>Notice the relationship between the two. The standard deviation is
+the square root of the variance, so we could also calculate one from the
+other.</p>
+<p>If you want to calculate the standard error, that can be done using
+the <code>MeanSE</code> function in the <strong>DescTools</strong>
+package:</p>
+<pre class="r"><code>se_density &lt;- MeanSE(civu$density_2006)
+se_density</code></pre>
+<pre><code>## [1] 0.9924998</code></pre>
+<p>Alternatively, you can calculate it using only standard R functions
+by dividing the standard deviation by the square root of the sample
+size.</p>
+<pre class="r"><code>sd(civu$density_2006)/sqrt(length(civu$density_2006))</code></pre>
+<pre><code>## [1] 0.9924998</code></pre>
+<p>The numerator in this calculate is simply the standard deviation
+function above. In the denominator, I use a new function
+(<code>length</code>) to calculate the number of values in the
+density_2006 column (the sample size for that variable), and then I take
+the square root of that value.</p>
+</div>
+<div id="exploratory-data-visualization" class="section level3">
+<h3>4.3 Exploratory data visualization</h3>
+<p>In this section, we will make our first foray into graphing! We will
+use the <strong>ggplot2</strong> package (part of the
+<strong>tidyverse</strong> set of packages) for making graphs because it
+is easier to make nice looking graphs in ggplot than in base R. You used
+this package in the variability simulation, so you should already have
+it installed, but if not, install either <strong>ggplot2</strong> or
+<strong>tidyverse</strong> using one of the two lines below:</p>
+<pre class="r"><code>install.packages(&quot;ggplot2&quot;)
+install.packages(&quot;tidyverse&quot;)</code></pre>
+<p>Then load either one for this session:</p>
+<pre class="r"><code>library(ggplot2)
+library(tidyverse)</code></pre>
+<p>In this section, you will learn to make three different types of
+plots that can be useful when doing exploratory data analysis:
+histograms, scatter plots, and box plots.</p>
+<div id="histograms" class="section level4">
+<h4>Histograms</h4>
+<p>Histograms are useful for visualizing how our data are distributed.
+Are they close to a normal (bell-shaped) distribution? Are they skewed?
+Biomodal? Are there outliers? All of these questions can be answered
+with a histogram.</p>
+<p>We will start by making a histogram of our “density_2006” variable.
+When you use the <strong>ggplot2</strong> package to make graphs, you
+will start with one line of code that tells ggplot what data to use for
+your graph. Then you add additional lines of code to create and modify
+your graph. Here is the code to make a simple histogram, without
+changing any default settings:</p>
+<pre class="r"><code>ggplot(data = civu, aes(x = density_2006)) +
+  geom_histogram() </code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value
+## with `binwidth`.</code></pre>
+<p><img src="RHandbook_4_files/figure-html/histogram-1.png" width="672" /></p>
+<p>In the first line of code above, we start with the
+<code>ggplot</code> function. The first argument of the function (data)
+is the data frame that contains the data you want to graph (it needs to
+be a data frame object). We want to use our <code>civu</code> dataframe.
+Next is the aesthetics argument (aes), where you list the variables you
+want to graph. Notice that “aes” is followed by parentheses. This is
+because you can list multiple variable for this argument, so you put the
+list of variable inside the parentheses. For our histogram, we are only
+using one variable (density_2006), and this is our x variable. We end
+the line with a + sign to indicate that we are adding additional code on
+the next line to create the graph. In the second line of code, we are
+telling ggplot that we want to use the data from the first line of code
+to create a histogram. We don’t need to add any arguments to the
+<code>geom_histogram</code> because we already told ggplot what data to
+use, and we aren’t changing any default settings.</p>
+<p>Now let’s take a look at a few ways we can modify our graph to make
+it look nicer. When you look at the graph you made above, notice that
+the bins look uneven in their width and their are some gaps. This is
+because the default is to split the data into 30 different bins (ranges
+of data), but our data set is pretty small, so we don’t really need that
+many bins. We will thus add the bins argument to the
+<code>geom_histogram</code> function to change the number of bins to
+10.</p>
+<pre class="r"><code>ggplot(data = civu, aes(x = density_2006)) +
+  geom_histogram(bins = 10)</code></pre>
+<p><img src="RHandbook_4_files/figure-html/histogram_10-1.png" width="672" /></p>
+<p>Now let’s change our axis labels. “density_2006” is sensible for a
+column heading because it doesn’t have any spaces, but it looks a little
+odd on a graph. I also like to start my axis titles with a capital
+letter. We will add another line to the code with the <code>labs</code>
+function to change the axis labels. Don’t forget to add a plus sign to
+the end of the geom_histogram line to indicate that you are adding more
+code for the graph below.</p>
+<pre class="r"><code>ggplot(data = civu, aes(x = density_2006)) +
+  geom_histogram(bins = 10) +
+  labs(x = &quot;Density in 2006&quot;, y = &quot;Frequency&quot;)</code></pre>
+<p><img src="RHandbook_4_files/figure-html/axis_labels-1.png" width="672" /></p>
+<p>I also find the grey background to be distracting, so we will change
+the theme to get rid of the background. Again, we will add another line
+of code, so add the plus sign to the end of the labs line.</p>
+<pre class="r"><code>ggplot(data = civu, aes(x = density_2006)) +
+  geom_histogram(bins = 10) +
+  labs(x = &quot;Density in 2006&quot;, y = &quot;Frequency&quot;) +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_4_files/figure-html/theme-1.png" width="672" /></p>
+<p>Now we have a histogram that both shows us the distribution of our
+data and looks pretty nice!</p>
+</div>
+<div id="scatter-plots" class="section level4">
+<h4>Scatter plots</h4>
+<p>Scatter plots are a good way to visualize the relationship between
+two continuous variable, so we can see how strongly they might be
+correlated and whether the relationship is positive or negative.</p>
+<p>Here, we will make a scatter plot to show the relationship between
+density_2006 and density_2007.</p>
+<pre class="r"><code>ggplot(data = civu, aes(x = density_2006, y = density_2007)) +
+  geom_point()</code></pre>
+<p><img src="RHandbook_4_files/figure-html/scatter-1.png" width="672" /></p>
+<p>Notice the code is very similar to what we used to make the
+histogram. The first line is identical, except that we add a second
+variable, our y variable, in the aes argument. The second line is
+similar, except that we use the <code>geom_point</code> function to
+create a graph instead of a histogram.</p>
+<p>Now let’s also change our axis labels and theme, as we did for the
+histogram:</p>
+<pre class="r"><code>ggplot(data = civu, aes(x = density_2006, y = density_2007)) +
+  geom_point() +
+  labs(x = &quot;Density in 2006&quot;, y = &quot;Density in 2007&quot;) +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_4_files/figure-html/scatter_theme-1.png" width="672" /></p>
+</div>
+<div id="box-plots" class="section level4">
+<h4>Box plots</h4>
+<p>Box plots allow us to visualize the effect of a categorical
+independent variable on a continuous dependent variable. We will make a
+box plot showing how the herbivory treatment affected the density_2006
+variable.</p>
+<p>First, we need to change the herbivory variable from an integer
+variable to a factor variable, because we are using herbivory as a
+categorical variable. We did this in the data frame practice problems as
+well.</p>
+<pre class="r"><code>civu$herbivory &lt;- as.character(civu$herbivory)</code></pre>
+<p>Now we are ready to make our box plot. The set up will be similar to
+the code for the previous plots, except we are changing our x and y
+variables in the first line of code and changing our plot type in the
+second line of code. We will also change the axis labels and theme in
+this plot.</p>
+<pre class="r"><code>ggplot(data = civu, aes(x = herbivory, y = density_2006)) +
+  geom_boxplot() +
+  labs(x = &quot;Herbivory treatment&quot;, y = &quot;Density in 2006&quot;) +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_4_files/figure-html/boxplot-1.png" width="672" /></p>
+<p>If you are unfamiliar with box plots, they show both a measure of the
+central tendency (usually the median) and the variation in the dependent
+variable for each category. The median for each group is shown by the
+bar in the middle of each box. The boxes show the inter-quartile range
+(i.e., the bottom of the box showes the first quartile and the topr of
+the box shows the third quartile). Therefore, 50% of the values in the
+data fall within the box. The whiskers (vertical lines you might see
+below and/or above the box) show the smallest and largest values in the
+data set that are no farther than 1.5 times the inter-quartile range
+from the first and third quartile, respectively.</p>
+<p>There are many different types of graphs and ways we can modify our
+graphs using ggplot. We will cover some of these in future lessons as we
+get into inferential statistics. But these three types of graphs will
+give you a good starting point for exploring your own data sets!</p>
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
