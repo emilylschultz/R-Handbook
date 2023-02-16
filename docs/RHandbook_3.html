@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Emily Schultz" />
+
+<meta name="date" content="2023-01-29" />
+
+<title>ESS 3500 R Handbook, Lesson 3</title>
+
+<script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">ESS 3500 R Handbook</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li>
+  <a href="RHandbook_1.html">Lesson 1</a>
+</li>
+<li>
+  <a href="RHandbook_2.html">Lesson 2</a>
+</li>
+<li>
+  <a href="RHandbook_3.html">Lesson 3</a>
+</li>
+<li>
+  <a href="RHandbook_4.html">Lesson 4</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 3</h1>
+<h4 class="author">Emily Schultz</h4>
+<h4 class="date">2023-01-29</h4>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#lesson-3-data-frames" id="toc-lesson-3-data-frames">Lesson
+3: DATA FRAMES</a>
+<ul>
+<li><a href="#setting-your-working-directory"
+id="toc-setting-your-working-directory">3.1 Setting your working
+directory</a></li>
+<li><a href="#loading-data" id="toc-loading-data">3.2 Loading
+data</a></li>
+<li><a href="#getting-information-about-your-data-frame"
+id="toc-getting-information-about-your-data-frame">3.3 Getting
+information about your data frame</a></li>
+<li><a href="#manipulating-data-frames-with-the-tidyverse-package"
+id="toc-manipulating-data-frames-with-the-tidyverse-package">3.4
+Manipulating data frames with the <strong>Tidyverse</strong>
+package</a></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="lesson-3-data-frames" class="section level2">
+<h2>Lesson 3: DATA FRAMES</h2>
+<p>In this lesson, we will cover more details about how to work with
+data frames in R, including how to import data files into R, retrieve
+information about files, and manipulate data frames in R.</p>
+<div id="setting-your-working-directory" class="section level3">
+<h3>3.1 Setting your working directory</h3>
+<p>Today we will be working on importing data into R, so it is first
+important for us to know how to tell R where to look (i.e., in what
+folder on our computer) for the files we want to import.</p>
+<p>In the first lesson, when we looked at the layout of RStudio, I noted
+that one of the tabs in the bottom right-hand corner is the “Files” tab.
+This tab will show you all the files that are in your working directory,
+which is the folder R will search to find and save files. R usually has
+a default folder that it will set as your working directory unless you
+tell it otherwise.</p>
+<p>To help keep things organized, it is useful to store all of your
+R-related files for a single project in the same folder, and you will
+likely want to keep separate folders for separate projects. Then when
+you open R, you can set your working directory to that folder for the
+project you want to work on.</p>
+<p>There are a few ways to set your working directory. The easiest way
+for beginners is to use the drop-down menus in RStudio. Select “Session”
+from the menu bar at the top. Then hover over “Set Working Directory”
+and select “Choose Directory” from the new menu that appears. Then you
+will be able to use your file explorer to select the folder you want.
+When you do this, you will see a line a code appear in your console. The
+line of code is telling R to change the directory. If you know you will
+want to use that working directory again, then I would recommend copying
+and pasting the line of code into the top of your R script file. In the
+future, when you are working with that R script file, you can simply run
+that line of code to set the working directory.</p>
+</div>
+<div id="loading-data" class="section level3">
+<h3>3.2 Loading data</h3>
+<p>In the previous lesson, we created a simple data frame directly in R.
+In general, particularly with large data sets it is far easier to enter
+your data into a program like Excel and then import the data into R. For
+the remainder of the lesson, we will work with a simple example data set
+I provided you with called “DataFrameExample.csv”. I recommend saving
+data files you want to work with in R as csv files. You can import Excel
+files into R, but it is often slower, especially if the files are large.
+The other benefit of csv files is that they are a non-proprietary file
+type, so they don’t require a specific program like Excel. This will
+make it easier to share your files with other researchers.</p>
+<p>Save the “DataFrameExample.csv” file in the folder you want to use as
+your working directory for this lesson. If you haven’t already, follow
+the directions in the previous section to set your working directory.
+Now you are ready to import the data. We will use the
+<code>read.csv()</code> function to import the data, and we will save
+the data as an object called <code>data</code>. R will automatically
+save it as a data frame object. Here is the code to use:</p>
+<pre class="r"><code>data &lt;- read.csv(&quot;DataFrameExample.csv&quot;)
+data</code></pre>
+<pre><code>##    Tree Year Number.cones Growth Temperature
+## 1     A 2009            0   0.21        8.58
+## 2     A 2010           14   0.26        8.67
+## 3     A 2011            0   0.20        8.32
+## 4     A 2012           35   0.15        9.68
+## 5     A 2013           14   0.21        9.09
+## 6     B 2009           64   0.21        7.28
+## 7     B 2010           22   0.23        7.36
+## 8     B 2011           64   0.23        7.05
+## 9     B 2012           22   0.19        8.45
+## 10    B 2013           57   0.17        7.85</code></pre>
+<p>Notice that R automatically identify the first row as a header row.
+That is because there is an optional “header” argument for the read.csv
+file, and the default for that argument is “TRUE”. If your data file
+does not have a header row, you would want to change the header argument
+to “FALSE”.</p>
+<p>You now have a data frame object ready to work with in R!</p>
+</div>
+<div id="getting-information-about-your-data-frame"
+class="section level3">
+<h3>3.3 Getting information about your data frame</h3>
+<p>R is pretty good at importing data and correctly identifying what
+time of data you have for each variable. Nevertheless, it is still
+important to take a look at your data frame to make sure it was imported
+correctly. You also might sometimes need a reminder of what variables
+you have in your data frame (I sometimes forget). Here, we will learn
+some ways to get basic information about your data frame.</p>
+<div id="viewing-your-data" class="section level4">
+<h4>Viewing your data</h4>
+<p>In the section above, we viewed the data frame right in the console
+by just typing the name of the data frame. If you have a small data
+frame like ours, that works pretty well, but if you have a large data
+frame with lots of variables, lots of observations, or both, that will
+be unwieldy, but we have some other options!</p>
+<p>One option is to just view the top few rows of our data frame. This
+is a good option if you want to remind yourself of what is in your data
+frame and confirm that everything looks the way you would expect (this
+can be helpful after you have imported your data or made changes to your
+data frame). To view your the top few rows of your data frame, use the
+<code>head()</code> function:</p>
+<pre class="r"><code>head(data)</code></pre>
+<pre><code>##   Tree Year Number.cones Growth Temperature
+## 1    A 2009            0   0.21        8.58
+## 2    A 2010           14   0.26        8.67
+## 3    A 2011            0   0.20        8.32
+## 4    A 2012           35   0.15        9.68
+## 5    A 2013           14   0.21        9.09
+## 6    B 2009           64   0.21        7.28</code></pre>
+<p>On occasion, you might want to view your entire data frame. If your
+data frame is large, you can use the <code>View()</code> function to
+view the data frame in a separate tab:</p>
+<pre class="r"><code>View(data)</code></pre>
+<p>You should now see your data frame appear in a new tab next to your
+script files.</p>
+<p>You can also view just the names of the variable (i.e., the column
+names) in your data frame:</p>
+<pre class="r"><code>names(data)</code></pre>
+<pre><code>## [1] &quot;Tree&quot;         &quot;Year&quot;         &quot;Number.cones&quot; &quot;Growth&quot;       &quot;Temperature&quot;</code></pre>
+</div>
+<div id="the-structure-of-your-data-frame" class="section level4">
+<h4>The structure of your data frame</h4>
+<p>The variables in your data frame can be a number of different data
+types, including continuous numeric data, integers, factors (categorical
+variables), and characters (text). When you import a data frame, R will
+do its best to identify the variable type based on the data in each
+column. It is usually pretty good, but sometimes it makes mistakes
+(often because we used some poor practices when entering the data, like
+putting notes into a variable column instead of having a separate column
+for notes). Sometimes it doesn’t matter if the data type is identified
+incorrectly, but for some purposes including statistical tests and
+graphing, it can be important. It is therefore good practice to check
+your data frame and make sure the data types are correct.</p>
+<p>To look at the structure of a data frame, including the data type for
+each variable, we use the <code>str()</code> function.</p>
+<pre class="r"><code>str(data)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    10 obs. of  5 variables:
+##  $ Tree        : chr  &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; ...
+##  $ Year        : int  2009 2010 2011 2012 2013 2009 2010 2011 2012 2013
+##  $ Number.cones: int  0 14 0 35 14 64 22 64 22 57
+##  $ Growth      : num  0.21 0.26 0.2 0.15 0.21 0.21 0.23 0.23 0.19 0.17
+##  $ Temperature : num  8.58 8.67 8.32 9.68 9.09 7.28 7.36 7.05 8.45 7.85</code></pre>
+<p>You will now see a list of the variables in your data base. Next to
+each variable, it will show you the data type (chr = character, int =
+integer, num = continuous numeric), along with the first several values
+of each variable in your data frame. It looks like it did a good job
+identifying our data types, but let’s make one change to show you how it
+is done. Our Tree variable was identified as a character variable, but
+because that is a categorical variable identifying the tree each data
+point came from, it might be helpful to make it a factor variable
+instead. Run the following code to make the change:</p>
+<pre class="r"><code>data$Tree &lt;- as.factor(data$Tree)</code></pre>
+<p>Notice I used the <code>$</code> symbol to identify the variable in
+the data frame I wanted to change, and I told R to replace the original
+variable with the factor version of the save variable.</p>
+<p>Now let’s look at the structure of the data frame again.</p>
+<pre class="r"><code>str(data)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    10 obs. of  5 variables:
+##  $ Tree        : Factor w/ 2 levels &quot;A&quot;,&quot;B&quot;: 1 1 1 1 1 2 2 2 2 2
+##  $ Year        : int  2009 2010 2011 2012 2013 2009 2010 2011 2012 2013
+##  $ Number.cones: int  0 14 0 35 14 64 22 64 22 57
+##  $ Growth      : num  0.21 0.26 0.2 0.15 0.21 0.21 0.23 0.23 0.19 0.17
+##  $ Temperature : num  8.58 8.67 8.32 9.68 9.09 7.28 7.36 7.05 8.45 7.85</code></pre>
+<p>We can see that the Tree variable is now a factor with two different
+levels: A and B.</p>
+<p>There are equivalent functions to convert to the other variable
+types: <code>as.numeric()</code>, <code>as.integer</code>, and
+<code>as.character()</code>.</p>
+</div>
+</div>
+<div id="manipulating-data-frames-with-the-tidyverse-package"
+class="section level3">
+<h3>3.4 Manipulating data frames with the <strong>Tidyverse</strong>
+package</h3>
+<p>There are any number of ways we might want to manipulate our data
+sets, and, like with many aspects of programming, there are various ways
+to go about it. In this class, we will focus on using the
+<strong>Tidyverse</strong> packages. We will look at a few different
+ways of manipulating our data frames, but there are many more! There is
+a great resource online called <a href="https://r4ds.had.co.nz/">R for
+Data Science</a>. It is a comprehensive guide to using R for managing,
+visualizing, and analyzing data in R, with a particular focus on
+<strong>Tidyverse</strong>. Check it out if you want/need to learn
+more!</p>
+<p>For this section, you will need to activate the
+<strong>Tidyverse</strong> packages. This is something that needs to be
+done every time you start a new R session, if there are packages in
+addition to base R that you want to use. Enter the following code to
+activate <strong>Tidyverse</strong>:</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<div id="filtering-data" class="section level4">
+<h4>Filtering data</h4>
+<p>Filtering is used to select a subset of observations from your data
+frame. For example, our data frame contains data from two different
+trees, but we might want to create a data frame that contains only the
+data for a single tree. We can do this with the <code>filter</code>
+function as follows:</p>
+<pre class="r"><code>data_A &lt;- filter(data, Tree==&quot;A&quot;)
+data_A</code></pre>
+<pre><code>##   Tree Year Number.cones Growth Temperature
+## 1    A 2009            0   0.21        8.58
+## 2    A 2010           14   0.26        8.67
+## 3    A 2011            0   0.20        8.32
+## 4    A 2012           35   0.15        9.68
+## 5    A 2013           14   0.21        9.09</code></pre>
+<p>The new data frame now only has the data for Tree A. Notice a couple
+things about the code. First, notice the use of the double equals signs
+(<code>==</code>). We use the double equals signs when we are making a
+logical statement (i.e., give me all the values that equal a particular
+value). Also notice that the “A” is in quotes. For factor and character
+variables, the value of the variable needs to be in quotes.</p>
+<p>We are not restricted to using <code>==</code> in our logical
+statement. We can also use things like greater than (&gt;) or less than
+(&lt;), and we can include multiple criteria. Below is an example of
+using greater than or less than criteria for two different
+variables.</p>
+<pre class="r"><code>data_subset &lt;- filter(data, Growth &lt; 0.2, Temperature &gt; 8)
+data_subset</code></pre>
+<pre><code>##   Tree Year Number.cones Growth Temperature
+## 1    A 2012           35   0.15        9.68
+## 2    B 2012           22   0.19        8.45</code></pre>
+<p>The resulting data frame has only observations where growth was less
+that 0.2 and temperature was greater than 8.</p>
+</div>
+<div id="selecting-columns" class="section level4">
+<h4>Selecting columns</h4>
+<p>In the section above, we selected a subset of observations, but we
+might also want to select a subset of variables (columns) from our data
+frame. For example, maybe we are only interested in the number of cones
+produced by each tree in each year. We can use the <code>select()</code>
+function to select only those three variables:</p>
+<pre class="r"><code>data_cones &lt;- select(data, Tree, Year, Number.cones)
+data_cones</code></pre>
+<pre><code>##    Tree Year Number.cones
+## 1     A 2009            0
+## 2     A 2010           14
+## 3     A 2011            0
+## 4     A 2012           35
+## 5     A 2013           14
+## 6     B 2009           64
+## 7     B 2010           22
+## 8     B 2011           64
+## 9     B 2012           22
+## 10    B 2013           57</code></pre>
+</div>
+<div id="creating-new-variables" class="section level4">
+<h4>Creating new variables</h4>
+<p>One common manipulation we might want to make to a data frame is to
+calculate a new variable, possibly based on data we already have in our
+data frame. For example, we might have measured the length and width of
+a plant and then want to multiply the length and width variable together
+to calculate the area covered by the plant. We can use the
+<code>mutate()</code> function in the <strong>tidyverse</strong> package
+to create new variables. In our example, we will log transform (i.e.,
+take the natural log of) our temperature variable:</p>
+<pre class="r"><code>data_log &lt;- mutate(data,log_Temperature = log(Temperature))
+data_log</code></pre>
+<pre><code>##    Tree Year Number.cones Growth Temperature log_Temperature
+## 1     A 2009            0   0.21        8.58        2.149434
+## 2     A 2010           14   0.26        8.67        2.159869
+## 3     A 2011            0   0.20        8.32        2.118662
+## 4     A 2012           35   0.15        9.68        2.270062
+## 5     A 2013           14   0.21        9.09        2.207175
+## 6     B 2009           64   0.21        7.28        1.985131
+## 7     B 2010           22   0.23        7.36        1.996060
+## 8     B 2011           64   0.23        7.05        1.953028
+## 9     B 2012           22   0.19        8.45        2.134166
+## 10    B 2013           57   0.17        7.85        2.060514</code></pre>
+<p>If we wanted to add multiple new variables at the same time, we would
+simply add each new variable as a new argument, separated by commas.</p>
+</div>
+<div id="summarizing-data" class="section level4">
+<h4>Summarizing data</h4>
+<p>Another useful manipulation is summarizing our data. Maybe we want to
+summarize the data for each tree across all years of the study.There are
+a number of ways to summarize the data. We could take the average,
+maximum, minimum, sum, or any number of other functions. We’ll use a
+different function on each variable we summarize, so you can see a
+variety of examples.</p>
+<p>The first step in summarizing is to tell R what we want to use as our
+grouping variable(s). If we want to summarize the data for each tree
+across all years, Tree will be our grouping variable. We will create a
+new data frame, grouping our data by our grouping variable, using the
+<code>group_by()</code> function.</p>
+<pre class="r"><code>tree &lt;- group_by(data,Tree)</code></pre>
+<p>If we had wanted to group by multiple variable, we could add them
+after tree, separated by commas.</p>
+<p>Now we will summarize the data for each tree. We will calculate the
+total (sum) number of cones, the average growth, and the maximum
+temperature.</p>
+<pre class="r"><code>data_summary &lt;- summarise(tree, Total.cones = sum(Number.cones), Mean.growth = mean(Growth), Max.temperature = max(Temperature))
+data_summary</code></pre>
+<pre><code>## # A tibble: 2 × 4
+##   Tree  Total.cones Mean.growth Max.temperature
+##   &lt;fct&gt;       &lt;int&gt;       &lt;dbl&gt;           &lt;dbl&gt;
+## 1 A              63       0.206            9.68
+## 2 B             229       0.206            8.45</code></pre>
+<p>When we use the <code>summarise()</code> function, notice that our
+first argument is not our original data frame. It is the new data frame
+we created with the <code>group_by</code> function. The following
+arguments are the summary variables we want to create. We first provide
+a name for our new variable, followed by an equal sign, and then provide
+the function and variable we want to summarize. In this case we are
+creating three summary variable using different summary functions.</p>
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
