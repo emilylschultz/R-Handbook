@@ -38,3 +38,12 @@ The full code to set up the model is as follows. We will save the model as an ob
 ```{r civu_null}
 civu_null <- lm(density_2006 ~ 1, civu)
 ```
+
+Now, lets view the basic output from this model. To do this, we simply type the name of our model object.
+
+```{r view_null}
+civu_null
+```
+
+This simple output will tell us two things. It will first remind us of the code we used to build the model, so we can see the independent and dependent variables we included. Second, it will show us the coefficients, or the parameters of our model. Because our null model did not have any predictors, it just has a single coefficient, the intercept, which in this case is 34.6.
+Remember, this model represents the mean of the distribution of our data.
