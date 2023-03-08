@@ -285,25 +285,36 @@ $(document).ready(function () {
 <li><a href="#lesson-5-linear-models-in-r"
 id="toc-lesson-5-linear-models-in-r">Lesson 5: LINEAR MODELS IN R</a>
 <ul>
-<li><a href="#the-lm-function" id="toc-the-lm-function">5.1 The lm
-function</a></li>
+<li><a href="#discrete-predictor-variable"
+id="toc-discrete-predictor-variable">5.1 Discrete predictor
+variable</a></li>
+<li><a href="#continuous-predictor-variable"
+id="toc-continuous-predictor-variable">5.2 Continuous predictor
+variable</a></li>
 </ul></li>
 </ul>
 </div>
 
 <div id="lesson-5-linear-models-in-r" class="section level2">
 <h2>Lesson 5: LINEAR MODELS IN R</h2>
-<div id="the-lm-function" class="section level3">
-<h3>5.1 The lm function</h3>
-<div id="discrete-predictor" class="section level4">
-<h4>Discrete predictor</h4>
+<p>Now that you have learned how to write statistical models
+(hypotheses), you will learn how to build these models in R. In this
+process, we will not only write the models, but we will get R to
+<em>parameterize</em> the models for us. What I mean by this is that
+once we set up the models, R will use our data to estimate the mean and
+variance for the true distribution of the variable in our population of
+interest. If we include predictor variables in our model, it will also
+estimate how the predictor variable affects the mean of our
+distribution.</p>
+<div id="discrete-predictor-variable" class="section level3">
+<h3>5.1 Discrete predictor variable</h3>
 <p>We will start with an example with a discrete (categorical)
 independent variable and a continuous dependent variable.</p>
 <p>Start off by reading in the civu data set that we have worked with
 before. Be sure to first set your working directory to the folder with
 the civu dataset. Then use the <code>head</code> function to view the
-top rows of the data set, as a reminder of what data we have in the
-dataframe.</p>
+top rows of the data set, as a reminder of what data we have in the data
+frame.</p>
 <pre class="r"><code>civu &lt;- read.csv(&quot;civu.csv&quot;)
 head(civu)</code></pre>
 <pre><code>##   herbivory plant_id density_2006 density_2007 survival_t.1
@@ -319,6 +330,8 @@ density of thistle plants? For this example we will build 2 models: one
 respresented the null hypothesis and one representing the altnerative
 hypothesis. Then we will practice interpreting the output of the
 models.</p>
+<div id="null-model" class="section level4">
+<h4>Null model</h4>
 <p>Let’s start with the null hypothesis: herbivory does not affect the
 density of thistles.</p>
 <p>To build linear models in R, we will use a new function, the
@@ -350,7 +363,200 @@ and dependent variables we included. Second, it will show us the
 coefficients, or the parameters of our model. Because our null model did
 not have any predictors, it just has a single coefficient, the
 intercept, which in this case is 34.6. Remember, this model represents
-the mean of the distribution of our data.</p>
+the mean of the distribution of our data, so, based on our null model,
+the mean density is 34.6, regardless of the herbivory treatment.</p>
+</div>
+<div id="alternative-model" class="section level4">
+<h4>Alternative model</h4>
+<p>Now, let’s compare this null model to our alternative model. Our
+alternative model is that herbivory does affect the density, so this
+time, we want it include it as a predictor in our model. We will then be
+able to see how the herbivory treatment affects our estimate of the mean
+density.</p>
+<p>We set up the model in the same way we did for the null model, but
+put our predictor variable in place of the 1.</p>
+<pre class="r"><code>civu_alt &lt;- lm(density_2006 ~ herbivory, civu)
+civu_alt</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = density_2006 ~ herbivory, data = civu)
+## 
+## Coefficients:
+## (Intercept)    herbivory  
+##          21           17</code></pre>
+<p>Now when we view the output, we see two coefficients. The intercept
+(21) and the herbivory coefficient (17). If we wrote this model out as
+an equation, it would be:</p>
+<p><span class="math display">\[
+\mu = 21 + 17*herbivory
+\]</span> where is the mean density. Recall that the categorical
+herbivory term in this equation can take on two values: 0 and 1. In this
+case, 0 is the control group, which is herbivores present and 1 is the
+treatment group, which is herbivores excluded. Therefore, the mean
+density in the presence of herbivores is 21 and the mean density in the
+absence of herbivores is <span
+class="math inline">\(21+17=38\)</span>.</p>
+</div>
+<div id="model-variance" class="section level4">
+<h4>Model variance</h4>
+<p>We now have two models that describe the mean (or means) of our
+data:</p>
+<ol style="list-style-type: decimal">
+<li>Null model: <span class="math inline">\(\mu=34.6\)</span></li>
+<li>Alternative model: <span
+class="math inline">\(\mu=21+17*herbivory\)</span></li>
+</ol>
+<p>But remember, to describe data using a normal distribution, we need
+two parameters: the mean and the variance! We’ll now learn how to find
+the variance (<span class="math inline">\(\sigma^2\)</span>) (and
+standard deviation) in the model output. To do so, we will use the
+<code>summary</code> function. The summary function will give us
+additional output for our model. Most of the output we will learn about
+later in the semester when we cover model testing. For now, we will just
+pull out the standard deviation from the summary for each model as
+follows:</p>
+<pre class="r"><code>null_sd_civu &lt;- summary(civu_null)$sigma
+alt_sd_civu &lt;- summary(civu_alt)$sigma</code></pre>
+<p>We can then calculate the variance by squaring the standard
+deviations:</p>
+<pre class="r"><code>null_var_civu &lt;- null_sd_civu^2
+alt_var_civu &lt;- alt_sd_civu^2</code></pre>
+<p>This variance is specifically what we refer to as the residual
+variance of the model, which we talked about earlier in the class. It is
+the variation in our data that is not explained by the predictors we
+included in our model. In this particular example, we can explain some
+variation in thistle density by herbivore presence (which is why the
+residual variance is lower in our alternative model than our null
+model), but within each treatment groups, there is still unexplained
+variation in density. In this type of model, we assume that the variance
+is equal, or close to equal, in both of our treatment groups, so we just
+have a single variance term.</p>
+<p>We now have to complete models, with both mean and variance terms to
+describe our data. If we write them out formally, they would look like
+this, where <span class="math inline">\(N\)</span> indicates a normal
+distribution:</p>
+<p>Null model: <span class="math display">\[
+density \sim N(\mu,\sigma^2)
+\]</span> <span class="math display">\[
+\mu = 34.6
+\]</span> <span class="math display">\[
+\sigma^2 = 12.16
+\]</span></p>
+<p>Alternative model: <span class="math display">\[
+density \sim N(\mu,\sigma^2)
+\]</span> <span class="math display">\[
+\mu = 21 + 17*herbivory
+\]</span> <span class="math display">\[
+\sigma^2 = 10.09
+\]</span></p>
+</div>
+</div>
+<div id="continuous-predictor-variable" class="section level3">
+<h3>5.2 Continuous predictor variable</h3>
+<p>We will now move on to an example with a continuous independent
+variable and a continuous dependent variable.</p>
+<p>Read in the DataFrameExample data set that we have worked with
+before. Be sure to first set your working directory to the folder with
+the DataFrameExample data set. Because this data set has data on tree
+growth, we will call it “tree”. Again use the <code>head</code> function
+to view the top rows of the data set to remind yourself what data we
+have in the data frame.</p>
+<pre class="r"><code>tree &lt;- read.csv(&quot;DataFrameExample.csv&quot;)
+head(tree)</code></pre>
+<pre><code>##   Tree Year Number.cones Growth Temperature
+## 1    A 2009            0   0.21        8.58
+## 2    A 2010           14   0.26        8.67
+## 3    A 2011            0   0.20        8.32
+## 4    A 2012           35   0.15        9.68
+## 5    A 2013           14   0.21        9.09
+## 6    B 2009           64   0.21        7.28</code></pre>
+<p>For this example, We will also work with the question you tackled in
+your Model Building Practice Problems for this data set: does
+temperature affect the growth of trees? Let’s build and interpret the
+null and alternative models for this example! The procedure is the same
+one used above, we will just interpret the output slightly
+differently.</p>
+<div id="null-model-1" class="section level4">
+<h4>Null model</h4>
+<p>Let’s start with the null hypothesis: temperature does not affect the
+growth of trees.</p>
+<p>As before, our null model will therefore not have a predictor
+variable because we are assuming that temperature is not important for
+the growth of trees.</p>
+<p>The full code to set up the model is as follows:</p>
+<pre class="r"><code>tree_null &lt;- lm( Growth ~ 1, tree)</code></pre>
+<p>Now, lets view the basic output from this model.</p>
+<pre class="r"><code>tree_null</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Growth ~ 1, data = tree)
+## 
+## Coefficients:
+## (Intercept)  
+##       0.206</code></pre>
+<p>This output should look very similar to the output for the null model
+for the civu data. It just has a single coefficient, the intercept
+because we do not have any predictors. The mean tree growth, based on
+our null model, is therefore 0.206.</p>
+</div>
+<div id="alternative-model-1" class="section level4">
+<h4>Alternative model</h4>
+<p>Now we’ll move on to our alternative model: temperature does affect
+the tree growth. This time, we will include temperature in our model to
+determine how the temperature affects tree growth.</p>
+<p>We set up the model in the same way we did for the null model, but
+this time including our temperature variable.</p>
+<pre class="r"><code>tree_alt &lt;- lm(Growth ~ Temperature, tree)
+tree_alt</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Growth ~ Temperature, data = tree)
+## 
+## Coefficients:
+## (Intercept)  Temperature  
+##     0.32926     -0.01497</code></pre>
+<p>Here we again see two coefficients. The intercept and the temperature
+coefficient (i.e., slope). If we wrote this model out as an equation, it
+would be:</p>
+<p><span class="math display">\[
+\mu = 0.32926 - 0.01497*temperature
+\]</span> where is the mean tree growth. The difference in the
+interpretation for this model is that temperature is a continuous
+variable, so it can take on a full range of values. Still, using this
+equation, we would be able to calculate the mean tree growth for any
+temperature value. We can also tell from the sign on the temperature
+coefficient that as temperature increases, we would expect the tree
+growth to decrease.</p>
+</div>
+<div id="model-variance-1" class="section level4">
+<h4>Model variance</h4>
+<p>Finally, we will calculate the residual variance for our two model,
+so we can fully describe the distribution of our tree growth data.</p>
+<pre class="r"><code>null_sd_tree &lt;- summary(tree_null)$sigma
+alt_sd_tree &lt;- summary(tree_alt)$sigma
+
+null_var_tree &lt;- null_sd_tree^2
+alt_var_tree &lt;- alt_sd_tree^2</code></pre>
+<p>We are now ready to write our full models, with both mean and
+variance terms (remember, we just have one variance term for each
+model), to describe our data.</p>
+<p>Null model: <span class="math display">\[
+growth \sim N(\mu,\sigma^2)
+\]</span> <span class="math display">\[
+\mu = 0.206
+\]</span> <span class="math display">\[
+\sigma^2 = 0.00098
+\]</span></p>
+<p>Alternative model: <span class="math display">\[
+growth \sim N(\mu,\sigma^2)
+\]</span> <span class="math display">\[
+\mu = 0.32926 - 0.01497*temperature
+\]</span> <span class="math display">\[
+\sigma^2 = 0.00093
+\]</span> In the next class, we will use these same examples to practice
+visualizing our data and model output, so be sure to save your code from
+this lesson, and make sure you add comments to your code so you remember
+what you were doing at each step!</p>
 </div>
 </div>
 </div>
