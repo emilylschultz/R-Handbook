@@ -1,0 +1,40 @@
+---
+title: "ESS 3500 R Handbook, Lesson 5"
+author: "Emily Schultz"
+date: "2023-02-15"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Lesson 5: LINEAR MODELS IN R
+
+
+### 5.1 The lm function
+
+#### Discrete predictor
+We will start with an example with a discrete (categorical) independent variable and a continuous dependent variable. 
+
+Start off by reading in the civu data set that we have worked with before. Be sure to first set your working directory to the folder with the civu dataset. Then use the `head` function to view the top rows of the data set, as a reminder of what data we have in the dataframe.
+
+```{r data}
+civu <- read.csv("civu.csv")
+head(civu)
+```
+
+In this example, we will work with the same question you tackled in your Model Building Practice Problems: does insect herbivory affect the density of thistle plants? For this example we will build 2 models: one respresented the null hypothesis and one representing the altnerative hypothesis. Then we will practice interpreting the output of the models.
+
+Let's start with the null hypothesis: herbivory does not affect the density of thistles.
+
+To build linear models in R, we will use a new function, the `lm` function (short for "linear model"). The function requires two arguments: the formula for our model and the data set. The formula for our model needs to include the dependent variable on the left side of the formula and the predictor variable(s) on the right side of the formula. For our null model, saying that herbivory does not affect density is the equivalent of saying that we do not need to use herbivory as a predictor in the model. In this case, our null model will therefore not have a predictor variable. We tell R this by putting a 1 in place of a predictor variable.
+
+The full code to set up the model is as follows. We will save the model as an object called "civu_null".
+
+```{r civu_null}
+civu_null <- lm(density_2006 ~ 1, civu)
+```
