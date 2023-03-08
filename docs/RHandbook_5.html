@@ -9,9 +9,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Emily Schultz" />
 
+<meta name="date" content="2023-02-15" />
 
-<title>ESS 3500 R Handbook</title>
+<title>ESS 3500 R Handbook, Lesson 5</title>
 
 <script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -272,14 +274,86 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">ESS 3500 R Handbook</h1>
+<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 5</h1>
+<h4 class="author">Emily Schultz</h4>
+<h4 class="date">2023-02-15</h4>
 
 </div>
 
+<div id="TOC">
+<ul>
+<li><a href="#lesson-5-linear-models-in-r"
+id="toc-lesson-5-linear-models-in-r">Lesson 5: LINEAR MODELS IN R</a>
+<ul>
+<li><a href="#the-lm-function" id="toc-the-lm-function">5.1 The lm
+function</a></li>
+</ul></li>
+</ul>
+</div>
 
-<p>This reference contains the lessons you will need to navigate R in
-ESS 355: Biostatistics and Quantitative Reasoning! Use the menu at the
-top to navigate to the different lessons.</p>
+<div id="lesson-5-linear-models-in-r" class="section level2">
+<h2>Lesson 5: LINEAR MODELS IN R</h2>
+<div id="the-lm-function" class="section level3">
+<h3>5.1 The lm function</h3>
+<div id="discrete-predictor" class="section level4">
+<h4>Discrete predictor</h4>
+<p>We will start with an example with a discrete (categorical)
+independent variable and a continuous dependent variable.</p>
+<p>Start off by reading in the civu data set that we have worked with
+before. Be sure to first set your working directory to the folder with
+the civu dataset. Then use the <code>head</code> function to view the
+top rows of the data set, as a reminder of what data we have in the
+dataframe.</p>
+<pre class="r"><code>civu &lt;- read.csv(&quot;civu.csv&quot;)
+head(civu)</code></pre>
+<pre><code>##   herbivory plant_id density_2006 density_2007 survival_t.1
+## 1         0       15           20            3            0
+## 2         0        7           26            5            0
+## 3         0       16           17            1            0
+## 4         0       22           26            5            0
+## 5         0       23           26            5            0
+## 6         0       12           20            3            0</code></pre>
+<p>In this example, we will work with the same question you tackled in
+your Model Building Practice Problems: does insect herbivory affect the
+density of thistle plants? For this example we will build 2 models: one
+respresented the null hypothesis and one representing the altnerative
+hypothesis. Then we will practice interpreting the output of the
+models.</p>
+<p>Let’s start with the null hypothesis: herbivory does not affect the
+density of thistles.</p>
+<p>To build linear models in R, we will use a new function, the
+<code>lm</code> function (short for “linear model”). The function
+requires two arguments: the formula for our model and the data set. The
+formula for our model needs to include the dependent variable on the
+left side of the formula and the predictor variable(s) on the right side
+of the formula. For our null model, saying that herbivory does not
+affect density is the equivalent of saying that we do not need to use
+herbivory as a predictor in the model. In this case, our null model will
+therefore not have a predictor variable. We tell R this by putting a 1
+in place of a predictor variable.</p>
+<p>The full code to set up the model is as follows. We will save the
+model as an object called “civu_null”.</p>
+<pre class="r"><code>civu_null &lt;- lm(density_2006 ~ 1, civu)</code></pre>
+<p>Now, lets view the basic output from this model. To do this, we
+simply type the name of our model object.</p>
+<pre class="r"><code>civu_null</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = density_2006 ~ 1, data = civu)
+## 
+## Coefficients:
+## (Intercept)  
+##        34.6</code></pre>
+<p>This simple output will tell us two things. It will first remind us
+of the code we used to build the model, so we can see the independent
+and dependent variables we included. Second, it will show us the
+coefficients, or the parameters of our model. Because our null model did
+not have any predictors, it just has a single coefficient, the
+intercept, which in this case is 34.6. Remember, this model represents
+the mean of the distribution of our data.</p>
+</div>
+</div>
+</div>
 
 
 
