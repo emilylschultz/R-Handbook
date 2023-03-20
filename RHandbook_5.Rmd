@@ -25,7 +25,7 @@ civu <- read.csv("civu.csv")
 head(civu)
 ```
 
-In this example, we will work with the same question you tackled in your Model Building Practice Problems: does insect herbivory affect the density of thistle plants? For this example we will build 2 models: one respresented the null hypothesis and one representing the altnerative hypothesis. Then we will practice interpreting the output of the models.
+In this example, we will work with the same question you tackled in your Model Building Practice Problems: does insect herbivory affect the density of thistle plants? For this example we will build 2 models: one representing the null hypothesis and one representing the alternative hypothesis. Then we will practice interpreting the output of the models.
 
 #### Null model
 Let's start with the null hypothesis: herbivory does not affect the density of thistles.
