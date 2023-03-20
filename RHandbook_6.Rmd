@@ -22,7 +22,7 @@ library(ggplot2)
 ```
 
 ### 6.1 Discrete predictor variable
-We will once again start our civu example with a discrete (categorical) independent variable and a continuous dependent variable. 
+We will once again start with our civu example with a discrete (categorical) independent variable and a continuous dependent variable. 
 
 Using the script file from Lesson 5, run all of the code you wrote for the civu example, including the building of both the null and alternative models. Be sure you first have your working directory set to the folder containing the civu data set.
 
@@ -33,19 +33,20 @@ The first type of graph we will make is a boxplot. Good news! You already practi
 
 As I mentioned, this type of plot does not explicitly incorporate the model output. However it will show information similar to the parameters R calculated when you ran the models in R: central tendency and variation.
 
-Let's start with our box plot for our null model. Just like when we worked with ggplot in the past, we will start by specifying the data and variables we want to include in our graph. Then we add layers to the code to specify the type of graph we want. For this first graph, we will use the civu data set. Because this is our null model, we are assuming that herbivory does not affect plant density, so we just want to graph a single distribution for all of our data. Therefore, unlike when we created box plots before, when we specified both and x and y variable, we will just specify the y variable this time (our plant density variable). In the following lines of code, we tell R to make a box plot, change the axis label, and use the classic theme that removes the background color and gridlines.
+Let's start with our box plot for our null model. Just like when we worked with ggplot in the past, we will start by specifying the data and variables we want to include in our graph. Then we add layers to the code to specify the type of graph we want. For this first graph, we will use the civu data set. Because this is our null model, we are assuming that herbivory does not affect plant density, so we just want to graph a single distribution for all of our data. Therefore, unlike when we created box plots before, when we specified both and x and y variable, we will just specify the y variable this time (our plant density variable). In the following lines of code, we tell R to make a box plot, change the axis label, and use the classic theme that removes the background color and gridlines. Because R likely classified our herbivory treatment variable as a numeric variable when we loaded the data, we will also reclassify that variable as a factor before we make our graph. 
 
 ```{r null_box}
+civu$herbivory <- as.factor(civu$herbivory)
+
 ggplot(data = civu, aes(y = density_2006)) +
   geom_boxplot() +
   labs(y = "Density in 2006") +
   theme_classic()
 ```
   
-Now let's make an equivalent plot for our alternative model. Because R likely classified our herbivory treatment variable as a numeric variable when we loaded the data, we will reclassify that variable as a factor before we make our graph. Then we will make a box plot, just as before, but this time including herbivory as our x variable.
+Now let's make an equivalent plot for our alternative model. We will make a box plot, just as before, but this time including herbivory as our x variable.
 
 ```{r alt_box}
-civu$herbivory <- as.factor(civu$herbivory)
 ggplot(data = civu, aes(x = herbivory, y = density_2006)) +
   geom_boxplot() +
   labs(x = "Herbivory treatment", y = "Density in 2006") +
@@ -66,7 +67,7 @@ Remember, though, that box plots are a good way to visualize data like these, so
 ##### Null model
 We will start with the graph for the null model. We will take this in steps, first creating a histogram of our sample data, which should be familiar from Lesson 4. Then we will add another layer to the plot with the distribution estimated from our model.
 
-Let's create our histogram. Our null model assumes the distribution of plant density does not depend on the herbivory treatment, so for this graph, we will just make a single histogram of all of our density data. This code is the same code we used to histogram these data in Lesson 4, with one change. In Lesson 4, we graphed the frequency of each range of plant density values, i.e., the count of observations that fell within each range. However, when we add our estimated distribution from the model, we will be plotting the probability density of each possible plant value. The probability density is not on the same scale as the frequency because the frequency depends on the total sample size as well as the probability of observing each range of plant density values. Therefore, in order to compare the sample distribution and the estimated distribution, we will convert the frequency to the probability density. You can see this step in the second line of code below, as an argument in the `geom_histogram` function. The argument we add is `r aes(y=after_stat(density))`. This argument tells R to calculate the probability density and use that as our y variable in place of the frequency. Try it out!
+Let's create our histogram. Our null model assumes the distribution of plant density does not depend on the herbivory treatment, so for this graph, we will just make a single histogram of all of our density data. This code is the same code we used to histogram these data in Lesson 4, with one change. In Lesson 4, we graphed the frequency of each range of plant density values, i.e., the count of observations that fell within each range. However, when we add our estimated distribution from the model, we will be plotting the probability density of each possible plant value. The probability density is not on the same scale as the frequency because the frequency depends on the total sample size as well as the probability of observing each range of plant density values. Therefore, in order to compare the sample distribution and the estimated distribution, we will convert the frequency to the probability density. You can see this step in the second line of code below, as an argument in the `geom_histogram` function. The argument we add is `aes(y=after_stat(density))`. This argument tells R to calculate the probability density and use that as our y variable in place of the frequency. Try it out!
 
 ```{r null_hist}
 ggplot(data = civu, aes(x = density_2006))+
@@ -77,7 +78,7 @@ ggplot(data = civu, aes(x = density_2006))+
 
 Now we have a graph showing the distribution of the plant density data from our sample. Next, we will add the distribution estimated from our model. We have the mean and the standard deviation of the distribution in our model output. We will use these to create a data set representing the distribution that we can add to our graph.
 
-We'll start by saving the mean and standard deviation from our null model. If you ran all of the code from Lesson 5, you should already have the standard deviation saved as a variable. Check now by typing the variable name `r null_sd_civu` into your console. If you get an error saying this variable does not exist, go back to your lesson 5 code and run the lines of code in the Model Variance section of Lesson 5.1. To save the mean as a variable, we need to pull the value out the of model coefficients from the null model. We can indicate to R that we want the coefficients from the civu_null model using the `r civu_null$coefficients` command. Then we tell R which coefficient we want, using brackets to index the vector of coefficients. In this case, there is only one coefficient, which is the mean, so we will put a 1 inside the brackets to pull out the first (and only) coefficient.
+We'll start by saving the mean and standard deviation from our null model. If you ran all of the code from Lesson 5, you should already have the standard deviation saved as a variable. Check now by typing the variable name `null_sd_civu` into your console. If you get an error saying this variable does not exist, go back to your lesson 5 code and run the lines of code in the Model Variance section of Lesson 5.1. To save the mean as a variable, we need to pull the value out the of model coefficients from the null model. We can indicate to R that we want the coefficients from the civu_null model using the `civu_null$coefficients` command. Then we tell R which coefficient we want, using brackets to index the vector of coefficients. In this case, there is only one coefficient, which is the mean, so we will put a 1 inside the brackets to pull out the first (and only) coefficient.
 
 ```{r civu_null_mean}
 # Save distribution mean from null model parameters
@@ -138,7 +139,7 @@ ggplot(data = civu, aes(x = density_2006))+
 
 On this new graph, we can see the plant density in the presence of herbivores in yellow and the plant density in the absence of herbivores in green, quickly showing the difference between the two.
 
-It is now time to add the estimated distributions from our alternative model. First we need to set up the data frame with the data representing our distributions. This time, we will need to calculate two sets of probability densities: one for each herbivory treatment. Check that you have saved the standard deviation for the alternative model by typing `r alt_sd_civu` into the console. Go back and run the Model Variance code from Lesson 5 as necessary.
+It is now time to add the estimated distributions from our alternative model. First we need to set up the data frame with the data representing our distributions. This time, we will need to calculate two sets of probability densities: one for each herbivory treatment. Check that you have saved the standard deviation for the alternative model by typing `alt_sd_civu` into the console. Go back and run the Model Variance code from Lesson 5 as necessary.
 
 Next, calculate the means for each treatment. Remember, in this time of model, when we include a predictor variable, we are calculating different means for each treatment, so we need to calculate two means here. The mean for herbivory = 0 (herbivores present) is simply the intercept from the model and the mean for herbivory = 1 (herbivores absent) is the intercept plus the herbivory coefficient, which is the second values in the coefficients vector from the model. (If this doesn't make sense go back to Lesson 5 to review it, or ask me.)
 
@@ -174,7 +175,7 @@ head(civu_alt_data)
 We now have the data frame we need to create our final graph, where we add our estimated distributions to our histograms. We will do this as before, but this time, we will add the `geom_density` function before the `geom_histogram` function to plot the denisty underneath the histogram. The code is the same we used for the null model, but this time we add additional "fill" and "color" arguments inside the `aes` function to graph the lines and fill for the two distributions in different colors. We also add another argument at the end of the `geom_density` function ("alpha = 0.3") to make the fill color transparent. The only other thing we need to do is manually set the fill color the way we did for the line color. The syntax is the same as for line color, but this time the function is `scale_fill_manual`.
 
 
-```{r null_density}
+```{r alt_density}
 ggplot(data = civu, aes(x = density_2006))+
   geom_density(data = civu_alt_data, aes(x = Density, y = Probability, fill = Herbivory, colour = Herbivory), stat="identity", alpha = 0.3) +
   geom_histogram(aes(y=after_stat(density), colour = herbivory),fill = NA , bins = 10) +
@@ -188,6 +189,8 @@ Here we have our final graph, with the bars of the histograms showing the sample
 
 ### 5.2 Continuous predictor variable
 We will now move on to our tree example with a continuous independent variable and a continuous dependent variable. This will be easy compared to the previous set of graphs you made! To visualize these models, we will use scatter plots of the sample data along with best fit lines to represent the distributions predicted by the models.
+
+If you haven't already, use the script file from Lesson 5 to run all of the code you wrote for the tree example, including the building of both the null and alternative models. Be sure you first have your working directory set to the folder containing the DataFrameExample data set.
 
 #### Null model
 Let's start with the null model: temperature does not affect the growth of trees. We'll make the scatter plot of the sample data first. This is the same method we used to make scatter plots in Lesson 4.
