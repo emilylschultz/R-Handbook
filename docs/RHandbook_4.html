@@ -265,6 +265,9 @@ $(document).ready(function () {
 <li>
   <a href="RHandbook_6.html">Lesson 6</a>
 </li>
+<li>
+  <a href="RHandbook_7.html">Lesson 7</a>
+</li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
         
@@ -330,8 +333,9 @@ have a mode function.</p>
 <p>You will only need to run the install packages command once, and then
 it will be installed on your computer.</p>
 <p>To load the package and calculate the mode, run</p>
-<pre class="r"><code>library(DescTools)
-mode_density &lt;- Mode(civu$density_2006)
+<pre class="r"><code>library(DescTools)</code></pre>
+<pre><code>## Warning: package &#39;DescTools&#39; was built under R version 4.2.3</code></pre>
+<pre class="r"><code>mode_density &lt;- Mode(civu$density_2006)
 mode_density</code></pre>
 <pre><code>## [1] 37
 ## attr(,&quot;freq&quot;)

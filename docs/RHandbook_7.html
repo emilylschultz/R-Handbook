@@ -9,9 +9,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Emily Schultz" />
 
+<meta name="date" content="2023-02-15" />
 
-<title>ESS 3500 R Handbook</title>
+<title>ESS 3500 R Handbook, Lesson 7</title>
 
 <script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -278,14 +280,115 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">ESS 3500 R Handbook</h1>
+<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 7</h1>
+<h4 class="author">Emily Schultz</h4>
+<h4 class="date">2023-02-15</h4>
 
 </div>
 
+<div id="TOC">
+<ul>
+<li><a href="#lesson-7-t-tests-in-r"
+id="toc-lesson-7-t-tests-in-r">Lesson 7: T-TESTS IN R</a>
+<ul>
+<li><a href="#classical-frequentist-approach"
+id="toc-classical-frequentist-approach">5.1 Classical Frequentist
+Approach</a></li>
+<li><a href="#likelihood-based-approach"
+id="toc-likelihood-based-approach">5.2 Likelihood-based
+approach</a></li>
+</ul></li>
+</ul>
+</div>
 
-<p>This reference contains the lessons you will need to navigate R in
-ESS 355: Biostatistics and Quantitative Reasoning! Use the menu at the
-top to navigate to the different lessons.</p>
+<div id="lesson-7-t-tests-in-r" class="section level2">
+<h2>Lesson 7: T-TESTS IN R</h2>
+<p>In this lesson, you will practice running your first formal
+statistical test, a t-test! You will use both a classical frequentist
+and a likelihood-based approach to run the test.</p>
+<div id="classical-frequentist-approach" class="section level3">
+<h3>5.1 Classical Frequentist Approach</h3>
+<p>We will start by analyzing the civu thistle data using the classical
+frequentist approach. We will continue work with the same question you
+tackled in your previous lessons: does insect herbivory affect the
+density of thistle plants?</p>
+<p>You can start by re-running your code from the Model Building lesson,
+or you can just run the commands in this lesson to set up your data and
+build your models. Don’t forget to set your working directory first!</p>
+<pre class="r"><code>civu &lt;- read.csv(&quot;civu.csv&quot;)
+civu$herbivory &lt;- as.factor(civu$herbivory)</code></pre>
+<p>Now that we have the data set up, let’s run the t-test itself. The
+syntax is similar to what we used to set up our alternative model in the
+<code>lm</code> function, but this time we will use a new function:
+<code>t.test</code>. The first argument for this function is the formula
+for our alternative model, with the dependent variable on the left and
+the independent variable on the right. The second argument is the data
+set. Then then final argument “var.equal = TRUE” tells R that we are
+assuming our two treatments have equal variance.</p>
+<pre class="r"><code>civu_ttest &lt;- t.test(density_2006 ~ herbivory, data = civu, var.equal = TRUE)</code></pre>
+<p>To view the output, just type:</p>
+<pre class="r"><code>civu_ttest</code></pre>
+<pre><code>## 
+##  Two Sample t-test
+## 
+## data:  density_2006 by herbivory
+## t = -8.2506, df = 148, p-value = 7.941e-14
+## alternative hypothesis: true difference in means between group 0 and group 1 is not equal to 0
+## 95 percent confidence interval:
+##  -21.07172 -12.92828
+## sample estimates:
+## mean in group 0 mean in group 1 
+##              21              38</code></pre>
+<p>You should see the following pieces in your output:</p>
+<ol style="list-style-type: decimal">
+<li>data: This just tells you what variables went into your model</li>
+<li>t: This is the value of your test statistic (t)</li>
+<li>df: This is your degrees of freedom. We will discuss this in more
+detail later, but it is related to your sample size.</li>
+<li>p-value: This is the probability of observing your test statistic or
+a more extreme test statistic, assuming your null model is true.</li>
+<li>alternative hypothesis: This is a verbal statement of the
+alternative hypothesis being tested.</li>
+<li>95 percent confidence interval: If you repeated this experiment over
+and over, you would expect that 95% of the time, the difference in the
+sample means of the two treatment would fall between these two
+values.</li>
+<li>sample estimates: These are the means calculated for your two
+treatment groups.</li>
+</ol>
+<p>Based on this output, would you reject the null hypothesis and
+tentatively accept the alternative hypothesis?</p>
+</div>
+<div id="likelihood-based-approach" class="section level3">
+<h3>5.2 Likelihood-based approach</h3>
+<p>Next we will use a likelihood-based approach to test the same
+question. For this, we will start by building our two linear models,
+just as we did in the Model Building lesson:</p>
+<pre class="r"><code>civu_null &lt;- lm(density_2006 ~ 1, civu)
+civu_alt &lt;- lm(density_2006 ~ herbivory, civu)</code></pre>
+<p>Now, we just need to calculate the Akaike’s Information Criterion
+(AIC) values for the two models. We can do this using the
+<code>AIC</code> function. As the arguments, we just need to list the
+models we want to compare. We can compare more than two models at once,
+but for this question, we just have our null model and one alternative
+model.</p>
+<pre class="r"><code>AIC(civu_null, civu_alt)</code></pre>
+<pre><code>##           df      AIC
+## civu_null  2 1178.015
+## civu_alt   3 1123.255</code></pre>
+<p>You should see the output automatically appear in a table. The first
+column lists the model. The second column (df) lists the number of
+parameters in each model (remember, AIC penalizes for adding
+parameters). The final column lists the AIC values for each model. The
+lower the AIC value, the better the model. A difference of 2 or more
+between the AIC values indicates that one model is significantly better
+than the other.</p>
+<p>Based on this output, which is the better model? Is it significantly
+better?</p>
+<p>Does your conclusion from this approach match your conclusion from
+the classical frequentist approach?</p>
+</div>
+</div>
 
 
 
