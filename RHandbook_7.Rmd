@@ -1,0 +1,70 @@
+---
+title: "ESS 3500 R Handbook, Lesson 7"
+author: "Emily Schultz"
+date: "2023-02-15"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Lesson 7: T-TESTS IN R
+In this lesson, you will practice running your first formal statistical test, a t-test! You will use both a classical frequentist and a likelihood-based approach to run the test.
+
+### 5.1 Classical Frequentist Approach
+We will start by analyzing the civu thistle data using the classical frequentist approach. We will continue work with the same question you tackled in your previous lessons: does insect herbivory affect the density of thistle plants?
+
+You can start by re-running your code from the Model Building lesson, or you can just run the commands in this lesson to set up your data and build your models. Don't forget to set your working directory first!
+
+```{r civu_data}
+civu <- read.csv("civu.csv")
+civu$herbivory <- as.factor(civu$herbivory)
+```
+
+Now that we have the data set up, let's run the t-test itself. The syntax is similar to what we used to set up our alternative model in the `lm` function, but this time we will use a new function: `t.test`. The first argument for this function is the formula for our alternative model, with the dependent variable on the left and the independent variable on the right. The second argument is the data set. Then then final argument "var.equal = TRUE" tells R that we are assuming our two treatments have equal variance.
+
+```{r civu_ttest}
+civu_ttest <- t.test(density_2006 ~ herbivory, data = civu, var.equal = TRUE)
+```
+
+To view the output, just type:
+
+```{r ttest_out}
+civu_ttest
+```
+
+You should see the following pieces in your output:
+
+1. data: This just tells you what variables went into your model
+2. t: This is the value of your test statistic (t)
+3. df: This is your degrees of freedom. We will discuss this in more detail later, but it is related to your sample size.
+4. p-value: This is the probability of observing your test statistic or a more extreme test statistic, assuming your null model is true.
+5. alternative hypothesis: This is a verbal statement of the alternative hypothesis being tested.
+6. 95 percent confidence interval: If you repeated this experiment over and over, you would expect that 95% of the time, the difference in the sample means of the two treatment would fall between these two values.
+7. sample estimates:  These are the means calculated for your two treatment groups.
+
+Based on this output, would you reject the null hypothesis and tentatively accept the alternative hypothesis?
+
+### 5.2 Likelihood-based approach
+Next we will use a likelihood-based approach to test the same question. For this, we will start by building our two linear models, just as we did in the Model Building lesson:
+
+```{r civu_lm}
+civu_null <- lm(density_2006 ~ 1, civu)
+civu_alt <- lm(density_2006 ~ herbivory, civu)
+```
+
+Now, we just need to calculate the Akaike's Information Criterion (AIC) values for the two models. We can do this using the `AIC` function. As the arguments, we just need to list the models we want to compare. We can compare more than two models at once, but for this question, we just have our null model and one alternative model.
+
+```{r aic}
+AIC(civu_null, civu_alt)
+```
+
+You should see the output automatically appear in a table. The first column lists the model. The second column (df) lists the number of parameters in each model (remember, AIC penalizes for adding parameters). The final column lists the AIC values for each model. The lower the AIC value, the better the model. A difference of 2 or more between the AIC values indicates that one model is significantly better than the other.
+
+Based on this output, which is the better model? Is it significantly better?
+
+Does your conclusion from this approach match your conclusion from the classical frequentist approach?
