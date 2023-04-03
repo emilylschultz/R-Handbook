@@ -94,6 +94,17 @@ The output includes the same components as the output from the two-sample t-test
 
 Based on this output, would you reject or accept the null hypothesis? What does that say about the effect herbivory on thistle density?
 
+#### visualing one-sample t-test data
+We'll wrap up this section by taking a look at one example of how you can visualize the data for a one sample t-test. This graph will be similar to some graphs you have made before; it will by a histogram of your data. However, in this case, instead of having two samples, we have one sample and a value for the true mean in the presence of herbivores. Therefore, we will create a histogram of our sample data with a vertical line (using the `geom_vline` function) showing the true mean. We set the value of the true mean for the vertical line using the "x intercept" argument of the `geom_vline` function.
+
+```{r one_density}
+ggplot(data = civu_noherb, aes(x = density_2006))+
+  geom_histogram(aes(y=after_stat(density)),fill = "#3b7c70", colour = "#3b7c70" , bins = 6) +
+  geom_vline(xintercept = 28, linewidth = 1) +
+  labs(x = "Density in 2006", y = "Probability Density") +
+  theme_classic()
+```
+
 ### 7.3 Paired t-tests
 Paired sampling designs can be powerful designs for reducing the effects of variation between our samples, allowing us to better detect the effects of our predictor variable. In a paired design, our observations are paired, or matched, in some way. For example, each individual might be subjected to both treatments or we might compare two treatments applied to the same plot. Paired t-tests are a test we can use for paired sampling designs to make comparisons between the two treatments for each individual/sample. The mechanics of this test are actually similar to that of a one-sample t-test! We are comparing the difference in values of our paired samples with a "true" mean of zero.
 
@@ -140,3 +151,23 @@ AIC(zinc_null, zinc_alt)
 ```
 
 The output should have the same structure that it had when we used AIC to compare models for the one sample t-test. Based on this output, which is the better model? (Notice that the AIC values are negative this time, so the better model will be more negative.) What does that tell you about whether zinc concentrations vary between the surface and bottom of the lake?
+
+#### visualing paired t-test data
+There are many ways we could visualize paired t-test data, including a simple boxplot, as we would for a regular two-sample t-test. However, using a boxplot like that would show the full variation in each sample, without accounting for the paired design. A way around that is to instead make a histogram of the *difference* between our paired samples. As we did with the one sample t-test, we will again add a vertical line, this time at 0, to represent the difference we would expect to see under our null hypothesis.
+
+First we need to make a data frame with the difference in zinc concentrations between the surface and the bottom of the lake at each location. We will do this using the `group-by` and `summarise` functions to summarise the difference in concentration for each sample number.
+
+```{r difference}
+group <- group_by(zinc,sampnum)
+zinc_diff <- summarise(group, diff = diff(conc))
+```
+
+Now we can make our histogram using the new `zinc_diff` data frame:
+
+```{r paired_density}
+ggplot(data = zinc_diff, aes(x = diff))+
+  geom_histogram(aes(y=after_stat(density)),fill = "#3b7c70", colour = "#3b7c70" , bins = 6) +
+  geom_vline(xintercept = 0, linewidth = 1) +
+  labs(x = "Difference in zinc concentration", y = "Probability Density") +
+  theme_classic()
+```

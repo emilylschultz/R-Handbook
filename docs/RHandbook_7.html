@@ -437,6 +437,24 @@ This time, the alternative hypothesis compares the sample mean to the
 true mean, instead of comparing two sample means.</p>
 <p>Based on this output, would you reject or accept the null hypothesis?
 What does that say about the effect herbivory on thistle density?</p>
+<div id="visualing-one-sample-t-test-data" class="section level4">
+<h4>visualing one-sample t-test data</h4>
+<p>We’ll wrap up this section by taking a look at one example of how you
+can visualize the data for a one sample t-test. This graph will be
+similar to some graphs you have made before; it will by a histogram of
+your data. However, in this case, instead of having two samples, we have
+one sample and a value for the true mean in the presence of herbivores.
+Therefore, we will create a histogram of our sample data with a vertical
+line (using the <code>geom_vline</code> function) showing the true mean.
+We set the value of the true mean for the vertical line using the “x
+intercept” argument of the <code>geom_vline</code> function.</p>
+<pre class="r"><code>ggplot(data = civu_noherb, aes(x = density_2006))+
+  geom_histogram(aes(y=after_stat(density)),fill = &quot;#3b7c70&quot;, colour = &quot;#3b7c70&quot; , bins = 6) +
+  geom_vline(xintercept = 28, linewidth = 1) +
+  labs(x = &quot;Density in 2006&quot;, y = &quot;Probability Density&quot;) +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_7_files/figure-html/one_density-1.png" width="672" /></p>
+</div>
 </div>
 <div id="paired-t-tests" class="section level3">
 <h3>7.3 Paired t-tests</h3>
@@ -522,6 +540,32 @@ which is the better model? (Notice that the AIC values are negative this
 time, so the better model will be more negative.) What does that tell
 you about whether zinc concentrations vary between the surface and
 bottom of the lake?</p>
+</div>
+<div id="visualing-paired-t-test-data" class="section level4">
+<h4>visualing paired t-test data</h4>
+<p>There are many ways we could visualize paired t-test data, including
+a simple boxplot, as we would for a regular two-sample t-test. However,
+using a boxplot like that would show the full variation in each sample,
+without accounting for the paired design. A way around that is to
+instead make a histogram of the <em>difference</em> between our paired
+samples. As we did with the one sample t-test, we will again add a
+vertical line, this time at 0, to represent the difference we would
+expect to see under our null hypothesis.</p>
+<p>First we need to make a data frame with the difference in zinc
+concentrations between the surface and the bottom of the lake at each
+location. We will do this using the <code>group-by</code> and
+<code>summarise</code> functions to summarise the difference in
+concentration for each sample number.</p>
+<pre class="r"><code>group &lt;- group_by(zinc,sampnum)
+zinc_diff &lt;- summarise(group, diff = diff(conc))</code></pre>
+<p>Now we can make our histogram using the new <code>zinc_diff</code>
+data frame:</p>
+<pre class="r"><code>ggplot(data = zinc_diff, aes(x = diff))+
+  geom_histogram(aes(y=after_stat(density)),fill = &quot;#3b7c70&quot;, colour = &quot;#3b7c70&quot; , bins = 6) +
+  geom_vline(xintercept = 0, linewidth = 1) +
+  labs(x = &quot;Difference in zinc concentration&quot;, y = &quot;Probability Density&quot;) +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_7_files/figure-html/paired_density-1.png" width="672" /></p>
 </div>
 </div>
 </div>
