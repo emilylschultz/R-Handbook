@@ -187,7 +187,7 @@ ggplot(data = civu, aes(x = density_2006))+
 
 Here we have our final graph, with the bars of the histograms showing the sample distributions and the shaded density plots showing the estimated population distributions for the two herbivory treatments based on the alternative model. If you would like, feel free to play around with some of the parameters like the number of bins in the histogram, the alpha (transparency) value, and the colors, to see how that impacts the aesthetics of the graph!
 
-### 5.2 Continuous predictor variable
+### 6.2 Continuous predictor variable
 We will now move on to our tree example with a continuous independent variable and a continuous dependent variable. This will be easy compared to the previous set of graphs you made! To visualize these models, we will use scatter plots of the sample data along with best fit lines to represent the distributions predicted by the models.
 
 If you haven't already, use the script file from Lesson 5 to run all of the code you wrote for the tree example, including the building of both the null and alternative models. Be sure you first have your working directory set to the folder containing the DataFrameExample data set.

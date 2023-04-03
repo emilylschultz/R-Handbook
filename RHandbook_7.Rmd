@@ -15,7 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Lesson 7: T-TESTS IN R
 In this lesson, you will practice running your first formal statistical test, a t-test! You will use both a classical frequentist and a likelihood-based approach to run the test.
 
-### 5.1 Two-sample t-tests
+### 7.1 Two-sample t-tests
 
 #### Classical Frequentist Approach
 We will start by analyzing the civu thistle data using the classical frequentist approach. We will continue work with the same question you tackled in your previous lessons: does insect herbivory affect the density of thistle plants?
@@ -71,7 +71,7 @@ Based on this output, which is the better model? Is it significantly better?
 
 Does your conclusion from this approach match your conclusion from the classical frequentist approach?
 
-### 5.2 One-Sample t-tests
+### 7.2 One-Sample t-tests
 We use a one-sample t-test in place of a two-sample t-test when we have a good estimate of the true mean for a variable in our underlying population. This true mean can effectively be used in place of a control group. Rather than having to estimate the true mean from the control group, we already have a value for the true mean that we can then compare to our sample group. For this test, we will only look at the classical frequentist approach.
 
 For simplicity, let's keep working with the civu thistle data set. This time, let's imagine we had good data from a long-term study on the density of thistles in the presence of herbivores. These data provide a good estimate of the true mean thistle density. This true mean density is 28 thistle plants.
@@ -94,7 +94,7 @@ The output includes the same components as the output from the two-sample t-test
 
 Based on this output, would you reject or accept the null hypothesis? What does that say about the effect herbivory on thistle density?
 
-### 5.3 Paired t-tests
+### 7.3 Paired t-tests
 Paired sampling designs can be powerful designs for reducing the effects of variation between our samples, allowing us to better detect the effects of our predictor variable. In a paired design, our observations are paired, or matched, in some way. For example, each individual might be subjected to both treatments or we might compare two treatments applied to the same plot. Paired t-tests are a test we can use for paired sampling designs to make comparisons between the two treatments for each individual/sample. The mechanics of this test are actually similar to that of a one-sample t-test! We are comparing the difference in values of our paired samples with a "true" mean of zero.
 
 For this example, we will use a new data set with zinc concentrations at the surface and bottom of a lake. The samples were taken at 10 different locations within the lake. At each site, one sample was taken at the surface and one sample was taken at the bottom. Therefore, we can use a paired t-test to compare between the surface and bottom samples at each location.
