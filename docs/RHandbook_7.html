@@ -291,12 +291,12 @@ $(document).ready(function () {
 <li><a href="#lesson-7-t-tests-in-r"
 id="toc-lesson-7-t-tests-in-r">Lesson 7: T-TESTS IN R</a>
 <ul>
-<li><a href="#classical-frequentist-approach"
-id="toc-classical-frequentist-approach">5.1 Classical Frequentist
-Approach</a></li>
-<li><a href="#likelihood-based-approach"
-id="toc-likelihood-based-approach">5.2 Likelihood-based
-approach</a></li>
+<li><a href="#two-sample-t-tests" id="toc-two-sample-t-tests">5.1
+Two-sample t-tests</a></li>
+<li><a href="#one-sample-t-tests" id="toc-one-sample-t-tests">5.2
+One-Sample t-tests</a></li>
+<li><a href="#paired-t-tests" id="toc-paired-t-tests">5.3 Paired
+t-tests</a></li>
 </ul></li>
 </ul>
 </div>
@@ -306,8 +306,10 @@ approach</a></li>
 <p>In this lesson, you will practice running your first formal
 statistical test, a t-test! You will use both a classical frequentist
 and a likelihood-based approach to run the test.</p>
-<div id="classical-frequentist-approach" class="section level3">
-<h3>5.1 Classical Frequentist Approach</h3>
+<div id="two-sample-t-tests" class="section level3">
+<h3>5.1 Two-sample t-tests</h3>
+<div id="classical-frequentist-approach" class="section level4">
+<h4>Classical Frequentist Approach</h4>
 <p>We will start by analyzing the civu thistle data using the classical
 frequentist approach. We will continue work with the same question you
 tackled in your previous lessons: does insect herbivory affect the
@@ -359,8 +361,8 @@ treatment groups.</li>
 <p>Based on this output, would you reject the null hypothesis and
 tentatively accept the alternative hypothesis?</p>
 </div>
-<div id="likelihood-based-approach" class="section level3">
-<h3>5.2 Likelihood-based approach</h3>
+<div id="likelihood-based-approach" class="section level4">
+<h4>Likelihood-based approach</h4>
 <p>Next we will use a likelihood-based approach to test the same
 question. For this, we will start by building our two linear models,
 just as we did in the Model Building lesson:</p>
@@ -387,6 +389,140 @@ than the other.</p>
 better?</p>
 <p>Does your conclusion from this approach match your conclusion from
 the classical frequentist approach?</p>
+</div>
+</div>
+<div id="one-sample-t-tests" class="section level3">
+<h3>5.2 One-Sample t-tests</h3>
+<p>We use a one-sample t-test in place of a two-sample t-test when we
+have a good estimate of the true mean for a variable in our underlying
+population. This true mean can effectively be used in place of a control
+group. Rather than having to estimate the true mean from the control
+group, we already have a value for the true mean that we can then
+compare to our sample group. For this test, we will only look at the
+classical frequentist approach.</p>
+<p>For simplicity, let’s keep working with the civu thistle data set.
+This time, let’s imagine we had good data from a long-term study on the
+density of thistles in the presence of herbivores. These data provide a
+good estimate of the true mean thistle density. This true mean density
+is 28 thistle plants.</p>
+<p>For this, we will want to use a data set that only includes
+observations in the absence of herbivores because that is what we want
+to compare to the true mean in the presence of herbivores. We’ll start
+by creating that data set:</p>
+<pre class="r"><code>civu_noherb &lt;- filter(civu,herbivory == &quot;1&quot;)</code></pre>
+<p>Remember to use the double equals signs to tell R that you are
+looking for observations that match that criterion.</p>
+<p>Now, let’s run the t-test using the classical frequentist approach.
+We will still use the <code>t.test</code> function, but this time,
+because we are just comparing one sample to a true mean, we will not
+have a predictor variable. Instead of using a formula as the argument,
+we will provide two arguments: a vector with our data (the density
+values in the absence of herbivores) and the estimate for the true mean
+(28).</p>
+<pre class="r"><code>t.test(x = civu_noherb$density_2006, mu = 28)</code></pre>
+<pre><code>## 
+##  One Sample t-test
+## 
+## data:  civu_noherb$density_2006
+## t = 9.8695, df = 119, p-value &lt; 2.2e-16
+## alternative hypothesis: true mean is not equal to 28
+## 95 percent confidence interval:
+##  35.99373 40.00627
+## sample estimates:
+## mean of x 
+##        38</code></pre>
+<p>The output includes the same components as the output from the
+two-sample t-test, but not the difference in the alternative hypothesis.
+This time, the alternative hypothesis compares the sample mean to the
+true mean, instead of comparing two sample means.</p>
+<p>Based on this output, would you reject or accept the null hypothesis?
+What does that say about the effect herbivory on thistle density?</p>
+</div>
+<div id="paired-t-tests" class="section level3">
+<h3>5.3 Paired t-tests</h3>
+<p>Paired sampling designs can be powerful designs for reducing the
+effects of variation between our samples, allowing us to better detect
+the effects of our predictor variable. In a paired design, our
+observations are paired, or matched, in some way. For example, each
+individual might be subjected to both treatments or we might compare two
+treatments applied to the same plot. Paired t-tests are a test we can
+use for paired sampling designs to make comparisons between the two
+treatments for each individual/sample. The mechanics of this test are
+actually similar to that of a one-sample t-test! We are comparing the
+difference in values of our paired samples with a “true” mean of
+zero.</p>
+<p>For this example, we will use a new data set with zinc concentrations
+at the surface and bottom of a lake. The samples were taken at 10
+different locations within the lake. At each site, one sample was taken
+at the surface and one sample was taken at the bottom. Therefore, we can
+use a paired t-test to compare between the surface and bottom samples at
+each location.</p>
+<div id="frequentist-approach" class="section level4">
+<h4>Frequentist approach</h4>
+<p>Start by loading your data. Be sure your new zinc data set is in your
+working directory.</p>
+<pre class="r"><code>zinc &lt;- read.csv(&quot;zinc.csv&quot;)</code></pre>
+<p>Now go ahead and view the entire data set, either using the
+<code>View</code> function or typing the data frame name into your
+console. One thing I want you to notice about the data set is that if
+you look at the sample number column, the samples are in the same order,
+from 1 to 10, for both the bottom and surface samples. When you use the
+<code>t.test</code> function for a paired t-test, it is important for
+your samples to be in the same order for both of your treatments.
+Otherwise R will not pair up the values correctly. For the likelihood
+approach, the order does not matter, as long a you have a column for the
+sample number.</p>
+<p>Next we will run the t-test. The syntax is the same as what you used
+for a two sample t-test. You will include the formula with your
+dependent and independent variables as the first argument and the data
+frame as the second argument. Then we will add one additional argument
+(“paired = TRUE”), which will tell R to run a paired t-test instead of a
+normal two-sample t-test.</p>
+<pre class="r"><code>paired &lt;- t.test(conc ~ type, data = zinc, paired = TRUE)</code></pre>
+<p>Again, the output should be similar to what you have seen before.
+Should you reject the null hypothesis that there is no difference in
+zinc concentration between the surface and bottom of the lake?</p>
+</div>
+<div id="likelihood-approach" class="section level4">
+<h4>Likelihood approach</h4>
+<p>We will now run the same test using the likelihood approach. To do
+this, we will be using a function similar to the <code>lm</code>
+function, but which will allow us to account for the paired design. The
+new function, <code>lmer</code>, can be found in the
+<strong>lme4</strong> package. If you haven’t already done so, install
+the packages using <code>install.packages("lmer")</code>.</p>
+<p>Then load the package for this session:</p>
+<pre class="r"><code>library(lme4)</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
+<pre><code>## 
+## Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:tidyr&#39;:
+## 
+##     expand, pack, unpack</code></pre>
+<p>We are now ready to run the test. As I said, we will use the
+<code>lmer</code> function, which is very similar to the <code>lm</code>
+function. We will include the same arguments as usual: the formula for
+our model and the data. The only change we need to make is adding an
+additional piece to our formula. The syntax for the additional piece is
+<code>(1|sampnum)</code>. This additional piece of the formula will tell
+R to compare the zinc concentrations at the surface and bottom within
+each sampling location. We will build both a null an alternative model
+to compare.</p>
+<pre class="r"><code>zinc_null &lt;- lmer(conc ~ 1 + (1|sampnum), data = zinc)
+zinc_alt &lt;- lmer(conc ~ type + (1|sampnum), data = zinc)</code></pre>
+<p>Next, we will use our <code>AIC</code> function to compare our null
+and alternative models to each other:</p>
+<pre class="r"><code>AIC(zinc_null, zinc_alt)</code></pre>
+<pre><code>##           df       AIC
+## zinc_null  3 -20.78169
+## zinc_alt   4 -25.24908</code></pre>
+<p>The output should have the same structure that it had when we used
+AIC to compare models for the one sample t-test. Based on this output,
+which is the better model? (Notice that the AIC values are negative this
+time, so the better model will be more negative.) What does that tell
+you about whether zinc concentrations vary between the surface and
+bottom of the lake?</p>
+</div>
 </div>
 </div>
 
