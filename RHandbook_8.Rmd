@@ -18,14 +18,35 @@ In this lesson, you will move on from t-tests to ANOVAs. The ANOVA (Analysis of 
 ### 8.1 One-way ANOVA
 The one-way ANOVA is used when we have a single indpendent variable that we would like to test. In future lessons, we will cover how to handle more than one independent variable. For this test, we will use an related to lodgepole pine. Lodgepole pine trees can be found in habitats with different predators, which may have influenced the evolution of their cone morphology. In this example, we will test for differences in the mass of lodgepole pine cones in three different habitats: islands with no squirrel, islands with squirrels, and the mainland (which also has squirrels).
 
-#### Classical Frequentist Approach
-As usual, we will start off by analyzing the data using a frequentist approach. First, load the data set. Be sure your working directory is set to the location of the lodgepole data file.
+#### Model building and visualization
+We'll start off by building our null and alternative models for this question. The approach is exactly the same as the approach we used for the t-test.
+
+First, load the data set. Be sure your working directory is set to the location of the lodgepole data file.
 
 ```{r cone_data}
 cone <- read.csv("lodgepole.csv")
 ```
 
-We are ready to run the ANOVA. The syntax is similar to the other tests we have run, but this time, we will use the `aov` function. The arguments are still the formula for the model (dependent variable on the left, independent variable on the right) and the data frame.
+Next, build the two models.
+
+```{r cone_lm}
+cone_null <- lm(conesize ~ 1, cone)
+cone_alt <- lm(conesize ~ type, cone)
+```
+
+To view the output of the model, just type the name of the model. For the null model, it should be pretty simple: just an intercept coefficient representing the overall mean cone mass, regarless of the habitat type. For the alternative model, we now have three coefficients: an intercept, a typeip, and a typemp coefficient. These three values tell us  the means for each habitat. When R runs a linear model with a variable that has multiple categories, it will automatically choose one of the categories as the baseline. The mean for this baseline category is the intercept coefficient. In this case, R used the "ia" category as the baseline. We can tell because the other coefficients are for the type "ip" and the type "mp". The mean mass of cones on the islands without squirrels (ia) is therefore 8.9. To calculate the means for the other group, you add the value of the coefficient for that group to the intercept. To calculate the mean mass of cones on islands with squirrels (ip), for example, you would add 8.9 and -1.98. 
+
+Now, let's create a graph to visualize our data. A boxplot is a good option because, like for the t-test example, we have a categorical independent variable and a continuous dependent variable.
+
+```{r cone_boxplot}
+ggplot(cone, aes(x=type, y=conesize)) +
+  geom_boxplot() +
+  labs(x="Habitat type", y="Mass of cones") +
+  theme_classic()
+```
+
+#### Classical Frequentist Approach
+As usual, we will start off by analyzing the data using a frequentist approach. The syntax for running an ANOVA is similar to the other tests we have run, but this time, we will use the `aov` function. The arguments are still the formula for the model (dependent variable on the left, independent variable on the right) and the data frame.
 
 ```{r cone_anova}
 cone_ANOVA <- aov(conesize ~ type, data = cone)
@@ -42,14 +63,7 @@ When you view the output, the most important line is the first row of the output
 #### Likelihood-based approach
 Next we will use a likelihood-based approach to test the same question. Good news! The syntax for this is exactly the same as it was for the t-test. That's because t-tests and ANOVAs are both types of linear models.
 
-We will start by building our two linear models, just as we did for the t-test:
-
-```{r cone_lm}
-cone_null <- lm(conesize ~ 1, cone)
-cone_alt <- lm(conesize ~ type, cone)
-```
-
-Now we use the `AIC` function to compare the null and alternative models.
+We already build our null and alternative models for this problem earlier in the lesson, so we can jump right into using the `AIC` function to compare the models.
 
 ```{r cone_aic}
 AIC(cone_null, cone_alt)
