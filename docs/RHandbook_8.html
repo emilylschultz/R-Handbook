@@ -9,9 +9,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Emily Schultz" />
 
+<meta name="date" content="2023-02-15" />
 
-<title>ESS 3500 R Handbook</title>
+<title>ESS 3500 R Handbook, Lesson 8</title>
 
 <script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -281,14 +283,132 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">ESS 3500 R Handbook</h1>
+<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 8</h1>
+<h4 class="author">Emily Schultz</h4>
+<h4 class="date">2023-02-15</h4>
 
 </div>
 
+<div id="TOC">
+<ul>
+<li><a href="#lesson-8-anovas-in-r" id="toc-lesson-8-anovas-in-r">Lesson
+8: ANOVAs in R</a>
+<ul>
+<li><a href="#one-way-anova" id="toc-one-way-anova">8.1 One-way
+ANOVA</a></li>
+</ul></li>
+</ul>
+</div>
 
-<p>This reference contains the lessons you will need to navigate R in
-ESS 355: Biostatistics and Quantitative Reasoning! Use the menu at the
-top to navigate to the different lessons.</p>
+<div id="lesson-8-anovas-in-r" class="section level2">
+<h2>Lesson 8: ANOVAs in R</h2>
+<p>In this lesson, you will move on from t-tests to ANOVAs. The ANOVA
+(Analysis of Variance) test can be used for similar data types as the
+t-test: a categorical independent variable and a continuous dependent
+variable. However, ANOVAs can be used when your independent variable has
+more than two categories. ANOVAs can, in fact, also be used when your
+indpendent variable has only two categories, and you would get the same
+results that you would with a t-test.</p>
+<div id="one-way-anova" class="section level3">
+<h3>8.1 One-way ANOVA</h3>
+<p>The one-way ANOVA is used when we have a single indpendent variable
+that we would like to test. In future lessons, we will cover how to
+handle more than one independent variable. For this test, we will use an
+related to lodgepole pine. Lodgepole pine trees can be found in habitats
+with different predators, which may have influenced the evolution of
+their cone morphology. In this example, we will test for differences in
+the mass of lodgepole pine cones in three different habitats: islands
+with no squirrel, islands with squirrels, and the mainland (which also
+has squirrels).</p>
+<div id="classical-frequentist-approach" class="section level4">
+<h4>Classical Frequentist Approach</h4>
+<p>As usual, we will start off by analyzing the data using a frequentist
+approach. First, load the data set. Be sure your working directory is
+set to the location of the lodgepole data file.</p>
+<pre class="r"><code>cone &lt;- read.csv(&quot;lodgepole.csv&quot;)</code></pre>
+<p>We are ready to run the ANOVA. The syntax is similar to the other
+tests we have run, but this time, we will use the <code>aov</code>
+function. The arguments are still the formula for the model (dependent
+variable on the left, independent variable on the right) and the data
+frame.</p>
+<pre class="r"><code>cone_ANOVA &lt;- aov(conesize ~ type, data = cone)</code></pre>
+<p>To view the output, use the <code>summary</code> function.</p>
+<pre class="r"><code>summary(cone_ANOVA)</code></pre>
+<pre><code>##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## type         2  22.84  11.421   13.38 0.000698 ***
+## Residuals   13  11.10   0.854                     
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>When you view the output, the most important line is the first row of
+the output table, in this case labeled “type”, which was our independent
+variable. If you look at this row, you will see the F statistic and the
+p-value for the test. Based on these values, would your reject or accept
+the null hypothesis? What does this tell you about the effect of habitat
+on cone mass?</p>
+</div>
+<div id="likelihood-based-approach" class="section level4">
+<h4>Likelihood-based approach</h4>
+<p>Next we will use a likelihood-based approach to test the same
+question. Good news! The syntax for this is exactly the same as it was
+for the t-test. That’s because t-tests and ANOVAs are both types of
+linear models.</p>
+<p>We will start by building our two linear models, just as we did for
+the t-test:</p>
+<pre class="r"><code>cone_null &lt;- lm(conesize ~ 1, cone)
+cone_alt &lt;- lm(conesize ~ type, cone)</code></pre>
+<p>Now we use the <code>AIC</code> function to compare the null and
+alternative models.</p>
+<pre class="r"><code>AIC(cone_null, cone_alt)</code></pre>
+<pre><code>##           df      AIC
+## cone_null  2 61.43694
+## cone_alt   4 47.54997</code></pre>
+<p>Based on this output, what would you conclude about the effect of
+habitat on cone size?</p>
+</div>
+<div id="post-hoc-tests" class="section level4">
+<h4>Post-hoc tests</h4>
+<p>But wait! These tests only tells us that cone size is different in at
+least one of our categories! How do we know which categories actually
+differ? This is where post-hoc tests come in. Note that we will only use
+a classical frequentist approach for the post-hoc tests. This is because
+there are subtle differences in the main goals of the analysis between a
+classical frequentist approach and a likelihood approach. In a
+likelihood approach, we are more interested in selecting the best model,
+rather than drawing specific inferences about individual variables. This
+is something to keep in mind when choosing the best method for your
+question. If you are specifically interested in testing the differences
+between multiple categories, the classical frequentist approach is the
+better approach to use.</p>
+<p>We will now run a Tukey’s HSD test, which will do pairwise
+comparisons between each of our three categories. The Tukey’s HSD test
+will automatically adjust the p-values to account for the fact that we
+are making multiple comparisons. The syntax for the test is simple. We
+will use the <code>TukeyHSD</code> function, and the argument is the
+model we created when we ran the ANOVA using the frequentist
+approach.</p>
+<pre class="r"><code>TukeyHSD(cone_ANOVA)</code></pre>
+<pre><code>##   Tukey multiple comparisons of means
+##     95% family-wise confidence level
+## 
+## Fit: aov(formula = conesize ~ type, data = cone)
+## 
+## $type
+##        diff       lwr        upr     p adj
+## ip-ia -1.98 -3.457145 -0.5028551 0.0094626
+## mp-ia -2.78 -4.257145 -1.3028551 0.0006982
+## mp-ip -0.80 -2.342828  0.7428275 0.3845461</code></pre>
+<p>The output you see is the pairwise comparison between each category.
+The first column of the table shows you which two categories are being
+compared (ia = islands with no squirrels, ip = islands with squirrels,
+mp = mainland). The second column tells you the difference in the means
+of the two categories. The third and forth columns show the lower and
+upper bounds of the 95% confidence intervals around the mean. Finally,
+the last column gives you the p-values for the pairwise comparisons.</p>
+<p>Based on the p-values, which pairs of habitat types had significant
+differences in their cone size?</p>
+</div>
+</div>
+</div>
 
 
 
