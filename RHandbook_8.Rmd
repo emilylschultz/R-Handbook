@@ -71,7 +71,7 @@ AIC(cone_null, cone_alt)
 
 Based on this output, what would you conclude about the effect of habitat on cone size?
 
-#### Post-hoc tests
+### 8.2 Post-hoc tests
 But wait! These tests only tells us that cone size is different in at least one of our categories! How do we know which categories actually differ? This is where post-hoc tests come in. Note that we will only use a classical frequentist approach for the post-hoc tests. This is because there are subtle differences in the main goals of the analysis between a classical frequentist approach and a likelihood approach. In a likelihood approach, we are more interested in selecting the best model, rather than drawing specific inferences about individual variables. This is something to keep in mind when choosing the best method for your question. If you are specifically interested in testing the differences between multiple categories, the classical frequentist approach is the better approach to use.
 
 We will now run a Tukey's HSD test, which will do pairwise comparisons between each of our three categories. The Tukey's HSD test will automatically adjust the p-values to account for the fact that we are making multiple comparisons. The syntax for the test is simple. We will use the `TukeyHSD` function, and the argument is the model we created when we ran the ANOVA using the frequentist approach.

@@ -13,7 +13,7 @@
 
 <meta name="date" content="2023-02-15" />
 
-<title>ESS 3500 R Handbook, Lesson 8</title>
+<title>ESS 3500 R Handbook, Lesson 9</title>
 
 <script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -286,7 +286,7 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 8</h1>
+<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 9</h1>
 <h4 class="author">Emily Schultz</h4>
 <h4 class="date">2023-02-15</h4>
 
@@ -294,152 +294,117 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#lesson-8-anovas-in-r" id="toc-lesson-8-anovas-in-r">Lesson
-8: ANOVAs in R</a>
+<li><a href="#lesson-9-regressions-in-r"
+id="toc-lesson-9-regressions-in-r">Lesson 9: Regressions in R</a>
 <ul>
-<li><a href="#one-way-anova" id="toc-one-way-anova">8.1 One-way
-ANOVA</a></li>
-<li><a href="#post-hoc-tests" id="toc-post-hoc-tests">8.2 Post-hoc
-tests</a></li>
+<li><a href="#building-and-visualizing-your-models"
+id="toc-building-and-visualizing-your-models">9.1 Building and
+visualizing your models</a></li>
+<li><a href="#testing-the-models" id="toc-testing-the-models">9.2
+Testing the models</a></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="lesson-8-anovas-in-r" class="section level2">
-<h2>Lesson 8: ANOVAs in R</h2>
-<p>In this lesson, you will move on from t-tests to ANOVAs. The ANOVA
-(Analysis of Variance) test can be used for similar data types as the
-t-test: a categorical independent variable and a continuous dependent
-variable. However, ANOVAs can be used when your independent variable has
-more than two categories. ANOVAs can, in fact, also be used when your
-indpendent variable has only two categories, and you would get the same
-results that you would with a t-test.</p>
-<div id="one-way-anova" class="section level3">
-<h3>8.1 One-way ANOVA</h3>
-<p>The one-way ANOVA is used when we have a single indpendent variable
-that we would like to test. In future lessons, we will cover how to
-handle more than one independent variable. For this test, we will use an
-related to lodgepole pine. Lodgepole pine trees can be found in habitats
-with different predators, which may have influenced the evolution of
-their cone morphology. In this example, we will test for differences in
-the mass of lodgepole pine cones in three different habitats: islands
-with no squirrel, islands with squirrels, and the mainland (which also
-has squirrels).</p>
-<div id="model-building-and-visualization" class="section level4">
-<h4>Model building and visualization</h4>
+<div id="lesson-9-regressions-in-r" class="section level2">
+<h2>Lesson 9: Regressions in R</h2>
+<p>In this lesson, you will tackle your third type of statistical test:
+linear regressions. Linear regressions are used when both your
+independent and dependent variables are continuous.</p>
+<p>For this lesson, we will work with the temperature and plant size
+example we have used before. Our question will be: does the bite
+strength of lizards affect the area of the territory they are able to
+occupy.</p>
+<div id="building-and-visualizing-your-models" class="section level3">
+<h3>9.1 Building and visualizing your models</h3>
 <p>We’ll start off by building our null and alternative models for this
-question. The approach is exactly the same as the approach we used for
-the t-test.</p>
+question.</p>
 <p>First, load the data set. Be sure your working directory is set to
-the location of the lodgepole data file.</p>
-<pre class="r"><code>cone &lt;- read.csv(&quot;lodgepole.csv&quot;)</code></pre>
+the location of the lizard bite data file.</p>
+<pre class="r"><code>plant &lt;- read.csv(&quot;DataFrameExample.csv&quot;)</code></pre>
 <p>Next, build the two models.</p>
-<pre class="r"><code>cone_null &lt;- lm(conesize ~ 1, cone)
-cone_alt &lt;- lm(conesize ~ type, cone)</code></pre>
-<p>To view the output of the model, just type the name of the model. For
-the null model, it should be pretty simple: just an intercept
-coefficient representing the overall mean cone mass, regarless of the
-habitat type. For the alternative model, we now have three coefficients:
-an intercept, a typeip, and a typemp coefficient. These three values
-tell us the means for each habitat. When R runs a linear model with a
-variable that has multiple categories, it will automatically choose one
-of the categories as the baseline. The mean for this baseline category
-is the intercept coefficient. In this case, R used the “ia” category as
-the baseline. We can tell because the other coefficients are for the
-type “ip” and the type “mp”. The mean mass of cones on the islands
-without squirrels (ia) is therefore 8.9. To calculate the means for the
-other group, you add the value of the coefficient for that group to the
-intercept. To calculate the mean mass of cones on islands with squirrels
-(ip), for example, you would add 8.9 and -1.98.</p>
-<p>Now, let’s create a graph to visualize our data. A boxplot is a good
-option because, like for the t-test example, we have a categorical
-independent variable and a continuous dependent variable.</p>
-<pre class="r"><code>ggplot(cone, aes(x=type, y=conesize)) +
-  geom_boxplot() +
-  labs(x=&quot;Habitat type&quot;, y=&quot;Mass of cones&quot;) +
+<pre class="r"><code>plant_null &lt;- lm(Growth ~ 1, plant)
+plant_alt &lt;- lm(Growth~ Temperature, plant)</code></pre>
+<p>To view the output of your models, type the name of each model. Just
+like when we have worked with this model before, the null model will
+have just an intercept, and the alternative model will have a intercept
+and a slope term (labeled “Temperature”) for the effect of temperature
+on plant growth. Based on the slope term, are higher temperatures likely
+to lead to slower or faster plant growth? Does it seem like a strong
+effect?</p>
+<p>Now, let’s create a graph to visualize our data. Because we have two
+continuous variables, a scatterplot is a good option. We will also
+include a best fit line based on our alternative model. If you haven’t
+already, load the <code>ggplot2</code> package first.</p>
+<pre class="r"><code>library(ggplot2)
+ggplot(plant, aes(x=Temperature, y=Growth)) +
+  geom_point() +
+  geom_smooth(method=&quot;lm&quot;)+
+  labs(x=&quot;Temperature&quot;, y=&quot;Plant Growth&quot;) +
   theme_classic()</code></pre>
-<p><img src="RHandbook_8_files/figure-html/cone_boxplot-1.png" width="672" /></p>
+<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<p><img src="RHandbook_9_files/figure-html/plant_scatter-1.png" width="672" /></p>
 </div>
+<div id="testing-the-models" class="section level3">
+<h3>9.2 Testing the models</h3>
 <div id="classical-frequentist-approach" class="section level4">
 <h4>Classical Frequentist Approach</h4>
-<p>As usual, we will start off by analyzing the data using a frequentist
-approach. The syntax for running an ANOVA is similar to the other tests
-we have run, but this time, we will use the <code>aov</code> function.
-The arguments are still the formula for the model (dependent variable on
-the left, independent variable on the right) and the data frame.</p>
-<pre class="r"><code>cone_ANOVA &lt;- aov(conesize ~ type, data = cone)</code></pre>
-<p>To view the output, use the <code>summary</code> function.</p>
-<pre class="r"><code>summary(cone_ANOVA)</code></pre>
-<pre><code>##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
-## type         2  22.84  11.421   13.38 0.000698 ***
-## Residuals   13  11.10   0.854                     
+<p>Let’s again start by analyzing the models using a frequentist
+approach. We don’t actually need to run any additional tests for this.
+We can just look at some additional output from the models we already
+ran.</p>
+<p>To view the additional output, use the <code>summary</code>
+function.</p>
+<pre class="r"><code>summary(plant_alt)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = Growth ~ Temperature, data = plant)
+## 
+## Residuals:
+##       Min        1Q    Median        3Q       Max 
+## -0.041734 -0.012130  0.000796  0.010496  0.060543 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)  
+## (Intercept)  0.32926    0.09938   3.313   0.0106 *
+## Temperature -0.01497    0.01201  -1.246   0.2480  
 ## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<p>When you view the output, the most important line is the first row of
-the output table, in this case labeled “type”, which was our independent
-variable. If you look at this row, you will see the F statistic and the
-p-value for the test. Based on these values, would your reject or accept
-the null hypothesis? What does this tell you about the effect of habitat
-on cone mass?</p>
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.03042 on 8 degrees of freedom
+## Multiple R-squared:  0.1626, Adjusted R-squared:  0.05787 
+## F-statistic: 1.553 on 1 and 8 DF,  p-value: 0.248</code></pre>
+<p>When you view the output, you will see a number of things. First, you
+will be able to see the the formula you used to build the models. Then
+you will see some information on the distribution of the residuals (the
+leftover variation not explained by your model). Next, you will see the
+coefficients from your model, along with standard error od the
+estimates. The coefficients section will also show you t-values and
+p-values for each coefficient. These are one-sample t-tests comparing
+the value of the coefficient to zero.</p>
+<p>The information we really want for our linear regression test is down
+at the very bottom. In the final section, you will see some R-squared
+values. These are a measure of how much variation in your dependent
+variable is explained by your independent variable (we will talk about
+this more in class). Below that, you will see the output of the linear
+regression test. First is the F-statistic (the same statistic that was
+calculated for the ANOVA). Then you will see the p-value. Based on these
+values, would your reject or accept the null hypothesis? What does this
+tell you about the effect of temperature on plant growth?</p>
 </div>
 <div id="likelihood-based-approach" class="section level4">
 <h4>Likelihood-based approach</h4>
 <p>Next we will use a likelihood-based approach to test the same
-question. Good news! The syntax for this is exactly the same as it was
-for the t-test. That’s because t-tests and ANOVAs are both types of
-linear models.</p>
-<p>We already build our null and alternative models for this problem
-earlier in the lesson, so we can jump right into using the
-<code>AIC</code> function to compare the models.</p>
-<pre class="r"><code>AIC(cone_null, cone_alt)</code></pre>
-<pre><code>##           df      AIC
-## cone_null  2 61.43694
-## cone_alt   4 47.54997</code></pre>
+question. Once again, the approach is the same as what you used for the
+t-test and ANOVA, using the <code>AIC</code> function to compare the two
+models.</p>
+<pre class="r"><code>AIC(plant_null, plant_alt)</code></pre>
+<pre><code>##            df       AIC
+## plant_null  2 -37.93176
+## plant_alt   3 -37.70574</code></pre>
 <p>Based on this output, what would you conclude about the effect of
-habitat on cone size?</p>
+temperature on plant growth?</p>
 </div>
-</div>
-<div id="post-hoc-tests" class="section level3">
-<h3>8.2 Post-hoc tests</h3>
-<p>But wait! These tests only tells us that cone size is different in at
-least one of our categories! How do we know which categories actually
-differ? This is where post-hoc tests come in. Note that we will only use
-a classical frequentist approach for the post-hoc tests. This is because
-there are subtle differences in the main goals of the analysis between a
-classical frequentist approach and a likelihood approach. In a
-likelihood approach, we are more interested in selecting the best model,
-rather than drawing specific inferences about individual variables. This
-is something to keep in mind when choosing the best method for your
-question. If you are specifically interested in testing the differences
-between multiple categories, the classical frequentist approach is the
-better approach to use.</p>
-<p>We will now run a Tukey’s HSD test, which will do pairwise
-comparisons between each of our three categories. The Tukey’s HSD test
-will automatically adjust the p-values to account for the fact that we
-are making multiple comparisons. The syntax for the test is simple. We
-will use the <code>TukeyHSD</code> function, and the argument is the
-model we created when we ran the ANOVA using the frequentist
-approach.</p>
-<pre class="r"><code>TukeyHSD(cone_ANOVA)</code></pre>
-<pre><code>##   Tukey multiple comparisons of means
-##     95% family-wise confidence level
-## 
-## Fit: aov(formula = conesize ~ type, data = cone)
-## 
-## $type
-##        diff       lwr        upr     p adj
-## ip-ia -1.98 -3.457145 -0.5028551 0.0094626
-## mp-ia -2.78 -4.257145 -1.3028551 0.0006982
-## mp-ip -0.80 -2.342828  0.7428275 0.3845461</code></pre>
-<p>The output you see is the pairwise comparison between each category.
-The first column of the table shows you which two categories are being
-compared (ia = islands with no squirrels, ip = islands with squirrels,
-mp = mainland). The second column tells you the difference in the means
-of the two categories. The third and forth columns show the lower and
-upper bounds of the 95% confidence intervals around the mean. Finally,
-the last column gives you the p-values for the pairwise comparisons.</p>
-<p>Based on the p-values, which pairs of habitat types had significant
-differences in their cone size?</p>
 </div>
 </div>
 
