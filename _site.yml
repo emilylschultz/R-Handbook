@@ -23,3 +23,5 @@ navbar:
       href: RHandbook_8.html
     - text: "Lesson 9"
       href: RHandbook_9.html
+    - text: "Lesson 10"
+      href: RHandbook_10.html
