@@ -153,7 +153,7 @@ If you are working with two continuous variables, you can make a scatter plot to
 #### Levene's test
 Levene's test is a formal test that will check for equal variances. Note that is tends to be a bit sensitive, so it will sometimes pick up small differences in the variances that are not a problem, particularly if you have large sample sizes. With the Levene's test, we are testing the null hypothesis that the variances are equal. Therefore if the p-value is less than 0.05, that suggests that the variances are not equal.
 
-The function for the Levene's test is in the `car` package, so install (`install.packages("car)`) and load that package first.
+The function for the Levene's test is in the `car` package, so install (`install.packages("car")`) and load that package first.
 
 ```{r install_car}
 library(car)
