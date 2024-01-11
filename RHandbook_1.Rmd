@@ -48,9 +48,9 @@ To run R via RStudio, simply open the RStudio application. It will automatically
 
 ![Image of RStudio layout, showing the console, environment, and help tabs](RStudio.png)
 
-There are three main panels that you will see. The panel on the left panel is the console: the place where you will run your code and view the output. R is a programming language, so rather than selecting options from dropdown menus, you will be writing code that you will run to complete your statistical analyses. 
+There are three main panels that you will see. The panel on the left panel is the console: the place where you will run your code and view the output. R is a programming language, so rather than selecting options from drop-down menus, you will be writing code that you will run to complete your statistical analyses. 
 
-The two panels on the right will not be used to write code, but they can help you stay organized and keep track of what you are doing. The upper right-hand panel is primarily for viewing the objects (such as variable and data frames; if this still doesn’t make sense, you will learn more about object later) you create as you run your programs. You can view all the objects you have saved, what they are named, and what type of objects they are. The bottom right-hand panel has multiple tabs with different purposes. Here are the ones you should be familiar with:
+The two panels on the right will not be used to write code, but they can help you stay organized and keep track of what you are doing. The upper right-hand panel is primarily for viewing the objects (such as variables and data frames; if this still doesn’t make sense, you will learn more about objects later) you create as you run your programs. You can view all the objects you have saved, what they are named, and what type of objects they are. The bottom right-hand panel has multiple tabs with different purposes. Here are the ones you should be familiar with:
 1.	Files: This tab has a file manager, similar to the file explorer on your computer. Here you can view the files in your directory.
 2.	Plots: When you create a plot, this is where you can view it.
 3.	Packages: R has packages you can install, which will give you access to additional functions. This tab shows you the packages you have installed and the packages you can install.
@@ -70,7 +70,7 @@ The two packages we will use in this class are the **tidyverse** package (useful
 This is one of the rare cases where it is fine to type the code directly into the console because once you install the packages, you won’t need to install them again unless you update R. It will just take a single line of code to install both packages. Put your cursor in the console, next to the “>” symbol and type the following line of code:
 
 ```{r install_packages, eval=FALSE}
-install.packages(“tidyverse”,”lme4”)
+install.packages("tidyverse","lme4")
 ```
 
 Then hit enter. You should see a bunch of text pop up in the console as the packages install. Once the packages install, you should see the “>” in the console again, indicating that you can type more code into the console. Sometimes warnings will show up in the console when you install packages, but they are usually nothing to worry about. We can deal with them on a case-by-case basis if necessary. If, after you run the line of code, you see only a few lines of text show up in the console, and then it stops, check for a dialogue box asking if you want to install the package in your personal library. If you get this message, click “yes”, and the packages should continue to install.
