@@ -327,7 +327,9 @@ need to install: R and RStudio. R is an opensource programming language
 designed for statistical computing. It is widely used by ecologists for
 quantitative analyses. RStudio is an environment for R that is more
 user-friendly than the standard R environment, so it is the environment
-we will use in this class.</p>
+we will use in this class. We will also install an addition set of
+tools, RTools, which is needed to run one of the packages that we will
+use in this class.</p>
 <div id="installing-r" class="section level4">
 <h4>Installing R</h4>
 <p>To install R, first go to the <a href="https://www.r-project.org/">R
@@ -350,8 +352,8 @@ touch with me.</p>
 <h5>Mac:</h5>
 <p>On the new page, you should see a list of R packages, with the most
 up-to-date packages first. The package you will want depends on your
-operating system. The newest version if for macOS 11 and higher. If you
-are running an older version, select the appropriate package bases on
+operating system. The newest version is for macOS 11 and higher. If you
+are running an older version, select the appropriate package based on
 the system information provided for each package. When you click on the
 link for the package you need, it will prompt you to download the
 application setup file. Be sure to pay attention to where you save the
@@ -389,6 +391,38 @@ downloads for all operating systems. Select the appropriate system for
 your computer and save the application setup file. Finally, open the
 setup file and follow the installation instructions. When you finish the
 installation, RStudio should be ready to run on your computer.</p>
+</div>
+<div id="installing-rtools" class="section level4">
+<h4>Installing Rtools</h4>
+<p>Some R packages, which provide additional useful functions for
+analysis, are only available as source code, and they have to be
+compiled before they can be used. There are some additional steps we
+will need to take to make sure your computers can compile the code.
+Before completing these steps, be sure that R and RStudio are closed on
+your computer.</p>
+<div id="mac-1" class="section level5">
+<h5>Mac:</h5>
+<p>If you have a Mac, you do not actually need to download RTools.
+Instead, open a terminal window (click the spotlight search button on
+your computer, and search for “Terminal”). Then copy and paste the code
+below into the terminal and hit “return”.</p>
+<p>You might need to enter your computer password to allow the
+installation. Next, follow any onscreen instructions and allow the
+installation to finish. Once this is done, you should be good to go!</p>
+</div>
+<div id="windows-1" class="section level5">
+<h5>Windows:</h5>
+<p>If you have a PC, you will need to install RTools. Go to the <a
+href="https://cran.r-project.org/bin/windows/Rtools/">RTools download
+website</a>. Unless you are running an old version of R (you probably
+are not, unless you installed R years ago and have not updated), select
+the “RTools 4.3” link. On the new page, look for the Rtools43 installer
+link about halfway down the page, in the Installing Rtools 43 section.
+Click on this link to download the exe file. Run the file and follow the
+onscreen instructions to complete the installation. You may use the
+default settings. After the installation has finished, you should be
+set!</p>
+</div>
 </div>
 </div>
 <div id="layout-of-rstudio" class="section level3">
