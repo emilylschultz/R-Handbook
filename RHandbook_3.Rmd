@@ -30,8 +30,8 @@ In the previous lesson, we created a simple data frame directly in R. In general
 Save the "DataFrameExample.csv" file in the folder you want to use as your working directory for this lesson. If you haven't already, follow the directions in the previous section to set your working directory. Now you are ready to import the data. We will use the `read.csv()` function to import the data, and we will save the data as an object called `data`. R will automatically save it as a data frame object. Here is the code to use:
 
 ```{r import_data}
-data <- read.csv("DataFrameExample.csv")
-data
+DATA <- read.csv("DataFrameExample.csv")
+DATA
 ```
 
 Notice that R automatically identify the first row as a header row. That is because there is an optional "header" argument for the read.csv file, and the default for that argument is "TRUE". If your data file does not have a header row, you would want to change the header argument to "FALSE".
@@ -47,13 +47,13 @@ In the section above, we viewed the data frame right in the console by just typi
 One option is to just view the top few rows of our data frame. This is a good option if you want to remind yourself of what is in your data frame and confirm that everything looks the way you would expect (this can be helpful after you have imported your data or made changes to your data frame). To view your the top few rows of your data frame, use the `head()` function:
 
 ```{r head}
-head(data)
+head(DATA)
 ```
 
 On occasion, you might want to view your entire data frame. If your data frame is large, you can use the `View()` function to view the data frame in a separate tab:
 
 ```{r view}
-View(data)
+View(DATA)
 ```
 
 You should now see your data frame appear in a new tab next to your script files.
@@ -61,7 +61,7 @@ You should now see your data frame appear in a new tab next to your script files
 You can also view just the names of the variable (i.e., the column names) in your data frame:
 
 ```{r names}
-names(data)
+names(DATA)
 ```
 
 #### The structure of your data frame
@@ -70,13 +70,13 @@ The variables in your data frame  can be a number of different data types, inclu
 To look at the structure of a data frame, including the data type for each variable, we use the `str()` function.
 
 ```{r structure}
-str(data)
+str(DATA)
 ```
 
 You will now see a list of the variables in your data base. Next to each variable, it will show you the data type (chr = character, int = integer, num = continuous numeric), along with the first several values of each variable in your data frame. It looks like it did a good job identifying our data types, but let's make one change to show you how it is done. Our Tree variable was identified as a character variable, but because that is a categorical variable identifying the tree each data point came from, it might be helpful to make it a factor variable instead. Run the following code to make the change:
 
 ```{r data_type}
-data$Tree <- as.factor(data$Tree)
+DATA$Tree <- as.factor(DATA$Tree)
 ```
 
 Notice I used the `$` symbol to identify the variable in the data frame I wanted to change, and I told R to replace the original variable with the factor version of the save variable.
@@ -84,7 +84,7 @@ Notice I used the `$` symbol to identify the variable in the data frame I wanted
 Now let's look at the structure of the data frame again.
 
 ```{r structure_again}
-str(data)
+str(DATA)
 ```
 
 We can see that the Tree variable is now a factor with two different levels: A and B.
@@ -94,7 +94,7 @@ There are equivalent functions to convert to the other variable types: `as.numer
 ### 3.4 Manipulating data frames with the **Tidyverse** package
 There are any number of ways we might want to manipulate our data sets, and, like with many aspects of programming, there are various ways to go about it. In this class, we will focus on using the **Tidyverse** packages. We will look at a few different ways of manipulating our data frames, but there are many more! There is a great resource online called [R for Data Science](https://r4ds.had.co.nz/). It is a comprehensive guide to using R for managing, visualizing, and analyzing data in R, with a particular focus on **Tidyverse**. Check it out if you want/need to learn more!
 
-For this section, you will need to activate the **Tidyverse** packages. This is something that needs to be done every time you start a new R session, if there are packages in addition to base R that you want to use. Enter the following code to activate **Tidyverse**:
+For this section, you will need to activate the **Tidyverse** packages. This is something that needs to be done every time you start a new R session if there are packages in addition to base R that you want to use. Enter the following code to activate **Tidyverse**:
 
 ```{r tidyverse, results = 'hide', message = FALSE}
 library(tidyverse)
@@ -105,8 +105,8 @@ library(tidyverse)
 Filtering is used to select a subset of observations from your data frame. For example, our data frame contains data from two different trees, but we might want to create a data frame that contains only the data for a single tree. We can do this with the `filter` function as follows:
 
 ```{r filter}
-data_A <- filter(data, Tree=="A")
-data_A
+DATA_A <- filter(DATA, Tree=="A")
+DATA_A
 ```
 
 The new data frame now only has the data for Tree A. Notice a couple things about the code. First, notice the use of the double equals signs (`==`). We use the double equals signs when we are making a logical statement (i.e., give me all the values that equal a particular value). Also notice that the "A" is in quotes. For factor and character variables, the value of the variable needs to be in quotes.
@@ -114,8 +114,8 @@ The new data frame now only has the data for Tree A. Notice a couple things abou
 We are not restricted to using `==` in our logical statement. We can also use things like greater than (>) or less than (<), and we can include multiple criteria. Below is an example of using greater than or less than criteria for two different variables.
 
 ```{r multiple_filter}
-data_subset <- filter(data, Growth < 0.2, Temperature > 8)
-data_subset
+DATA_SUBSET <- filter(DATA, Growth < 0.2, Temperature > 8)
+DATA_SUBSET
 ```
 
 The resulting data frame has only observations where growth was less that 0.2 and temperature was greater than 8.
@@ -124,16 +124,16 @@ The resulting data frame has only observations where growth was less that 0.2 an
 In the section above, we selected a subset of observations, but we might also want to select a subset of variables (columns) from our data frame. For example, maybe we are only interested in the number of cones produced by each tree in each year. We can use the `select()` function to select only those three variables:
 
 ```{r select}
-data_cones <- select(data, Tree, Year, Number.cones)
-data_cones
+DATA_CONES <- select(DATA, Tree, Year, Number.cones)
+DATA_CONES
 ```
 
 #### Creating new variables
 One common manipulation we might want to make to a data frame is to calculate a new variable, possibly based on data we already have in our data frame. For example, we might have measured the length and width of a plant and then want to multiply the length and width variable together to calculate the area covered by the plant. We can use the `mutate()` function in the **tidyverse** package to create new variables. In our example, we will log transform (i.e., take the natural log of) our temperature variable:
 
 ```{r mutate}
-data_log <- mutate(data,log_Temperature = log(Temperature))
-data_log
+DATA_LOG <- mutate(DATA,log_Temperature = log(Temperature))
+DATA_LOG
 ```
 
 If we wanted to add multiple new variables at the same time, we would simply add each new variable as a new argument, separated by commas.
@@ -144,16 +144,16 @@ Another useful manipulation is summarizing our data. Maybe we want to summarize 
 The first step in summarizing is to tell R what we want to use as our grouping variable(s). If we want to summarize the data for each tree across all years, Tree will be our grouping variable. We will create a new data frame, grouping our data by our grouping variable, using the `group_by()` function.
 
 ```{r group}
-tree <- group_by(data,Tree)
+TREE <- group_by(DATA,Tree)
 ```
 
-If we had wanted to group by multiple variable, we could add them after tree, separated by commas.
+If we had wanted to group by multiple variables, we could add them after tree, separated by commas.
 
 Now we will summarize the data for each tree. We will calculate the total (sum) number of cones, the average growth, and the maximum temperature.
 
 ```{r summarise}
-data_summary <- summarise(tree, Total.cones = sum(Number.cones), Mean.growth = mean(Growth), Max.temperature = max(Temperature))
-data_summary
+DATA_SUMMARY <- summarise(TREE, Total.cones = sum(Number.cones), Mean.growth = mean(Growth), Max.temperature = max(Temperature))
+DATA_SUMMARY
 ```
 
 When we use the `summarise()` function, notice that our first argument is not our original data frame. It is the new data frame we created with the `group_by` function. The following arguments are the summary variables we want to create. We first provide a name for our new variable, followed by an equal sign, and then provide the function and variable we want to summarize. In this case we are creating three summary variable using different summary functions. 

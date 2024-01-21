@@ -54,12 +54,14 @@ To start harnessing the full power of R, we want to be able to save our values, 
 
 Let's say you are studying the population size of a plant. You go out and count the number of plants in three different plots. Then you also want to calculate the total number of plants across all three plots.
 
-First, lets save the number of plants each plot as three separate variables. Use `<-` to assign a value to a variable. I recommend you give your variables names that are short but informative.
+First, lets save the number of plants each plot as three separate variables. Use `<-` to name your variable and assign a value to a variable. Generally speaking, you can name your variable whatever you want, but avoid spaces in the name. I recommend you give your variables names that are short but informative. Throughout this handbook, I will use all caps when I name objects to make them stand out and indicate that, unlike the functions, you are free to change to names to make sense for your analysis.
+
 ```{r variables}
 PLOT1 <- 4
 PLOT2 <- 7
 PLOT3 <- 6
 ```
+
 After you run these three lines of code, you should see your three variables listed in your Environment window in the upper right-hand corner of RStudio. This can help you keep track of the variables and other objects you create in R.
 
 Now let's use our variables to calculate the total number of plants across all three plots and save that total as a new variable.

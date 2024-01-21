@@ -383,8 +383,8 @@ Now you are ready to import the data. We will use the
 <code>read.csv()</code> function to import the data, and we will save
 the data as an object called <code>data</code>. R will automatically
 save it as a data frame object. Here is the code to use:</p>
-<pre class="r"><code>data &lt;- read.csv(&quot;DataFrameExample.csv&quot;)
-data</code></pre>
+<pre class="r"><code>DATA &lt;- read.csv(&quot;DataFrameExample.csv&quot;)
+DATA</code></pre>
 <pre><code>##    Tree Year Number.cones Growth Temperature
 ## 1     A 2009            0   0.21        8.58
 ## 2     A 2010           14   0.26        8.67
@@ -425,7 +425,7 @@ frame and confirm that everything looks the way you would expect (this
 can be helpful after you have imported your data or made changes to your
 data frame). To view your the top few rows of your data frame, use the
 <code>head()</code> function:</p>
-<pre class="r"><code>head(data)</code></pre>
+<pre class="r"><code>head(DATA)</code></pre>
 <pre><code>##   Tree Year Number.cones Growth Temperature
 ## 1    A 2009            0   0.21        8.58
 ## 2    A 2010           14   0.26        8.67
@@ -436,12 +436,12 @@ data frame). To view your the top few rows of your data frame, use the
 <p>On occasion, you might want to view your entire data frame. If your
 data frame is large, you can use the <code>View()</code> function to
 view the data frame in a separate tab:</p>
-<pre class="r"><code>View(data)</code></pre>
+<pre class="r"><code>View(DATA)</code></pre>
 <p>You should now see your data frame appear in a new tab next to your
 script files.</p>
 <p>You can also view just the names of the variable (i.e., the column
 names) in your data frame:</p>
-<pre class="r"><code>names(data)</code></pre>
+<pre class="r"><code>names(DATA)</code></pre>
 <pre><code>## [1] &quot;Tree&quot;         &quot;Year&quot;         &quot;Number.cones&quot; &quot;Growth&quot;       &quot;Temperature&quot;</code></pre>
 </div>
 <div id="the-structure-of-your-data-frame" class="section level4">
@@ -459,7 +459,7 @@ graphing, it can be important. It is therefore good practice to check
 your data frame and make sure the data types are correct.</p>
 <p>To look at the structure of a data frame, including the data type for
 each variable, we use the <code>str()</code> function.</p>
-<pre class="r"><code>str(data)</code></pre>
+<pre class="r"><code>str(DATA)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    10 obs. of  5 variables:
 ##  $ Tree        : chr  &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; ...
 ##  $ Year        : int  2009 2010 2011 2012 2013 2009 2010 2011 2012 2013
@@ -475,12 +475,12 @@ is done. Our Tree variable was identified as a character variable, but
 because that is a categorical variable identifying the tree each data
 point came from, it might be helpful to make it a factor variable
 instead. Run the following code to make the change:</p>
-<pre class="r"><code>data$Tree &lt;- as.factor(data$Tree)</code></pre>
+<pre class="r"><code>DATA$Tree &lt;- as.factor(DATA$Tree)</code></pre>
 <p>Notice I used the <code>$</code> symbol to identify the variable in
 the data frame I wanted to change, and I told R to replace the original
 variable with the factor version of the save variable.</p>
 <p>Now let’s look at the structure of the data frame again.</p>
-<pre class="r"><code>str(data)</code></pre>
+<pre class="r"><code>str(DATA)</code></pre>
 <pre><code>## &#39;data.frame&#39;:    10 obs. of  5 variables:
 ##  $ Tree        : Factor w/ 2 levels &quot;A&quot;,&quot;B&quot;: 1 1 1 1 1 2 2 2 2 2
 ##  $ Year        : int  2009 2010 2011 2012 2013 2009 2010 2011 2012 2013
@@ -510,7 +510,7 @@ visualizing, and analyzing data in R, with a particular focus on
 more!</p>
 <p>For this section, you will need to activate the
 <strong>Tidyverse</strong> packages. This is something that needs to be
-done every time you start a new R session, if there are packages in
+done every time you start a new R session if there are packages in
 addition to base R that you want to use. Enter the following code to
 activate <strong>Tidyverse</strong>:</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
@@ -521,8 +521,8 @@ frame. For example, our data frame contains data from two different
 trees, but we might want to create a data frame that contains only the
 data for a single tree. We can do this with the <code>filter</code>
 function as follows:</p>
-<pre class="r"><code>data_A &lt;- filter(data, Tree==&quot;A&quot;)
-data_A</code></pre>
+<pre class="r"><code>DATA_A &lt;- filter(DATA, Tree==&quot;A&quot;)
+DATA_A</code></pre>
 <pre><code>##   Tree Year Number.cones Growth Temperature
 ## 1    A 2009            0   0.21        8.58
 ## 2    A 2010           14   0.26        8.67
@@ -540,8 +540,8 @@ statement. We can also use things like greater than (&gt;) or less than
 (&lt;), and we can include multiple criteria. Below is an example of
 using greater than or less than criteria for two different
 variables.</p>
-<pre class="r"><code>data_subset &lt;- filter(data, Growth &lt; 0.2, Temperature &gt; 8)
-data_subset</code></pre>
+<pre class="r"><code>DATA_SUBSET &lt;- filter(DATA, Growth &lt; 0.2, Temperature &gt; 8)
+DATA_SUBSET</code></pre>
 <pre><code>##   Tree Year Number.cones Growth Temperature
 ## 1    A 2012           35   0.15        9.68
 ## 2    B 2012           22   0.19        8.45</code></pre>
@@ -555,8 +555,8 @@ might also want to select a subset of variables (columns) from our data
 frame. For example, maybe we are only interested in the number of cones
 produced by each tree in each year. We can use the <code>select()</code>
 function to select only those three variables:</p>
-<pre class="r"><code>data_cones &lt;- select(data, Tree, Year, Number.cones)
-data_cones</code></pre>
+<pre class="r"><code>DATA_CONES &lt;- select(DATA, Tree, Year, Number.cones)
+DATA_CONES</code></pre>
 <pre><code>##    Tree Year Number.cones
 ## 1     A 2009            0
 ## 2     A 2010           14
@@ -579,8 +579,8 @@ to calculate the area covered by the plant. We can use the
 <code>mutate()</code> function in the <strong>tidyverse</strong> package
 to create new variables. In our example, we will log transform (i.e.,
 take the natural log of) our temperature variable:</p>
-<pre class="r"><code>data_log &lt;- mutate(data,log_Temperature = log(Temperature))
-data_log</code></pre>
+<pre class="r"><code>DATA_LOG &lt;- mutate(DATA,log_Temperature = log(Temperature))
+DATA_LOG</code></pre>
 <pre><code>##    Tree Year Number.cones Growth Temperature log_Temperature
 ## 1     A 2009            0   0.21        8.58        2.149434
 ## 2     A 2010           14   0.26        8.67        2.159869
@@ -608,14 +608,14 @@ grouping variable(s). If we want to summarize the data for each tree
 across all years, Tree will be our grouping variable. We will create a
 new data frame, grouping our data by our grouping variable, using the
 <code>group_by()</code> function.</p>
-<pre class="r"><code>tree &lt;- group_by(data,Tree)</code></pre>
-<p>If we had wanted to group by multiple variable, we could add them
+<pre class="r"><code>TREE &lt;- group_by(DATA,Tree)</code></pre>
+<p>If we had wanted to group by multiple variables, we could add them
 after tree, separated by commas.</p>
 <p>Now we will summarize the data for each tree. We will calculate the
 total (sum) number of cones, the average growth, and the maximum
 temperature.</p>
-<pre class="r"><code>data_summary &lt;- summarise(tree, Total.cones = sum(Number.cones), Mean.growth = mean(Growth), Max.temperature = max(Temperature))
-data_summary</code></pre>
+<pre class="r"><code>DATA_SUMMARY &lt;- summarise(TREE, Total.cones = sum(Number.cones), Mean.growth = mean(Growth), Max.temperature = max(Temperature))
+DATA_SUMMARY</code></pre>
 <pre><code>## # A tibble: 2 × 4
 ##   Tree  Total.cones Mean.growth Max.temperature
 ##   &lt;fct&gt;       &lt;int&gt;       &lt;dbl&gt;           &lt;dbl&gt;
