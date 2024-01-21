@@ -364,13 +364,13 @@ the code, and R will ignore them when it runs the code.)</p>
 <pre><code>## [1] 243</code></pre>
 <p>R also has built-in functions that can be used for other types of
 arithmetic calculations. There are many, but a few examples are listed
-below. In the examples, “x” can be any number or set of numbers.</p>
-<pre class="r"><code>log(x) # natural logarithm of x
-log10(x) # logarithm base 10 of x
-sqrt(x) # square root of x
-abs(x) # absolute value of x</code></pre>
+below. In the examples, “X” can be any number or set of numbers.</p>
+<pre class="r"><code>log(X) # natural logarithm of x
+log10(X) # logarithm base 10 of x
+sqrt(X) # square root of x
+abs(X) # absolute value of x</code></pre>
 <p>Go ahead and try out these functions. You can use any value you want
-in place of x!</p>
+in place of X!</p>
 </div>
 <div id="saving-and-recalling-values" class="section level3">
 <h3>2.2 Saving and recalling values</h3>
@@ -385,19 +385,19 @@ want to calculate the total number of plants across all three plots.</p>
 variables. Use <code>&lt;-</code> to assign a value to a variable. I
 recommend you give your variables names that are short but
 informative.</p>
-<pre class="r"><code>plot1 &lt;- 4
-plot2 &lt;- 7
-plot3 &lt;- 6</code></pre>
+<pre class="r"><code>PLOT1 &lt;- 4
+PLOT2 &lt;- 7
+PLOT3 &lt;- 6</code></pre>
 <p>After you run these three lines of code, you should see your three
 variables listed in your Environment window in the upper right-hand
 corner of RStudio. This can help you keep track of the variables and
 other objects you create in R.</p>
 <p>Now let’s use our variables to calculate the total number of plants
 across all three plots and save that total as a new variable.</p>
-<pre class="r"><code>total &lt;- plot1 + plot2 + plot3</code></pre>
+<pre class="r"><code>TOTAL &lt;- PLOT1 + PLOT2 + PLOT3</code></pre>
 <p>If you now want to view the value of the total plot count, just type
 in the variable name (Note that R is case-sensitive):</p>
-<pre class="r"><code>total</code></pre>
+<pre class="r"><code>TOTAL</code></pre>
 <pre><code>## [1] 17</code></pre>
 <p>We could continue to use any of these variables in additional
 calculations.</p>
@@ -415,9 +415,9 @@ single object. Lets again work with our plant example from above. This
 time, instead of saving out plant counts as separate variables, we will
 store them together in a singe vector. To do so, we will use a new
 function, the concatenate function: <code>c()</code>.</p>
-<pre class="r"><code>plant_counts &lt;- c(4,7,6)</code></pre>
+<pre class="r"><code>PLANT_COUNTS &lt;- c(4,7,6)</code></pre>
 <p>If you view this vector object, you will see all values listed.</p>
-<pre class="r"><code>plant_counts</code></pre>
+<pre class="r"><code>PLANT_COUNTS</code></pre>
 <pre><code>## [1] 4 7 6</code></pre>
 <p>Saving multiple values in a single object can help simplify our code
 and the calculations we do, especially if we are working with a lot of
@@ -427,48 +427,48 @@ calculations with the numbers stored in vectors.</p>
 together to get the total numbers of plants across all plots. We can use
 a shortcut to calculate the total using our vector and the
 <code>sum</code> function:</p>
-<pre class="r"><code>sum(plant_counts)</code></pre>
+<pre class="r"><code>sum(PLANT_COUNTS)</code></pre>
 <pre><code>## [1] 17</code></pre>
 <p>We can also calculate things like the mean and standard deviation of
 the values in vectors:</p>
-<pre class="r"><code>mean(plant_counts)</code></pre>
+<pre class="r"><code>mean(PLANT_COUNTS)</code></pre>
 <pre><code>## [1] 5.666667</code></pre>
-<pre class="r"><code>sd(plant_counts)</code></pre>
+<pre class="r"><code>sd(PLANT_COUNTS)</code></pre>
 <pre><code>## [1] 1.527525</code></pre>
 <p>Okay, so we stored all these numbers in a vector, but what if we just
 want to work with one of the values from a vector? Well, we can do that
 by providing R with an index to tell it which of the values from the
 vector we want. For example, let’s say we want to save the plant counts
 from each plot as separate variables. We can do that as follows:</p>
-<pre class="r"><code>plot1 &lt;- plant_counts[1]
-plot2 &lt;- plant_counts[2]
-plot3 &lt;- plant_counts[3]</code></pre>
+<pre class="r"><code>PLOT1 &lt;- PLANT_COUNTS[1]
+PLOT2 &lt;- PLANT_COUNTS[2]
+PLOT3 &lt;- PLANT_COUNTS[3]</code></pre>
 <p>The indices are the numbers inside the brackets, telling R the
-position of the value we want from the vector.Single brackets are always
-used for indexing vectors.</p>
+position of the value we want from the vector. Single brackets are
+always used for indexing vectors.</p>
 <p>We can also select multiple values from a vector in various ways. If
 we want multiple adjacent values, we can use the colon symbol
 (<code>:</code>) to select the range of values we want. If we wanted to
 select the first two values from our <code>plant_counts</code> vector,
 we would do that as follows:</p>
-<pre class="r"><code>plot1_2 &lt;- plant_counts[1:2]</code></pre>
+<pre class="r"><code>PLOT1_2 &lt;- PLANT_COUNTS[1:2]</code></pre>
 <p>If we want to select non-adjacent values, we can again make use of
 our concatenate function to do that. We will essentially create a vector
 with the list of the indices of the values we want. To select the first
 and third values from our <code>plant_counts</code> vector, we could do
 the following:</p>
-<pre class="r"><code>plot1_3 &lt;- plant_counts[c(1,3)]</code></pre>
+<pre class="r"><code>PLOT1_3 &lt;- PLANT_COUNTS[c(1,3)]</code></pre>
 <p>We can also tell R to remove values from a vector, which is useful if
 we want to include most of the values and only remove a few. Another way
-of creating the <code>plot1_3</code> vector would be to remove the
+of creating the <code>PLOT1_3</code> vector would be to remove the
 second value. We do that using the minus symbol:</p>
-<pre class="r"><code>plot1_3 &lt;- plant_counts[-2]</code></pre>
+<pre class="r"><code>PLOT1_3 &lt;- PLANT_COUNTS[-2]</code></pre>
 <p>We can also remove multiple values by combining the minus symbol with
 either the colon to tell R to remove a range of values or with the
 concatenate function to specify individuals values we want to remove.
 Here are examples of both:</p>
-<pre class="r"><code>plot1 &lt;- plant_counts[-(2:3)]
-plot2 &lt;- plant_counts[-c(1,3)]</code></pre>
+<pre class="r"><code>PLOT1 &lt;- PLANT_COUNTS[-(2:3)]
+PLOT2 &lt;- PLANT_COUNTS[-c(1,3)]</code></pre>
 <p>What you might be starting to notice is that there are often multiple
 ways to do the same thing. Sometimes one strategy will be more efficient
 than other, but often multiple strategies will work! There is rarely one
@@ -494,35 +494,35 @@ and one with our plot counts. To create the data frame, we will use the
 function, we will tell R what variables we want and what data we want to
 add for each variable. Here is one way we could create our plant counts
 data frame:</p>
-<pre class="r"><code>plant_data &lt;- data.frame(Plot=c(1:3),Plant_count=plant_counts)
-plant_data</code></pre>
-<pre><code>##   Plot Plant_count
+<pre class="r"><code>PLANT_DATA &lt;- data.frame(PLOT=c(1:3),PLANT_COUNT=PLANT_COUNTS)
+PLANT_DATA</code></pre>
+<pre><code>##   PLOT PLANT_COUNT
 ## 1    1           4
 ## 2    2           7
 ## 3    3           6</code></pre>
-<p>When you view the data frame, you can now see two colums: the first
+<p>When you view the data frame, you can now see two columns: the first
 with your plot numbers and the second with the plant count for each
 plot. Now let’s break down the code we used to create the data frame.
 First, note that we are saving this as a new object called
-<code>plant_data</code>. Because we are creating it with the
-<code>data.frame</code> function, it will be a data frame oject. Inside
+<code>PLANT_DATA</code>. Because we are creating it with the
+<code>data.frame</code> function, it will be a data frame object. Inside
 the parentheses of the <code>data.frame</code> function, we told R to
-create two different variable, one called “Plot” and one called
-“Plant_count”. We tell R these are two separate variable by separating
-them by a comma. If we wanted, we could add additional variable. We are
-not limited to two. To tell R what data to add to each variable, we
+create two different variable, one called “PLOT” and one called
+“PLANT_COUNT”. We tell R these are two separate variables by separating
+them with a comma. If we wanted, we could add additional variables. We
+are not limited to two. To tell R what data to add to each variable, we
 first use the equals sign after the variable name and then tell R what
 numbers to add. For the Plot variable, I again used the concatenate
 function to tell R that the Plot variable should have the numbers 1
 through 3, in order. To create the Plant_counts variable, I simply told
-R to use the <code>plant_counts</code> vector we already created.</p>
+R to use the <code>PLANT_COUNTS</code> vector we already created.</p>
 <p>Once we have created a data frame, it is possible to extract
 particular data from the data frame, if we don’t want to work with all
 of the data at once. If we want to extract a particular column of data,
 we can do that by telling R the name of the data frame, followed by the
 <code>$</code> symbol, followed by the name of the column we want:</p>
-<pre class="r"><code>plant_counts &lt;- plant_data$Plant_count
-plant_counts</code></pre>
+<pre class="r"><code>PLANT_COUNTS &lt;- PLANT_DATA$PLANT_COUNT
+PLANT_COUNTS</code></pre>
 <pre><code>## [1] 4 7 6</code></pre>
 <p>Notice that the column we extracted is now in the form of a
 vector!</p>
@@ -530,11 +530,11 @@ vector!</p>
 we extracted values from a vector. When we are working with data frames,
 though, we will use double brackets, and we have to give R two indices,
 one for the row and one for the column, in that order.</p>
-<pre class="r"><code>plot1 &lt;- plant_data[[1,2]]
-plot1</code></pre>
+<pre class="r"><code>PLOT1 &lt;- PLANT_DATA[[1,2]]
+PLOT1</code></pre>
 <pre><code>## [1] 4</code></pre>
 <p>Here we extracted the value in the first row and second column from
-the <code>plant_data</code> data frame, which is the plant count from
+the <code>PLANT_DATA</code> data frame, which is the plant count from
 plot 1.</p>
 <p>In the next lesson, we will look at several additional ways to
 manipulate data frames in R, specifically focusing on using the
@@ -559,11 +559,11 @@ have additional optional arguments as well.</p>
 <p>Let’s look at the <code>mean</code> function as an example. We used
 the mean function above to calculate the mean number of plants in our
 plant counts vector:</p>
-<pre class="r"><code>mean(plant_counts)</code></pre>
+<pre class="r"><code>mean(PLANT_COUNTS)</code></pre>
 <pre><code>## [1] 5.666667</code></pre>
 <p>The mean function has one required argument: x, which is the set of
 numbers for which you want to calculate the mean. We provided the
-<code>plant_counts</code> vector as the object for that argument. There
+<code>PLANT_COUNTS</code> vector as the object for that argument. There
 are also additional optional arguments for the <code>mean</code>
 function. The optional arguments usually have default values that are
 used if you do not specify those arguments in your code. Often the
@@ -580,10 +580,10 @@ include the na.rm argument in our code and change its value to “TRUE”
 (or simply “T”). You can see the difference below, where I add an NA to
 our plant_counts vector, and then calculate the mean using both
 options.</p>
-<pre class="r"><code>plant_counts &lt;- c(plant_counts,NA)
-mean(plant_counts)</code></pre>
+<pre class="r"><code>PLANT_COUNTS &lt;- c(PLANT_COUNTS,NA)
+mean(PLANT_COUNTS)</code></pre>
 <pre><code>## [1] NA</code></pre>
-<pre class="r"><code>mean(plant_counts, na.rm=T)</code></pre>
+<pre class="r"><code>mean(PLANT_COUNTS, na.rm=T)</code></pre>
 <pre><code>## [1] 5.666667</code></pre>
 <p>Notice that when I provided the argument for x (the set of numbers),
 I didn’t include the name of the argument, I did not specify the name of
@@ -593,10 +593,11 @@ R the arguments in order, without skipping any, you do not need to
 specify the name of the argument. But if you list them in the wrong
 order or skip arguments, you do need to specify the name. In this
 example, I know that x is the first argument, but na.rm is the third. I
-could therefore get away with not giving the name of the first argument,
-but I had that one in the right position, but I did need to specify the
-name of the na.rm argument because I skipped an optional argument and
-had the na.rm argument in the second position instead of the third.</p>
+could therefore get away with not giving the name of the first argument
+because I had that one in the right position, but I did need to specify
+the name of the na.rm argument because I skipped an optional argument
+and had the na.rm argument in the second position instead of the
+third.</p>
 <p>But how do you know what a function does, what arguments you need in
 a function and what the correct order of the arguments is? We will cover
 that in the next section.</p>

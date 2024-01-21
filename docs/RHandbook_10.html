@@ -373,15 +373,15 @@ ggplot(residuals, aes(x=resid_null)) +
   geom_histogram() +
   labs(x=&quot;Extinction time&quot;, y=&quot;Frequency&quot;) +
   theme_classic()</code></pre>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick
-## better value with `binwidth`.</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better
+## value with `binwidth`.</code></pre>
 <p><img src="RHandbook_10_files/figure-html/residnull_hist-1.png" width="672" /></p>
 <pre class="r"><code>ggplot(residuals, aes(x=resid_alt)) +
   geom_histogram() +
   labs(x=&quot;Extinction time&quot;, y=&quot;Frequency&quot;) +
   theme_classic()</code></pre>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick
-## better value with `binwidth`.</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better
+## value with `binwidth`.</code></pre>
 <p><img src="RHandbook_10_files/figure-html/residalt_hist-1.png" width="672" /></p>
 <p>Do the residuals look normally distributed?</p>
 </div>
@@ -439,15 +439,15 @@ histograms:</p>
   geom_histogram() +
   labs(x=&quot;Extinction time&quot;, y=&quot;Frequency&quot;) +
   theme_classic()</code></pre>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick
-## better value with `binwidth`.</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better
+## value with `binwidth`.</code></pre>
 <p><img src="RHandbook_10_files/figure-html/residlog_hist-1.png" width="672" /></p>
 <pre class="r"><code>ggplot(residuals_log, aes(x=resid_alt)) +
   geom_histogram() +
   labs(x=&quot;Extinction time&quot;, y=&quot;Frequency&quot;) +
   theme_classic()</code></pre>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick
-## better value with `binwidth`.</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better
+## value with `binwidth`.</code></pre>
 <p><img src="RHandbook_10_files/figure-html/residlog_hist-2.png" width="672" /></p>
 <p>Next, make the qqplots:</p>
 <pre class="r"><code>qqnorm(resid_null_log)
@@ -595,12 +595,12 @@ package. In the second argument of the <code>filter</code> fuction, we
 will use the <code>!=</code> (does not equal) operator to tell R to
 exclude observations with that value for habitat type.</p>
 <pre class="r"><code>library(tidyverse)</code></pre>
-<pre><code>## ── Attaching packages ───────────────────
+<pre><code>## ── Attaching packages ───── tidyverse 1.3.2 ──
 ## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
 ## ✔ tidyr   1.3.0      ✔ stringr 1.5.0 
 ## ✔ readr   2.1.3      ✔ forcats 1.0.0 
 ## ✔ purrr   1.0.1      
-## ── Conflicts ─── tidyverse_conflicts() ──
+## ── Conflicts ──────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()
 ## ✖ dplyr::recode() masks car::recode()
