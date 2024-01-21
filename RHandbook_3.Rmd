@@ -27,7 +27,7 @@ There are a few ways to set your working directory. The easiest way for beginner
 ### 3.2 Loading data
 In the previous lesson, we created a simple data frame directly in R. In general, particularly with large data sets it is far easier to enter your data into a program like Excel and then import the data into R. For the remainder of the lesson, we will work with a simple example data set I provided you with called "DataFrameExample.csv". I recommend saving data files you want to work with in R as csv files. You can import Excel files into R, but it is often slower, especially if the files are large. The other benefit of csv files is that they are a non-proprietary file type, so they don't require a specific program like Excel. This will make it easier to share your files with other researchers.
 
-Save the "DataFrameExample.csv" file in the folder you want to use as your working directory for this lesson. If you haven't already, follow the directions in the previous section to set your working directory. Now you are ready to import the data. We will use the `read.csv()` function to import the data, and we will save the data as an object called `data`. R will automatically save it as a data frame object. Here is the code to use:
+Save the "DataFrameExample.csv" file in the folder you want to use as your working directory for this lesson. If you haven't already, follow the directions in the previous section to set your working directory. Now you are ready to import the data. We will use the `read.csv()` function to import the data, and we will save the data as an object called `DATA`. R will automatically save it as a data frame object. Here is the code to use:
 
 ```{r import_data}
 DATA <- read.csv("DataFrameExample.csv")
@@ -156,4 +156,12 @@ DATA_SUMMARY <- summarise(TREE, Total.cones = sum(Number.cones), Mean.growth = m
 DATA_SUMMARY
 ```
 
-When we use the `summarise()` function, notice that our first argument is not our original data frame. It is the new data frame we created with the `group_by` function. The following arguments are the summary variables we want to create. We first provide a name for our new variable, followed by an equal sign, and then provide the function and variable we want to summarize. In this case we are creating three summary variable using different summary functions. 
+When we use the `summarise()` function, notice that our first argument is not our original data frame. It is the new data frame we created with the `group_by` function. The following arguments are the summary variables we want to create. We first provide a name for our new variable, followed by an equal sign, and then provide the function and variable we want to summarize. In this case we are creating three summary variable using different summary functions.
+
+### Data Frames Team Challenge
+Work with your team to complete the following tasks. Use the same DataFrameExample data set from above. (If the rest of your group isn't ready yet, feel free to start on the Data Frames Practice Problems assignment while you wait.)
+
+1. Start with the original data frame. Extract the Number.cones column from the data frame and save it as a vector. (Review the Data Frame section in Lesson 2.3 if necessary.)
+2. Use indexing to remove the zeros from your vector. Then calculate the mean and standard deviation of the remaining numbers of cones. (Review the Vectors section in Lesson 2.3 if necessary.)
+3. Group the original data frame by year and summarize the data frame to calculate the mean growth and mean temperature for each year.
+4. Starting with your new summarized data frame, filter the data from to only include data from 2009. What was the average growth in 2009?

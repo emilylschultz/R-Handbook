@@ -420,7 +420,8 @@ time, instead of saving out plant counts as separate variables, we will
 store them together in a singe vector. To do so, we will use a new
 function, the concatenate function: <code>c()</code>.</p>
 <pre class="r"><code>PLANT_COUNTS &lt;- c(4,7,6)</code></pre>
-<p>If you view this vector object, you will see all values listed.</p>
+<p>If you view this vector object by typing in the object name, you will
+see all values listed.</p>
 <pre class="r"><code>PLANT_COUNTS</code></pre>
 <pre><code>## [1] 4 7 6</code></pre>
 <p>Saving multiple values in a single object can help simplify our code
@@ -453,13 +454,13 @@ always used for indexing vectors.</p>
 <p>We can also select multiple values from a vector in various ways. If
 we want multiple adjacent values, we can use the colon symbol
 (<code>:</code>) to select the range of values we want. If we wanted to
-select the first two values from our <code>plant_counts</code> vector,
+select the first two values from our <code>PLANT_COUNTS</code> vector,
 we would do that as follows:</p>
 <pre class="r"><code>PLOT1_2 &lt;- PLANT_COUNTS[1:2]</code></pre>
 <p>If we want to select non-adjacent values, we can again make use of
 our concatenate function to do that. We will essentially create a vector
 with the list of the indices of the values we want. To select the first
-and third values from our <code>plant_counts</code> vector, we could do
+and third values from our <code>PLANT_COUNTS</code> vector, we could do
 the following:</p>
 <pre class="r"><code>PLOT1_3 &lt;- PLANT_COUNTS[c(1,3)]</code></pre>
 <p>We can also tell R to remove values from a vector, which is useful if

@@ -327,6 +327,8 @@ information about your data frame</a></li>
 id="toc-manipulating-data-frames-with-the-tidyverse-package">3.4
 Manipulating data frames with the <strong>Tidyverse</strong>
 package</a></li>
+<li><a href="#data-frames-team-challenge"
+id="toc-data-frames-team-challenge">Data Frames Team Challenge</a></li>
 </ul></li>
 </ul>
 </div>
@@ -381,7 +383,7 @@ your working directory for this lesson. If you haven’t already, follow
 the directions in the previous section to set your working directory.
 Now you are ready to import the data. We will use the
 <code>read.csv()</code> function to import the data, and we will save
-the data as an object called <code>data</code>. R will automatically
+the data as an object called <code>DATA</code>. R will automatically
 save it as a data frame object. Here is the code to use:</p>
 <pre class="r"><code>DATA &lt;- read.csv(&quot;DataFrameExample.csv&quot;)
 DATA</code></pre>
@@ -629,6 +631,26 @@ a name for our new variable, followed by an equal sign, and then provide
 the function and variable we want to summarize. In this case we are
 creating three summary variable using different summary functions.</p>
 </div>
+</div>
+<div id="data-frames-team-challenge" class="section level3">
+<h3>Data Frames Team Challenge</h3>
+<p>Work with your team to complete the following tasks. Use the same
+DataFrameExample data set from above. (If the rest of your group isn’t
+ready yet, feel free to start on the Data Frames Practice Problems
+assignment while you wait.)</p>
+<ol style="list-style-type: decimal">
+<li>Start with the original data frame. Extract the Number.cones column
+from the data frame and save it as a vector. (Review the Data Frame
+section in Lesson 2.3 if necessary.)</li>
+<li>Use indexing to remove the zeros from your vector. Then calculate
+the mean and standard deviation of the remaining numbers of cones.
+(Review the Vectors section in Lesson 2.3 if necessary.)</li>
+<li>Group the original data frame by year and summarize the data frame
+to calculate the mean growth and mean temperature for each year.</li>
+<li>Starting with your new summarized data frame, filter the data from
+to only include data from 2009. What was the average growth in
+2009?</li>
+</ol>
 </div>
 </div>
 

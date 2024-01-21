@@ -86,7 +86,7 @@ A vector is a collection of multiple values stored together in a single object. 
 PLANT_COUNTS <- c(4,7,6)
 ```
 
-If you view this vector object, you will see all values listed.
+If you view this vector object by typing in the object name, you will see all values listed.
 
 ```{r vector_view}
 PLANT_COUNTS
@@ -117,13 +117,13 @@ PLOT3 <- PLANT_COUNTS[3]
 
 The indices are the numbers inside the brackets, telling R the position of the value we want from the vector. Single brackets are always used for indexing vectors.
 
-We can also select multiple values from a vector in various ways. If we want multiple adjacent values, we can use the colon symbol (`:`) to select the range of values we want. If we wanted to select the first two values from our `plant_counts` vector, we would do that as follows:
+We can also select multiple values from a vector in various ways. If we want multiple adjacent values, we can use the colon symbol (`:`) to select the range of values we want. If we wanted to select the first two values from our `PLANT_COUNTS` vector, we would do that as follows:
 
 ```{r range}
 PLOT1_2 <- PLANT_COUNTS[1:2]
 ```
 
-If we want to select non-adjacent values, we can again make use of our concatenate function to do that. We will essentially create a vector with the list of the indices of the values we want. To select the first and third values from our `plant_counts` vector, we could do the following:
+If we want to select non-adjacent values, we can again make use of our concatenate function to do that. We will essentially create a vector with the list of the indices of the values we want. To select the first and third values from our `PLANT_COUNTS` vector, we could do the following:
 
 ```{r nonadjacent}
 PLOT1_3 <- PLANT_COUNTS[c(1,3)]
