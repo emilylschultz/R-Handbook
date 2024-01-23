@@ -38,6 +38,8 @@ Some R packages, which provide additional useful functions for analysis, are onl
 ##### Mac:
 If you have a Mac, you do not actually need to download RTools. Instead, open a terminal window (click the spotlight search button on your computer, and search for "Terminal"). Then copy and paste the code below into the terminal and hit "return".
 
+xcode-select --install
+
 You might need to enter your computer password to allow the installation. Next, follow any onscreen instructions and allow the installation to finish. Once this is done, you should be good to go!
 
 ##### Windows:
