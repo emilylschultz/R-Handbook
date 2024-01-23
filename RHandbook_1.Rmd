@@ -61,6 +61,12 @@ As described above, you will be running your code in RStudio’s console. Howeve
 
 To open a script file, go to the file menu at the top of the window, hover over “New File”, and then select “R Script” from the new menu that appears. Now you will see a new panel on the top left-hand side of the screen where you can view and edit your script files. You can now type code into the script, save it, and run it. When you run the code, you will see it appear in the console.
 
+To run the code from an R script, you can place your cursor in the line of code you want to run or highlight the code you want to run, then either click the run button (see picture below) or hit "ctrl + enter" (PC) or "cmd + return" (Mac). Alternatively, you can copy and paste the code from the script into the console.
+
+![Image of RStudio layout, showing the "run code" button at the top of an R script](RunRCode.png)
+
+When you write code in an R script, it is extremely helpful to include comments in your code, as a reminder of what you are doing in each step. To make a comment in your script file, first type #, followed by your comment. The # will tell R that the following text should not be run as code. In Lesson 2, you will see some examples of code comments. 
+
 ### 1.4	Installing packages
 One nice thing about R is that it is opensource software. This means it is free, but it also means that users can write packages for the program. These packages contain new functions that are not included in base R. Other users can install the packages, giving them access to the new functions. There are many, many R packages out there designed for different purposes. In this class, we will primarily use two packages, in addition to the base R functions.
 
