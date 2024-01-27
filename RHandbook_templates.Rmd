@@ -1,0 +1,39 @@
+---
+title: "ESS 3500 R code templates"
+author: "Emily Schultz"
+date: "2024-01-26"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
+```
+
+## R Basics
+```{r arithmetic_functions}
+log(X) # natural logarithm of x
+log10(X) # logarithm base 10 of x
+sqrt(X) # square root of x
+abs(X) # absolute value of x
+
+VECTOR <- c(X1,X2,X3,...) # concatenate function to put values together in a vector
+
+sum(VECTOR, na.rm = T/F) # sum of a set of numbers; set na.rm to T to remove missing values
+mean(VECTOR, na.rm = T/F) # mean of a set of numbers; set na.rm to T to remove missing values
+sd(VECTOR, na.rm = T/F) # sd of a set of numbers; set na.rm to T to remove missing values
+
+VECTOR[X] # extract value X from a vector
+VECTOR[X1:X2] # extract values X1 through X2 from a vector
+VECTOR[c(X1,X2)] # extract values X1 and X2 from a vector
+VECTOR[-X] # remove value X from a vector
+VECTOR[-(X1:X2)] # remove values X1 through X2 from a vector
+VECTOR[-c(X1,X2)] # remove values X1 and X2 from a vector
+
+DATA <- data.frame(VARIALBE1=VALUES1,VARIALBE2=VALUES2,...) # create a data frame by inputing values for variables
+
+DATA$VARIABLE # Extract a variable from a data frame
+DATA[[X,Y]] # Extract the value in row X and column Y
+```
+
+
+

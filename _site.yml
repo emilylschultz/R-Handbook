@@ -31,3 +31,5 @@ navbar:
         href: RHandbook_11.html
       - text: "Lesson 12: Categorical data"
         href: RHandbook_12.html
+    - text: "R Templates"
+      href: RHandbook_templates.html

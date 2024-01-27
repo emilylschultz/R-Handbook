@@ -9,9 +9,11 @@
 <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
+<meta name="author" content="Emily Schultz" />
 
+<meta name="date" content="2024-01-26" />
 
-<title>ESS 3500 R Handbook</title>
+<title>ESS 3500 R code templates</title>
 
 <script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -305,14 +307,38 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">ESS 3500 R Handbook</h1>
+<h1 class="title toc-ignore">ESS 3500 R code templates</h1>
+<h4 class="author">Emily Schultz</h4>
+<h4 class="date">2024-01-26</h4>
 
 </div>
 
 
-<p>This reference contains the lessons you will need to navigate R in
-ESS 355: Biostatistics and Quantitative Reasoning! Use the menu at the
-top to navigate to the different lessons.</p>
+<div id="r-basics" class="section level2">
+<h2>R Basics</h2>
+<pre class="r"><code>log(X) # natural logarithm of x
+log10(X) # logarithm base 10 of x
+sqrt(X) # square root of x
+abs(X) # absolute value of x
+
+VECTOR &lt;- c(X1,X2,X3,...) # concatenate function to put values together in a vector
+
+sum(VECTOR, na.rm = T/F) # sum of a set of numbers; set na.rm to T to remove missing values
+mean(VECTOR, na.rm = T/F) # mean of a set of numbers; set na.rm to T to remove missing values
+sd(VECTOR, na.rm = T/F) # sd of a set of numbers; set na.rm to T to remove missing values
+
+VECTOR[X] # extract value X from a vector
+VECTOR[X1:X2] # extract values X1 through X2 from a vector
+VECTOR[c(X1,X2)] # extract values X1 and X2 from a vector
+VECTOR[-X] # remove value X from a vector
+VECTOR[-(X1:X2)] # remove values X1 through X2 from a vector
+VECTOR[-c(X1,X2)] # remove values X1 and X2 from a vector
+
+DATA &lt;- data.frame(VARIALBE1=VALUES1,VARIALBE2=VALUES2,...) # create a data frame by inputing values for variables
+
+DATA$VARIABLE # Extract a variable from a data frame
+DATA[[X,Y]] # Extract the value in row X and column Y</code></pre>
+</div>
 
 
 
