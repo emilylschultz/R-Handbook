@@ -264,7 +264,7 @@ $(document).ready(function () {
       <a href="RHandbook_3.html">Lesson 3: Data frames</a>
     </li>
     <li>
-      <a href="RHandbook_4.html">Lesson 4: Descriptive statistics</a>
+      <a href="RHandbook_4.html">Lesson 4: Distributions and descriptive statistics</a>
     </li>
     <li>
       <a href="RHandbook_5.html">Lesson 5: Linear models</a>
@@ -764,6 +764,65 @@ what measure of variation you used.</p>
 visualizing statistical models! In the upcoming lessons, we will focus
 on how we do formal comparisons of models to determine which model(s)
 best represent our data.</p>
+</div>
+<div id="scatter-plots" class="section level4">
+<h4>Scatter plots</h4>
+<p>Scatter plots are a good way to visualize the relationship between
+two continuous variable, so we can see how strongly they might be
+correlated and whether the relationship is positive or negative.</p>
+<p>Here, we will make a scatter plot to show the relationship between
+density_2006 and density_2007.</p>
+<pre class="r"><code>ggplot(data = civu, aes(x = density_2006, y = density_2007)) +
+  geom_point()</code></pre>
+<p><img src="RHandbook_6_files/figure-html/scatter-1.png" width="672" /></p>
+<p>Notice the code is very similar to what we used to make the
+histogram. The first line is identical, except that we add a second
+variable, our y variable, in the aes argument. The second line is
+similar, except that we use the <code>geom_point</code> function to
+create a graph instead of a histogram.</p>
+<p>Now let’s also change our axis labels and theme, as we did for the
+histogram:</p>
+<pre class="r"><code>ggplot(data = civu, aes(x = density_2006, y = density_2007)) +
+  geom_point() +
+  labs(x = &quot;Density in 2006&quot;, y = &quot;Density in 2007&quot;) +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_6_files/figure-html/scatter_theme-1.png" width="672" /></p>
+</div>
+<div id="box-plots-1" class="section level4">
+<h4>Box plots</h4>
+<p>Box plots allow us to visualize the effect of a categorical
+independent variable on a continuous dependent variable. We will make a
+box plot showing how the herbivory treatment affected the density_2006
+variable.</p>
+<p>First, we need to change the herbivory variable from an integer
+variable to a factor variable, because we are using herbivory as a
+categorical variable. We did this in the data frame practice problems as
+well.</p>
+<pre class="r"><code>civu$herbivory &lt;- as.character(civu$herbivory)</code></pre>
+<p>Now we are ready to make our box plot. The set up will be similar to
+the code for the previous plots, except we are changing our x and y
+variables in the first line of code and changing our plot type in the
+second line of code. We will also change the axis labels and theme in
+this plot.</p>
+<pre class="r"><code>ggplot(data = civu, aes(x = herbivory, y = density_2006)) +
+  geom_boxplot() +
+  labs(x = &quot;Herbivory treatment&quot;, y = &quot;Density in 2006&quot;) +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_6_files/figure-html/boxplot-1.png" width="672" /></p>
+<p>If you are unfamiliar with box plots, they show both a measure of the
+central tendency (usually the median) and the variation in the dependent
+variable for each category. The median for each group is shown by the
+bar in the middle of each box. The boxes show the inter-quartile range
+(i.e., the bottom of the box shows the first quartile and the top of the
+box shows the third quartile). Therefore, 50% of the values in the data
+fall within the box. The whiskers (vertical lines you might see below
+and/or above the box) show the smallest and largest values in the data
+set that are no farther than 1.5 times the inter-quartile range from the
+first and third quartile, respectively.</p>
+<p>There are many different types of graphs and ways we can modify our
+graphs using ggplot. We will cover some of these in future lessons as we
+get into inferential statistics. But these three types of graphs will
+give you a good starting point for exploring your own data sets!</p>
 </div>
 </div>
 </div>
