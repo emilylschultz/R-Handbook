@@ -10,13 +10,19 @@ knitr::opts_chunk$set(echo = TRUE, eval=FALSE)
 ```
 
 ## R Basics
+
+### Mathematical functions
 ```{r arithmetic_functions}
 log(X) # natural logarithm of x
 log10(X) # logarithm base 10 of x
 sqrt(X) # square root of x
 abs(X) # absolute value of x
+```
 
+### Vector functions
+```{r vectors}
 VECTOR <- c(X1,X2,X3,...) # concatenate function to put values together in a vector
+VECTOR <- seq(X1,XN, by=INCREMENT) # create a vector of numbers in a sequence from X1 to XN, in increments of INCREMENT
 
 sum(VECTOR, na.rm = T/F) # sum of a set of numbers; set na.rm to T to remove missing values
 mean(VECTOR, na.rm = T/F) # mean of a set of numbers; set na.rm to T to remove missing values
@@ -28,12 +34,79 @@ VECTOR[c(X1,X2)] # extract values X1 and X2 from a vector
 VECTOR[-X] # remove value X from a vector
 VECTOR[-(X1:X2)] # remove values X1 through X2 from a vector
 VECTOR[-c(X1,X2)] # remove values X1 and X2 from a vector
+```
 
+### Data frame basics
+```{r databasic}
 DATA <- data.frame(VARIALBE1=VALUES1,VARIALBE2=VALUES2,...) # create a data frame by inputing values for variables
 
 DATA$VARIABLE # Extract a variable from a data frame
 DATA[[X,Y]] # Extract the value in row X and column Y
 ```
 
+## Data frames
 
+### Creating and viewing data frames
+```{r dataframe}
+DATA <- read.csv("FILENAME.csv") # create a data frame by uploading a csv file
 
+head(DATA) # view the top few rows of your data frame
+View(DATA) # view the entire data frame in a new tab (note the capital V)
+names(DATA) # view the variable (column) names in your data frame
+str(DATA) # view the structure of your data frame, including variable names and types
+```
+
+### Changing variable types
+```{r vartype}
+DATA$VARIABLE <- as.factor(DATA$VARIABLE) # convert a variable to a factor variable
+DATA$VARIABLE <- as.character(DATA$VARIABLE) # convert a variable to a character variable
+DATA$VARIABLE <- as.integer(DATA$VARIABLE) # convert a variable to an integer variable
+DATA$VARIABLE <- as.numeric(DATA$VARIABLE) # convert a variable to a numeric variable
+```
+
+### Manipulating variables with the **tidyverse** package
+```{r tidyverse}
+library(tidyverse) # load tidyverse
+
+DATA_FILTER <- filter(DATA, VARIABLE==CRITERIA) # Filter data so new data frame includes only the values for a variable the meet a certain CRITERIA. If the variable is a text variable, the CRITERIA need to go inside quotes. CRITERIA can also use <, >, and != (not equal to) in place of ==.
+DATA_SELECT <- select(DATA, VARIABLE1, VARIABLE2,...) # select particular variables from a data frame
+DATA_MUTATE <- mutate(DATA,NEWVARIABLE = FUNCTION(VARIABLE)) # Create a new variable in the data frame by applying a function to existing variable(s). Functions can include, but are not limited to: log, sum, min, max, mean.
+GROUP <- group_by(DATA,VARIABLE) # Group a data frame by a particular variable(s) in preparation for summarizing a data frame. The grouped data frame will not look different than the original, but above the data frame, you will be able to see the number of groups for the variable you grouped by.
+DATA_SUMMARY <- summarise(GROUP, SUMMARYVARIABLE1 = FUNCTION(VARIABLE1), SUMMARYVARIABLE2 = FUNCTION(VARIABLE2),...) # Summarize variables in a data frame. Note that the first argument is a grouped data frame created using the group_by function. You can summarize more than one variable at a time with this function.
+```
+
+## Graphing with the **ggplot2** package
+Note: **ggplot2** is part of the **tidyverse** set of packages
+
+### General structure
+```{r ggplotinit}
+ggplot(DATA,aes(X=INDEPENDENTVARIABLE,Y=DEPENDENTVARIABLE)) # Initialize a ggplot graph by identifying the data frame, independent, and dependent variable. Note that some graphs (e.g., histograms) might only require an independent variable
+
+# Graph components are added after the ggplot function, using a plus sign (+) to add each additional component, as follows
+ggplot(DATA,aes(X=INDEPENDENTVARIABLE,Y=DEPENDENTVARIABLE)) +
+  geom_GRAPHTYPE() +
+  labs(x = "X AXIS LABEL", y = "Y AXIS LABEL") +
+  theme_classic()
+```
+
+### Specific graph types
+Note: multiple graph types can be added as components to the same plot
+```{r graphtypes}
+# Histogram
+ggplot(DATA,aes(X=INDEPENDENTVARIABLE)) +
+  geom_histogram() +
+  labs(x = "X AXIS LABEL", y = "Y AXIS LABEL") +
+  theme_classic()
+
+# Density
+ggplot(DATA,aes(X=INDEPENDENTVARIABLE,Y=DENSITY)) +
+  geom_density(stat="identity",linewidth=1)+
+  labs(x = "X AXIS LABEL", y = "Y AXIS LABEL") +
+  theme_classic()
+
+# Vertical line
+ggplot(DATA,aes(X=INDEPENDENTVARIABLE)) +
+  geom_vline(aes(xintercept=INTERCEPT),color="COLOR",linewidth=1) +
+  labs(x = "X AXIS LABEL", y = "Y AXIS LABEL") +
+  theme_classic()
+```
