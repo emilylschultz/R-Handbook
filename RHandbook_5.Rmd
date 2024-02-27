@@ -61,7 +61,7 @@ Now when we view the output, we see two coefficients. The intercept (21) and the
 $$
 \mu = 21 + 17*herbivory
 $$
-where \mu is the mean density. Recall that the categorical herbivory term in this equation can take on two values: 0 and 1. In this case, 0 is the control group, which is herbivores present and 1 is the treatment group, which is herbivores excluded. Therefore, the mean density in the presence of herbivores is 21 and the mean density in the absence of herbivores is $21+17=38$.
+where $\mu$ is the mean density. Recall that the categorical herbivory term in this equation can take on two values: 0 and 1. In this case, 0 is the control group, which is herbivores present and 1 is the treatment group, which is herbivores excluded. Therefore, the mean density in the presence of herbivores is 21 and the mean density in the absence of herbivores is $21+17=38$.
 
 #### Model variance
 We now have two models that describe the mean (or means) of our data:
@@ -69,7 +69,7 @@ We now have two models that describe the mean (or means) of our data:
 1. Null model: $\mu=34.6$
 2. Alternative model: $\mu=21+17*herbivory$
 
-But remember, to describe data using a normal distribution, we need two parameters: the mean and the variance! We'll now learn how to find the variance ($\sigma^2$) (and standard deviation) in the model output. To do so, we will use the `summary` function. The summary function will give us additional output for our model. Most of the output we will learn about later in the semester when we cover model testing. For now, we will just pull out the standard deviation from the summary for each model as follows:
+But remember, to describe data using a normal distribution, we need two parameters: the mean and the variance! We'll now learn how to find the variance ($\sigma^2$) (and standard deviation) in the model output. To do so, we will use the `summary` function. The summary function will give us additional output for our model. We will learn about most of the output later in the semester when we cover model testing. For now, we will just pull out the standard deviation from the summary for each model as follows:
 
 ```{r model_sd}
 null_sd_civu <- summary(civu_null)$sigma
@@ -85,7 +85,7 @@ alt_var_civu <- alt_sd_civu^2
 
 This variance is specifically what we refer to as the residual variance of the model, which we talked about earlier in the class. It is the variation in our data that is not explained by the predictors we included in our model. In this particular example, we can explain some variation in thistle density by herbivore presence (which is why the residual variance is lower in our alternative model than our null model), but within each treatment groups, there is still unexplained variation in density. In this type of model, we assume that the variance is equal, or close to equal, in both of our treatment groups, so we just have a single variance term.
 
-We now have to complete models, with both mean and variance terms to describe our data. If we write them out formally, they would look like this, where $N$ indicates a normal distribution:
+We now have two complete models, with both mean and variance terms to describe our data. If we write them out formally, they would look like this, where $N$ indicates a normal distribution:
 
 Null model:
 $$
@@ -124,7 +124,7 @@ For this example, We will also work with the question you tackled in your Model 
 #### Null model
 Let's start with the null hypothesis: temperature does not affect the growth of trees.
 
-As before, our null model will therefore not have a predictor variable because we are assuming that temperature is not important for the growth of trees.
+As before, our null model will not have a predictor variable because we are assuming that temperature is not important for the growth of trees.
 
 The full code to set up the model is as follows:
 
@@ -143,7 +143,7 @@ This output should look very similar to the output for the null model for the ci
 #### Alternative model
 Now we'll move on to our alternative model: temperature does affect the tree growth. This time, we will include temperature in our model to determine how the temperature affects tree growth.
 
-We set up the model in the same way we did for the null model, but this time including our temperature variable.
+We set up the model in the same way we did for the null model, but this time including our temperature variable as a predictor.
 
 ```{r tree_alt}
 tree_alt <- lm(Growth ~ Temperature, tree)
@@ -155,10 +155,10 @@ Here we again see two coefficients. The intercept and the temperature coefficien
 $$
 \mu = 0.32926 - 0.01497*temperature
 $$
-where \mu is the mean tree growth. The difference in the interpretation for this model is that temperature is a continuous variable, so it can take on a full range of values. Still, using this equation, we would be able to calculate the mean tree growth for any temperature value. We can also tell from the sign on the temperature coefficient that as temperature increases, we would expect the tree growth to decrease.
+where $\mu$ is the mean tree growth. The difference in the interpretation for this model is that temperature is a continuous variable, so it can take on a full range of values. Still, using this equation, we would be able to calculate the mean tree growth for any temperature value. We can also tell from the sign on the temperature coefficient that as temperature increases, we would expect the tree growth to decrease.
 
 #### Model variance
-Finally, we will calculate the residual variance for our two model, so we can fully describe the distribution of our tree growth data.
+Finally, we will calculate the residual variance for our two models, so we can fully describe the distribution of our tree growth data.
 
 ```{r variation}
 null_sd_tree <- summary(tree_null)$sigma
@@ -193,6 +193,9 @@ $$
 $$
 In the next class, we will use these same examples to practice visualizing our data and model output, so be sure to save your code from this lesson, and make sure you add comments to your code so you remember what you were doing at each step!
 
+### Team challenge
+1. In the first exercise in this lesson, you built models for testing the effect of herbivory on the density of thistles in 2006. Repeat the analysis to test the effect of herbivory on the density of thistles in 2007 (the density_2007 variable). Build the null and alternative models and identify the mean and variance terms for each model.
 
+2. In these models, we assume our dependent variable is normally distributed, but sometimes our data are not normally distributed and it works better to transform the data before building our models (we will discuss this more in later classes!). Using the tree data frame that you created from the DataFrameExample data set, first use the mutate function to create a new variable that is the log of the original Growth variable. Then re-run the analysis using the log of Growth, instead of the original Growth variable, as the dependent variable. Again, build the null and alternative models and identify the mean and variance terms for each model.
 
 
