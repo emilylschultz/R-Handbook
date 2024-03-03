@@ -15,10 +15,10 @@ knitr::opts_chunk$set(echo = TRUE)
 ## Lesson 6: VISUALING STATISTICAL MODELS
 In Lesson 5, you practiced building and parameterizing linear models in R. In this lesson, you will learn different ways of visualizing these models. For this lesson, we will work with the same models you built in Lesson 5, so go ahead and open your R script from lesson 5. You can add the code for this Lesson to the same script file, if you would like.
 
-We will use the **ggplot2** package to create these graphs, so load that package now.
+We will use the **ggplot2** package in the **tidyverse** set of packages to create these graphs, so load **tidyverse** now.
 
 ```{r load_ggplot}
-library(ggplot2)
+library(tidyverse)
 ```
 
 ### 6.1 Discrete predictor variable
@@ -29,49 +29,48 @@ Using the script file from Lesson 5, run all of the code you wrote for the civu 
 We will learn two different ways of visualizing the data and model. The first does not explicitly use the model output, but the second will allow you to visualize how the distribution of the data compares to the distribution predicted by the model.
 
 #### Box plots
-The first type of graph we will make is a boxplot. Good news! You already practiced making this type of plot in Lesson 4!
+The first type of graph we will make is a boxplot. Box plots allow us to visualize the effect of a categorical independent variable on a continuous dependent variable.
 
 As I mentioned, this type of plot does not explicitly incorporate the model output. However it will show information similar to the parameters R calculated when you ran the models in R: central tendency and variation.
 
-Let's start with our box plot for our null model. Just like when we worked with ggplot in the past, we will start by specifying the data and variables we want to include in our graph. Then we add layers to the code to specify the type of graph we want. For this first graph, we will use the civu data set. Because this is our null model, we are assuming that herbivory does not affect plant density, so we just want to graph a single distribution for all of our data. Therefore, unlike when we created box plots before, when we specified both and x and y variable, we will just specify the y variable this time (our plant density variable). In the following lines of code, we tell R to make a box plot, change the axis label, and use the classic theme that removes the background color and gridlines. Because R likely classified our herbivory treatment variable as a numeric variable when we loaded the data, we will also reclassify that variable as a factor before we make our graph. 
+Typically researchers don't make separate boxplots to represent the null and alternative models. The graph we will make will show separate distributions for each category, so we can visually compare them to determine if they look similar (null model) or different (alternative model). 
 
-```{r null_box}
-civu$herbivory <- as.factor(civu$herbivory)
-
-ggplot(data = civu, aes(y = density_2006)) +
-  geom_boxplot() +
-  labs(y = "Density in 2006") +
-  theme_classic()
-```
-  
-Now let's make an equivalent plot for our alternative model. We will make a box plot, just as before, but this time including herbivory as our x variable.
+Just like when we worked with ggplot in the past, we will start by specifying the data and variables we want to include in our graph. Then we add layers to the code to specify the type of graph we want. For this first graph, we will use the civu data set. Because we are now interested in two variables, our independent (herbivory treatment) and dependent (plant density) variables, we will first specify both our and x and y variable. In the following lines of code, we tell R to make a box plot, change the axis label, and use the classic theme that removes the background color and gridlines. Because R likely classified our herbivory treatment variable as a numeric variable when we loaded the data, we will also reclassify that variable as a factor before we make our graph. 
 
 ```{r alt_box}
+civu$herbivory <- as.factor(civu$herbivory)
+
 ggplot(data = civu, aes(x = herbivory, y = density_2006)) +
   geom_boxplot() +
   labs(x = "Herbivory treatment", y = "Density in 2006") +
   theme_classic()
 ```
 
+If you are unfamiliar with box plots, they show both a measure of the central tendency (usually the median) and the variation in the dependent variable for each category. With the default settings in **ggplot2** The median for each group is shown by the bar in the middle of each box. The boxes show the inter-quartile range (i.e., the bottom of the box shows the first quartile and the top of the box shows the third quartile). Therefore, 50% of the values in the data fall within the box. The whiskers (vertical lines you might see below and/or above the box) show the smallest and largest values in the data set that are no farther than 1.5 times the inter-quartile range from the first and third quartile, respectively.
+
 This type of plot is commonly used both in exploratory analysis and as a final plot that might be included in a manuscript. Although it does not explicitly use the output of the model, I will always accept this type of plot as a good way of summarizing the distribution of your data and how that distribution might vary between categories.
 
 #### Density Plots
-The second type of plot we will make is more complicated and probably less commonly used. However, I want you to create them in this exercise for two reasons:
+The second type of plot we will make is more complicated and probably less commonly used. However, I want you to create them in this exercise for three reasons:
 
 1. This type of plot reinforces that when we build models, we are using our data to estimate the parameters of a distribution that we think represents the distribution of our variable in the underlying population. It will also allow you to visualize how the estimated distribution compares to the actual distribution of your sample data.
 
-2. It will demonstrate how to use ggplot to add multiple layers to the same graph.
+2. It provides more information about the entire distribution of your data.
+
+3. It will demonstrate how to use ggplot to add multiple layers to the same graph.
 
 Remember, though, that box plots are a good way to visualize data like these, so if you are not comfortable making these density plots on your own, you may stick with box plots for visualizing your own data.
 
 ##### Null model
-We will start with the graph for the null model. We will take this in steps, first creating a histogram of our sample data, which should be familiar from Lesson 4. Then we will add another layer to the plot with the distribution estimated from our model.
+Because this type of graph directly ties our data to our modeled distributions, we will first explicitly make a graph of the null model to reinforce that the null model assumes the distribution of our dependent variable (plant density) does not depend on our independent variable (herbivory).
 
-Let's create our histogram. Our null model assumes the distribution of plant density does not depend on the herbivory treatment, so for this graph, we will just make a single histogram of all of our density data. This code is the same code we used to histogram these data in Lesson 4, with one change. In Lesson 4, we graphed the frequency of each range of plant density values, i.e., the count of observations that fell within each range. However, when we add our estimated distribution from the model, we will be plotting the probability density of each possible plant value. The probability density is not on the same scale as the frequency because the frequency depends on the total sample size as well as the probability of observing each range of plant density values. Therefore, in order to compare the sample distribution and the estimated distribution, we will convert the frequency to the probability density. You can see this step in the second line of code below, as an argument in the `geom_histogram` function. The argument we add is `aes(y=after_stat(density))`. This argument tells R to calculate the probability density and use that as our y variable in place of the frequency. Try it out!
+We will take this in steps, first creating a histogram of our sample data, which should be familiar from Lesson 4. Then we will add another layer to the plot with the distribution estimated from our model.
+
+Let's create our histogram. Our null model assumes the distribution of plant density does not depend on the herbivory treatment, so for this graph, we will just make a single histogram of all of our density data. This code is the same code we used to histogram these data in Lesson 4, with one change. In Lesson 4, we graphed the frequency of each range of plant density values, i.e., the count of observations that fell within each range. However, when we add our estimated distribution from the model, we will be plotting the probability density of each possible plant value. The probability density is not on the same scale as the frequency because the frequency depends on the total sample size as well as the probability of observing each range of plant density values. Therefore, in order to compare the sample distribution and the estimated distribution, we will convert the frequency to the probability density. You can see this step in the second line of code below, as an argument in the `geom_histogram` function. The argument we add is `aes(y=..density..)`. This argument tells R to calculate the probability density and use that as our y variable in place of the frequency. Try it out!
 
 ```{r null_hist}
 ggplot(data = civu, aes(x = density_2006))+
-  geom_histogram(aes(y=after_stat(density)),bins = 10) +
+  geom_histogram(aes(y=..density..),bins = 10) +
   labs(x = "Density in 2006", y = "Probability Density") +
   theme_classic()
 ```
@@ -125,13 +124,13 @@ There we have it! The histogram on our graph shows in the distribution of plant 
 ##### Alternative model
 Now we will repeat the above process for our alternative model. Our approach will be the same, but this time we will be graphing separate distributions for the herbivory and no herbivory treatments. This will be a little more complicated, but it will also give you a chance to play with color and other settings in ggplot to make the visualization more clear!
 
-We will again start by making the histogram of sample data. We will graph the data for each treatment in a different color, so we can see how herbivory affects the distribution of plant density. To do this, we will add a "colour = herbivory" argument *inside* the `aes` function in the `geom_histogram` command. This tells ggplot to create a histogram of plant densities for each treatment, and use a separate color for each. The other argument we will add *outside* the `aes` function is the "fill = NA" argument, which tells ggplot not to add a fill color to the histogram bars. This will just make it easier to see everything after we add the other layer.
+We will again start by making the histogram of sample data. We will graph the data for each treatment in a different color, so we can see how herbivory affects the distribution of plant density. To do this, we will add a `colour = herbivory` argument *inside* the `aes` function in the `geom_histogram` command. This tells ggplot to create a histogram of plant densities for each treatment, and use a separate color for each. The other arguments we will add *outside* the `aes` function are the `fill = NA` argument, which tells ggplot not to add a fill color to the histogram bars, and `linewidth = 1`, which increases the widths of the bar outlines. This will just make it easier to see everything after we add the other layer.
 
 We will also manually set the colors we want ggplot to use. The default color palette used by R is not colorblind friendly, so I always like to choose colorblind friendly options instead. There are a number of websites where you can find colorblind friendly palettes. I will post some links in the R discussion forum on Canvas. Many have accompanying R packages you are welcome to explore, but I often just look up the hex codes for the colors I want and use those in my code. We set the colors using the `scale_colour_manual` function, and we can simply provide ggplot with the hex codes we want using the "values" argument.
 
 ```{r alt_hist}
 ggplot(data = civu, aes(x = density_2006))+
-  geom_histogram(aes(y=after_stat(density), colour = herbivory), fill = NA, bins = 10) +
+  geom_histogram(aes(y=after_stat(density), colour = herbivory), fill = NA, bins = 10,linewidth = 1) +
   scale_colour_manual(values=c("#ce9642","#3b7c70")) +
   labs(x = "Density in 2006", y = "Probability Density") +
   theme_classic()
@@ -178,7 +177,7 @@ We now have the data frame we need to create our final graph, where we add our e
 ```{r alt_density}
 ggplot(data = civu, aes(x = density_2006))+
   geom_density(data = civu_alt_data, aes(x = Density, y = Probability, fill = Herbivory, colour = Herbivory), stat="identity", alpha = 0.3) +
-  geom_histogram(aes(y=after_stat(density), colour = herbivory),fill = NA , bins = 10) +
+  geom_histogram(aes(y=after_stat(density), colour = herbivory),fill = NA , bins = 10,linewidth = 1) +
   scale_colour_manual(values=c("#ce9642","#3b7c70")) +
   scale_fill_manual(values=c("#ce9642","#3b7c70")) +
   labs(x = "Density in 2006", y = "Probability Density") +
@@ -188,13 +187,16 @@ ggplot(data = civu, aes(x = density_2006))+
 Here we have our final graph, with the bars of the histograms showing the sample distributions and the shaded density plots showing the estimated population distributions for the two herbivory treatments based on the alternative model. If you would like, feel free to play around with some of the parameters like the number of bins in the histogram, the alpha (transparency) value, and the colors, to see how that impacts the aesthetics of the graph!
 
 ### 6.2 Continuous predictor variable
-We will now move on to our tree example with a continuous independent variable and a continuous dependent variable. This will be easy compared to the previous set of graphs you made! To visualize these models, we will use scatter plots of the sample data along with best fit lines to represent the distributions predicted by the models.
+We will now move on to our tree example with a continuous independent variable and a continuous dependent variable. This will be easy compared to the previous set of graphs you made! To visualize these models, we will use scatter plots of the sample data along with best fit lines to represent the distributions predicted by the models. Scatter plots are a good way to visualize the relationship between two continuous variable, so we can see how strongly they might be correlated and whether the relationship is positive or negative.
 
 If you haven't already, use the script file from Lesson 5 to run all of the code you wrote for the tree example, including the building of both the null and alternative models. Be sure you first have your working directory set to the folder containing the DataFrameExample data set.
 
-#### Null model
-Let's start with the null model: temperature does not affect the growth of trees. We'll make the scatter plot of the sample data first. This is the same method we used to make scatter plots in Lesson 4.
+As with the box plots, it is not typical to make separate graphs for the null and alternative models. People usually just add the best fit line, representing the alternative model and visually assess if the slope looks different than zero. For demonstration purposes, in this lesson, we will make a graph to explicitly represent the null model, but going forward, you are welcome to just make the alternative model version unless instructed otherwise.
 
+#### Null model
+Let's start with the null model: temperature does not affect the growth of trees. 
+
+We'll make the scatter plot of the sample data first. 
 
 ```{r null_scatter}
 ggplot(data = tree, aes(x = Temperature, y = Growth))+
@@ -250,49 +252,11 @@ ggplot(data = tree, aes(x = Temperature, y = Growth))+
 
 Like with our previous graph, you will see a best fit line representing the mean of the distribution, which now varies with temperature, and shading to represent variation, or uncertainty, in the mean. The biggest differnce is that this time the shading represents the 95% confidence interval, rather than the standard deviation. The 95% confidence interval basically says that if we repeated our experiment over and over again, we would expect the mean value estimated from our data to fall within that interval 95% of the time. Like the standard deviation, it is method of representing the variation in our data. Both measures (as well as variance and standard deviation) are acceptable ways of representing the variation. What is important is that when you present your results, you make it clear in your figure captions and text what measure of variation you used.
 
+There are many different types of graphs and ways we can modify our graphs using ggplot. We will cover some of these in future lessons as we get into inferential statistics. But these three types of graphs will give you a good starting point for exploring your own data sets!
+
 You have now gone through the whole process of building and visualizing statistical models! In the upcoming lessons, we will focus on how we do formal comparisons of models to determine which model(s) best represent our data.
 
-#### Scatter plots
+### Team challenge
+1. In the team challenge for lesson 5, you built models to test the effect of herbivory on the density of thistles in 2007 instead of 2006 (the density_2007 variable). Make at least one type of graph to visualize the effect of herbivory on the density of thistles in 2007.
 
-Scatter plots are a good way to visualize the relationship between two continuous variable, so we can see how strongly they might be correlated and whether the relationship is positive or negative.
-
-Here, we will make a scatter plot to show the relationship between density_2006 and density_2007.
-
-```{r scatter}
-ggplot(data = civu, aes(x = density_2006, y = density_2007)) +
-  geom_point()
-```
-
-Notice the code is very similar to what we used to make the histogram. The first line is identical, except that we add a second variable, our y variable, in the aes argument. The second line is similar, except that we use the `geom_point` function to create a graph instead of a histogram.
-
-Now let's also change our axis labels and theme, as we did for the histogram:
-
-```{r scatter_theme}
-ggplot(data = civu, aes(x = density_2006, y = density_2007)) +
-  geom_point() +
-  labs(x = "Density in 2006", y = "Density in 2007") +
-  theme_classic()
-```
-
-#### Box plots
-
-Box plots allow us to visualize the effect of a categorical independent variable on a continuous dependent variable. We will make a box plot showing how the herbivory treatment affected the density_2006 variable.
-
-First, we need to change the herbivory variable from an integer variable to a factor variable, because we are using herbivory as a categorical variable. We did this in the data frame practice problems as well.
-
-```{r factor}
-civu$herbivory <- as.character(civu$herbivory)
-```
-
-Now we are ready to make our box plot. The set up will be similar to the code for the previous plots, except we are changing our x and y variables in the first line of code and changing our plot type in the second line of code. We will also change the axis labels and theme in this plot.
-
-```{r boxplot}
-ggplot(data = civu, aes(x = herbivory, y = density_2006)) +
-  geom_boxplot() +
-  labs(x = "Herbivory treatment", y = "Density in 2006") +
-  theme_classic()
-```
-
-If you are unfamiliar with box plots, they show both a measure of the central tendency (usually the median) and the variation in the dependent variable for each category. The median for each group is shown by the bar in the middle of each box. The boxes show the inter-quartile range (i.e., the bottom of the box shows the first quartile and the top of the box shows the third quartile). Therefore, 50% of the values in the data fall within the box. The whiskers (vertical lines you might see below and/or above the box) show the smallest and largest values in the data set that are no farther than 1.5 times the inter-quartile range from the first and third quartile, respectively.
-
-There are many different types of graphs and ways we can modify our graphs using ggplot. We will cover some of these in future lessons as we get into inferential statistics. But these three types of graphs will give you a good starting point for exploring your own data sets!
+2. In the second lesson 5 team challenge activity, you built a model comparing temperature and tree growth, but using the log of Growth, instead of the original Growth variable, as the dependent variable. Make a scatter plot with a best fit line to show the relationship between temperature and log of Growth.
