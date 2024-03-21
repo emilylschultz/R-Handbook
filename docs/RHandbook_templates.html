@@ -396,23 +396,75 @@ ggplot(DATA,aes(X=INDEPENDENTVARIABLE,Y=DEPENDENTVARIABLE)) +
 <h3>Specific graph types</h3>
 <p>Note: multiple graph types can be added as components to the same
 plot</p>
-<pre class="r"><code># Histogram
-ggplot(DATA,aes(X=INDEPENDENTVARIABLE)) +
+<pre class="r"><code># Histogram (use this to graph the frequency of value for a single variable)
+ggplot(DATA,aes(x=INDEPENDENTVARIABLE)) +
   geom_histogram() +
   labs(x = &quot;X AXIS LABEL&quot;, y = &quot;Y AXIS LABEL&quot;) +
   theme_classic()
 
-# Density
-ggplot(DATA,aes(X=INDEPENDENTVARIABLE,Y=DENSITY)) +
+# Density (use this to graph the probability of value for a single variable)
+ggplot(DATA,aes(x=INDEPENDENTVARIABLE,y=DENSITY)) +
   geom_density(stat=&quot;identity&quot;,linewidth=1)+
   labs(x = &quot;X AXIS LABEL&quot;, y = &quot;Y AXIS LABEL&quot;) +
   theme_classic()
 
-# Vertical line
-ggplot(DATA,aes(X=INDEPENDENTVARIABLE)) +
+# Vertical line (use this to add a vertical line to a graph)
+ggplot(DATA,aes(x=INDEPENDENTVARIABLE)) +
   geom_vline(aes(xintercept=INTERCEPT),color=&quot;COLOR&quot;,linewidth=1) +
   labs(x = &quot;X AXIS LABEL&quot;, y = &quot;Y AXIS LABEL&quot;) +
+  theme_classic()
+
+# Boxplot (use this for a categorical independent variable and a continuous dependent variable)
+ggplot(DATA, aes(x=INDEPENDENTVARIABLE, y=DEPENDENTVARIABLE)) +
+  geom_boxplot() +
+  labs(x = &quot;X AXIS LABEL&quot;, y = &quot;Y AXIS LABEL&quot;) +
+  theme_classic()
+
+# Scatterplot with best fit line (use this for a continuous independent variable and a continuous dependent variable)
+ggplot(DATA, aes(x=INDEPENDENTVARIABLE, y=DEPENDENTVARIABLE))+
+  geom_point() +
+  geom_smooth(method = &quot;lm&quot;) +
+  labs(x = &quot;X AXIS LABEL&quot;, y = &quot;Y AXIS LABEL&quot;) +
   theme_classic()</code></pre>
+</div>
+</div>
+<div id="building-general-linear-models" class="section level2">
+<h2>Building general linear models</h2>
+<pre class="r"><code># Null model
+null &lt;- lm(INDEPENDENTVARIABLE ~ 1, DATA)
+
+# Alternative model
+alternative &lt;- lm(INDEPENDENTVARIABLE ~ DEPENDENTVARIABLE, DATA)
+
+# Extracting coefficients
+COEFFICIENTS &lt;- summary(MODELNAME)$coefficients
+
+# Extracting model standard deviation
+SIGMA &lt;- summary(MODELNAME)$sigma</code></pre>
+</div>
+<div id="running-statistics-tests" class="section level2">
+<h2>Running statistics tests</h2>
+<div
+id="maximum-likelihood-approach-code-has-the-same-structure-for-all-tests"
+class="section level3">
+<h3>Maximum likelihood approach (code has the same structure for all
+tests)</h3>
+<pre class="r"><code># First use the lm function (see previous section) to build your models
+# Calculate AIC
+AIC(null,altnernative) # You can compare more than two models at a time, so if you have more than one alternative model, you can add them to the list.</code></pre>
+</div>
+<div id="classical-frequentist" class="section level3">
+<h3>Classical frequentist</h3>
+<div id="t-tests" class="section level4">
+<h4>T-tests</h4>
+<p>Categorical independent variable (only 2 categories), continuous
+independent variable</p>
+<pre class="r"><code># Two sample t-test, equal variances
+t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = TRUE)
+
+# Two sample t-test, equal variances
+t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = FALSE)</code></pre>
+</div>
 </div>
 </div>
 

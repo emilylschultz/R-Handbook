@@ -92,21 +92,69 @@ ggplot(DATA,aes(X=INDEPENDENTVARIABLE,Y=DEPENDENTVARIABLE)) +
 ### Specific graph types
 Note: multiple graph types can be added as components to the same plot
 ```{r graphtypes}
-# Histogram
-ggplot(DATA,aes(X=INDEPENDENTVARIABLE)) +
+# Histogram (use this to graph the frequency of value for a single variable)
+ggplot(DATA,aes(x=INDEPENDENTVARIABLE)) +
   geom_histogram() +
   labs(x = "X AXIS LABEL", y = "Y AXIS LABEL") +
   theme_classic()
 
-# Density
-ggplot(DATA,aes(X=INDEPENDENTVARIABLE,Y=DENSITY)) +
+# Density (use this to graph the probability of value for a single variable)
+ggplot(DATA,aes(x=INDEPENDENTVARIABLE,y=DENSITY)) +
   geom_density(stat="identity",linewidth=1)+
   labs(x = "X AXIS LABEL", y = "Y AXIS LABEL") +
   theme_classic()
 
-# Vertical line
-ggplot(DATA,aes(X=INDEPENDENTVARIABLE)) +
+# Vertical line (use this to add a vertical line to a graph)
+ggplot(DATA,aes(x=INDEPENDENTVARIABLE)) +
   geom_vline(aes(xintercept=INTERCEPT),color="COLOR",linewidth=1) +
   labs(x = "X AXIS LABEL", y = "Y AXIS LABEL") +
   theme_classic()
+
+# Boxplot (use this for a categorical independent variable and a continuous dependent variable)
+ggplot(DATA, aes(x=INDEPENDENTVARIABLE, y=DEPENDENTVARIABLE)) +
+  geom_boxplot() +
+  labs(x = "X AXIS LABEL", y = "Y AXIS LABEL") +
+  theme_classic()
+
+# Scatterplot with best fit line (use this for a continuous independent variable and a continuous dependent variable)
+ggplot(DATA, aes(x=INDEPENDENTVARIABLE, y=DEPENDENTVARIABLE))+
+  geom_point() +
+  geom_smooth(method = "lm") +
+  labs(x = "X AXIS LABEL", y = "Y AXIS LABEL") +
+  theme_classic()
+```
+
+## Building general linear models
+```{r models}
+# Null model
+null <- lm(INDEPENDENTVARIABLE ~ 1, DATA)
+
+# Alternative model
+alternative <- lm(INDEPENDENTVARIABLE ~ DEPENDENTVARIABLE, DATA)
+
+# Extracting coefficients
+COEFFICIENTS <- summary(MODELNAME)$coefficients
+
+# Extracting model standard deviation
+SIGMA <- summary(MODELNAME)$sigma
+```
+
+## Running statistics tests
+### Maximum likelihood approach (code has the same structure for all tests)
+```{r likelihood}
+# First use the lm function (see previous section) to build your models
+# Calculate AIC
+AIC(null,altnernative) # You can compare more than two models at a time, so if you have more than one alternative model, you can add them to the list.
+
+```
+
+### Classical frequentist
+#### T-tests
+Categorical independent variable (only 2 categories), continuous independent variable
+```{r ttest}
+# Two sample t-test, equal variances
+t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = TRUE)
+
+# Two sample t-test, equal variances
+t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = FALSE)
 ```
