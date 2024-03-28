@@ -130,7 +130,7 @@ paired <- t.test(conc ~ type, data = zinc, paired = TRUE)
 Again, the output should be similar to what you have seen before. Should you reject the null hypothesis that there is no difference in zinc concentration between the surface and bottom of the lake?
 
 #### Likelihood approach
-We will now run the same test using the likelihood approach. To do this, we will be using a function similar to the `lm` function, but which will allow us to account for the paired design. The new function, `lmer`, can be found in the **lme4** package. If you haven't already done so, install the packages using `install.packages("lmer")`. 
+We will now run the same test using the likelihood approach. To do this, we will be using a function similar to the `lm` function, but which will allow us to account for the paired design. The new function, `lmer`, can be found in the **lme4** package. If you haven't already done so, install the packages using `install.packages("lme4")`. 
 
 Then load the package for this session:
 
