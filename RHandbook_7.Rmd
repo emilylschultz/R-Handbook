@@ -79,6 +79,7 @@ For simplicity, let's keep working with the civu thistle data set. This time, le
 For this, we will want to use a data set that only includes observations in the absence of herbivores because that is what we want to compare to the true mean in the presence of herbivores. We'll start by creating that data set:
 
 ```{r subset}
+library(tidyverse)
 civu_noherb <- filter(civu,herbivory == "1")
 ```
 
@@ -94,7 +95,7 @@ The output includes the same components as the output from the two-sample t-test
 
 Based on this output, would you reject or accept the null hypothesis? What does that say about the effect herbivory on thistle density?
 
-#### visualing one-sample t-test data
+#### Visualing one-sample t-test data
 We'll wrap up this section by taking a look at one example of how you can visualize the data for a one sample t-test. This graph will be similar to some graphs you have made before; it will by a histogram of your data. However, in this case, instead of having two samples, we have one sample and a value for the true mean in the presence of herbivores. Therefore, we will create a histogram of our sample data with a vertical line (using the `geom_vline` function) showing the true mean. We set the value of the true mean for the vertical line using the "x intercept" argument of the `geom_vline` function.
 
 ```{r one_density}
@@ -152,7 +153,7 @@ AIC(zinc_null, zinc_alt)
 
 The output should have the same structure that it had when we used AIC to compare models for the one sample t-test. Based on this output, which is the better model? (Notice that the AIC values are negative this time, so the better model will be more negative.) What does that tell you about whether zinc concentrations vary between the surface and bottom of the lake?
 
-#### visualing paired t-test data
+#### Visualing paired t-test data
 There are many ways we could visualize paired t-test data, including a simple boxplot, as we would for a regular two-sample t-test. However, using a boxplot like that would show the full variation in each sample, without accounting for the paired design. A way around that is to instead make a histogram of the *difference* between our paired samples. As we did with the one sample t-test, we will again add a vertical line, this time at 0, to represent the difference we would expect to see under our null hypothesis.
 
 First we need to make a data frame with the difference in zinc concentrations between the surface and the bottom of the lake at each location. We will do this using the `group-by` and `summarise` functions to summarise the difference in concentration for each sample number.
@@ -171,3 +172,20 @@ ggplot(data = zinc_diff, aes(x = diff))+
   labs(x = "Difference in zinc concentration", y = "Probability Density") +
   theme_classic()
 ```
+
+### Optional practice problems
+For each of the examples
+
+1. Select the appropriate type of t-test
+2. State your null and alternative hypotheses
+3. Make an appropriate graph to visualize the data
+4. Run the t-test
+5. State your conclusions
+
+#### Examples
+1. A researcher is interested in whether recent declines in the abundance of bees have affected seed set of native plants. For replicate plants, she chose one flower per plant to be a control and another to be hand pollinated. You can look at these data in scroph.csv. The researcher then measured fruit weight to determine how well pollinated the flowers were. Test whether fruit weight different between the control and hand-pollinated flowers.
+
+2. FEV (forced expiratory volume) is an index of pulmonary function that measures the volume of air expelled during 1 second of constant effort.  Our data set (FEV.csv) contains measures of FEV for 654 children ages 3-19 who were seen in the Childhood Respiratory Disease Study in East Boston, Massachusetts in 1980.  These data are part of a longitudinal study to follow the change in pulmonary function over time in children. The data available for each child include: Age (years), FEV (liters), Height (inches), Sex (for this study, classified as male or female), and Smoking Status (current smoker or non-current smoker). Test whether FEV varies between current smokers and non-current smokers.
+
+3. You are working with a group of patients being treated for high blood pressure, and you want to test to see if the treatment is effective. The BloodPressure.csv file contains the latest diastolic blood pressure values for these patients. You know the normal diastolic blood pressure is 80. Test whether the blood pressure of these patients differs from normal.
+

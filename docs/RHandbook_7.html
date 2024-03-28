@@ -324,6 +324,8 @@ Two-sample t-tests</a></li>
 One-Sample t-tests</a></li>
 <li><a href="#paired-t-tests" id="toc-paired-t-tests">7.3 Paired
 t-tests</a></li>
+<li><a href="#optional-practice-problems"
+id="toc-optional-practice-problems">Optional practice problems</a></li>
 </ul></li>
 </ul>
 </div>
@@ -436,7 +438,8 @@ is 28 thistle plants.</p>
 observations in the absence of herbivores because that is what we want
 to compare to the true mean in the presence of herbivores. We’ll start
 by creating that data set:</p>
-<pre class="r"><code>civu_noherb &lt;- filter(civu,herbivory == &quot;1&quot;)</code></pre>
+<pre class="r"><code>library(tidyverse)
+civu_noherb &lt;- filter(civu,herbivory == &quot;1&quot;)</code></pre>
 <p>Remember to use the double equals signs to tell R that you are
 looking for observations that match that criterion.</p>
 <p>Now, let’s run the t-test using the classical frequentist approach.
@@ -465,7 +468,7 @@ true mean, instead of comparing two sample means.</p>
 <p>Based on this output, would you reject or accept the null hypothesis?
 What does that say about the effect herbivory on thistle density?</p>
 <div id="visualing-one-sample-t-test-data" class="section level4">
-<h4>visualing one-sample t-test data</h4>
+<h4>Visualing one-sample t-test data</h4>
 <p>We’ll wrap up this section by taking a look at one example of how you
 can visualize the data for a one sample t-test. This graph will be
 similar to some graphs you have made before; it will by a histogram of
@@ -569,7 +572,7 @@ you about whether zinc concentrations vary between the surface and
 bottom of the lake?</p>
 </div>
 <div id="visualing-paired-t-test-data" class="section level4">
-<h4>visualing paired t-test data</h4>
+<h4>Visualing paired t-test data</h4>
 <p>There are many ways we could visualize paired t-test data, including
 a simple boxplot, as we would for a regular two-sample t-test. However,
 using a boxplot like that would show the full variation in each sample,
@@ -593,6 +596,46 @@ data frame:</p>
   labs(x = &quot;Difference in zinc concentration&quot;, y = &quot;Probability Density&quot;) +
   theme_classic()</code></pre>
 <p><img src="RHandbook_7_files/figure-html/paired_density-1.png" width="672" /></p>
+</div>
+</div>
+<div id="optional-practice-problems" class="section level3">
+<h3>Optional practice problems</h3>
+<p>For each of the examples</p>
+<ol style="list-style-type: decimal">
+<li>Select the appropriate type of t-test</li>
+<li>State your null and alternative hypotheses</li>
+<li>Make an appropriate graph to visualize the data</li>
+<li>Run the t-test</li>
+<li>State your conclusions</li>
+</ol>
+<div id="examples" class="section level4">
+<h4>Examples</h4>
+<ol style="list-style-type: decimal">
+<li><p>A researcher is interested in whether recent declines in the
+abundance of bees have affected seed set of native plants. For replicate
+plants, she chose one flower per plant to be a control and another to be
+hand pollinated. You can look at these data in scroph.csv. The
+researcher then measured fruit weight to determine how well pollinated
+the flowers were. Test whether fruit weight different between the
+control and hand-pollinated flowers.</p></li>
+<li><p>FEV (forced expiratory volume) is an index of pulmonary function
+that measures the volume of air expelled during 1 second of constant
+effort. Our data set (FEV.csv) contains measures of FEV for 654 children
+ages 3-19 who were seen in the Childhood Respiratory Disease Study in
+East Boston, Massachusetts in 1980. These data are part of a
+longitudinal study to follow the change in pulmonary function over time
+in children. The data available for each child include: Age (years), FEV
+(liters), Height (inches), Sex (for this study, classified as male or
+female), and Smoking Status (current smoker or non-current smoker). Test
+whether FEV varies between current smokers and non-current
+smokers.</p></li>
+<li><p>You are working with a group of patients being treated for high
+blood pressure, and you want to test to see if the treatment is
+effective. The BloodPressure.csv file contains the latest diastolic
+blood pressure values for these patients. You know the normal diastolic
+blood pressure is 80. Test whether the blood pressure of these patients
+differs from normal.</p></li>
+</ol>
 </div>
 </div>
 </div>

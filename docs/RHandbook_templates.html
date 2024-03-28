@@ -436,14 +436,17 @@ null &lt;- lm(INDEPENDENTVARIABLE ~ 1, DATA)
 # Alternative model
 alternative &lt;- lm(INDEPENDENTVARIABLE ~ DEPENDENTVARIABLE, DATA)
 
+# Paired t-test, random effects model
+paired &lt;- lm(INDEPENDENTVARIABLE ~ DEPENDENTVARIABLE + (1|SAMPLENUMBER), DATA)
+
 # Extracting coefficients
 COEFFICIENTS &lt;- summary(MODELNAME)$coefficients
 
 # Extracting model standard deviation
 SIGMA &lt;- summary(MODELNAME)$sigma</code></pre>
 </div>
-<div id="running-statistics-tests" class="section level2">
-<h2>Running statistics tests</h2>
+<div id="running-statistical-tests" class="section level2">
+<h2>Running statistical tests</h2>
 <div
 id="maximum-likelihood-approach-code-has-the-same-structure-for-all-tests"
 class="section level3">
@@ -462,8 +465,14 @@ independent variable</p>
 <pre class="r"><code># Two sample t-test, equal variances
 t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = TRUE)
 
-# Two sample t-test, equal variances
-t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = FALSE)</code></pre>
+# Two sample t-test, unequal variances
+t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = FALSE)
+
+# One sample t-test
+t.test(x = DATA$DEPENDENTVARIABLE, mu = TRUEMEAN)
+
+# Paired t-test
+paired &lt;- t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, paired = TRUE)</code></pre>
 </div>
 </div>
 </div>

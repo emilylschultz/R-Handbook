@@ -132,6 +132,9 @@ null <- lm(INDEPENDENTVARIABLE ~ 1, DATA)
 # Alternative model
 alternative <- lm(INDEPENDENTVARIABLE ~ DEPENDENTVARIABLE, DATA)
 
+# Paired t-test, random effects model
+paired <- lm(INDEPENDENTVARIABLE ~ DEPENDENTVARIABLE + (1|SAMPLENUMBER), DATA)
+
 # Extracting coefficients
 COEFFICIENTS <- summary(MODELNAME)$coefficients
 
@@ -139,7 +142,7 @@ COEFFICIENTS <- summary(MODELNAME)$coefficients
 SIGMA <- summary(MODELNAME)$sigma
 ```
 
-## Running statistics tests
+## Running statistical tests
 ### Maximum likelihood approach (code has the same structure for all tests)
 ```{r likelihood}
 # First use the lm function (see previous section) to build your models
@@ -155,6 +158,12 @@ Categorical independent variable (only 2 categories), continuous independent var
 # Two sample t-test, equal variances
 t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = TRUE)
 
-# Two sample t-test, equal variances
+# Two sample t-test, unequal variances
 t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = FALSE)
+
+# One sample t-test
+t.test(x = DATA$DEPENDENTVARIABLE, mu = TRUEMEAN)
+
+# Paired t-test
+paired <- t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, paired = TRUE)
 ```
