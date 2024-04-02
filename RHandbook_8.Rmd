@@ -83,3 +83,13 @@ TukeyHSD(cone_ANOVA)
 The output you see is the pairwise comparison between each category. The first column of the table shows you which two categories are being compared (ia = islands with no squirrels, ip = islands with squirrels, mp = mainland). The second column tells you the difference in the means of the two categories. The third and forth columns show the lower and upper bounds of the 95% confidence intervals around the mean. Finally, the last column gives you the p-values for the pairwise comparisons.
 
 Based on the p-values, which pairs of habitat types had significant differences in their cone size?
+
+### Optional practice problems
+A researcher is interested in comparing the egg size of four different species of birds. The data on the egg length of each species is in the cuckoo.csv data file.
+
+2. State your null and alternative hypotheses
+3. Make an appropriate graph to visualize the data
+4. Run an ANOVA and post-hoc tests as appropriate
+5. State your conclusions
+
+
