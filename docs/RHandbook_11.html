@@ -13,7 +13,7 @@
 
 <meta name="date" content="2023-02-15" />
 
-<title>ESS 3500 R Handbook, Lesson 11</title>
+<title>ESS 3500 R Handbook, Lesson 10</title>
 
 <script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -307,7 +307,7 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 11</h1>
+<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 10</h1>
 <h4 class="author">Emily Schultz</h4>
 <h4 class="date">2023-02-15</h4>
 
@@ -315,356 +315,362 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#lesson-11-multiple-predictors"
-id="toc-lesson-11-multiple-predictors">Lesson 11: Multiple
-Predictors</a>
+<li><a href="#lesson-10-assumptions-and-transformations"
+id="toc-lesson-10-assumptions-and-transformations">Lesson 10:
+Assumptions and Transformations</a>
 <ul>
-<li><a href="#two-categorical-variables-two-way-anova"
-id="toc-two-categorical-variables-two-way-anova">11.1 Two categorical
-variables (Two-way ANOVA)</a></li>
-<li><a href="#two-continuous-predictors-multiple-regression"
-id="toc-two-continuous-predictors-multiple-regression">11.2 Two
-continuous predictors (multiple regression)</a></li>
-<li><a href="#continuous-and-categorial-predictors"
-id="toc-continuous-and-categorial-predictors">11.3 Continuous and
-categorial predictors</a></li>
+<li><a href="#testing-for-normality" id="toc-testing-for-normality">10.1
+Testing for normality</a></li>
+<li><a href="#the-log-transform" id="toc-the-log-transform">10.2 The log
+transform</a></li>
+<li><a href="#testing-for-equal-variances"
+id="toc-testing-for-equal-variances">10.3 Testing for equal
+variances</a></li>
+<li><a href="#the-square-root-transform"
+id="toc-the-square-root-transform">10.4 The square root
+transform</a></li>
+<li><a href="#welchs-tests" id="toc-welchs-tests">10.5 Welch’s
+tests</a></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="lesson-11-multiple-predictors" class="section level2">
-<h2>Lesson 11: Multiple Predictors</h2>
-<p>In the previous lessons, we have worked with models that have only
-one independent and one dependent variable. However, it is common to
-have more than one independent variable that we would like the test.
-This is often particularly true when we do observational studies, and
-there are a whole suite of variable that might affect the response we
-measure. In this lesson, we will cover models with multiple predictors.
-We will focus on examples with only two predictors, but the methods can
-easily be extended to include more than two predictors as well.</p>
-<p>For these examples, we will only look at the likelihood approach,
-which can be more powerful for testing multiple alternative hypothesis.
-However, similar tests can be done with a classic frequentist approach,
-using two-way ANOVAs, stepwise regression, and ANCOVAs for the three
-examples, respectively.</p>
-<div id="two-categorical-variables-two-way-anova"
-class="section level3">
-<h3>11.1 Two categorical variables (Two-way ANOVA)</h3>
-<p>For our first example, we will work with two categorical predictor
-variables. We will use a data set from the arthropod world this time,
-testing whether levels of an amino acid, alanine, vary between different
-species and different sexes of millipedes.</p>
-<div id="visualizing-and-building-the-models" class="section level4">
-<h4>Visualizing and building the models</h4>
-<p>We’ll start off by loading and visualizing our data. Be sure your
-working directory is set to the location of the millipedes data file. We
-will also need to change the “species” variable to a factor.</p>
-<pre class="r"><code>mill &lt;- read.csv(&quot;millipedes.csv&quot;)
-mill$species &lt;- as.factor(mill$species)</code></pre>
-<p>Now, let’s make a box plot to visualize our data set. This will allow
-us to start looking at the patterns in the data, and also check our
-assumption of equal variances. We will put species on the x-axis and
-group and color our boxes by sex.</p>
+<div id="lesson-10-assumptions-and-transformations"
+class="section level2">
+<h2>Lesson 10: Assumptions and Transformations</h2>
+<p>In this lesson, we will cover how to test two assumptions of linear
+models (normality and equal variances) and what to do when the
+assumptions are violated</p>
+<div id="testing-for-normality" class="section level3">
+<h3>10.1 Testing for normality</h3>
+<p>Technically, the assumption of linear models is that the residuals
+(the leftover variation that is not explained by our model) are normally
+distributed. Therefore, in order to test this assumption, we need to run
+our model and save the residuals.</p>
+<p>For this example, we will work with a new data set on the Coachella
+Valley fringe-toed lizard. This lizard is very endangered, so we are
+interested in how to best manage the species to improve the chances of
+persistence. We have data based on a simulation that estimates the time
+to extinction (TTE) for three different management plans: no reserve
+(“none”), a single reserve (“single”), and multiple reserves in a
+network (“network”).</p>
+<p>Download the lizard data and load the data into R.</p>
+<pre class="r"><code>lizard &lt;- read.csv(&quot;lizard.csv&quot;)</code></pre>
+<p>Now we will build our two models, so we can save the residuals.</p>
+<pre class="r"><code>lizard_null &lt;- lm(TTE ~ 1, lizard)
+lizard_alt &lt;- lm(TTE~ Plan, lizard)</code></pre>
+<p>We will save the residuals from each model using the
+<code>resid</code> function. Then we will save the residuals in a data
+frame, so we can graph them using <code>ggplot</code>.</p>
+<pre class="r"><code>resid_null &lt;- resid(lizard_null)
+resid_alt &lt;- resid(lizard_alt)
+
+residuals &lt;- data.frame(resid_null = resid_null, resid_alt = resid_alt)</code></pre>
+<div id="histogram-of-residuals" class="section level4">
+<h4>Histogram of residuals</h4>
+<p>The first way to check for normality of residuals is to make a
+histogram to determine if the residuals look like they are normally
+distributed, or at least symmetrical.</p>
 <pre class="r"><code>library(ggplot2)
-ggplot(mill, aes(x=species, y=Alanine, fill=sex)) +
-  geom_boxplot() +
-  scale_fill_manual(values=c(&quot;#ce9642&quot;,&quot;#3b7c70&quot;)) +
-  labs(x=&quot;Species&quot;, y=&quot;Alanine levels&quot;, fill = &quot;Sex&quot;) +
+ggplot(residuals, aes(x=resid_null)) +
+  geom_histogram() +
+  labs(x=&quot;Extinction time&quot;, y=&quot;Frequency&quot;) +
   theme_classic()</code></pre>
-<p><img src="RHandbook_11_files/figure-html/mill_boxplot-1.png" width="672" /></p>
-<p>Based just on the graph, what patterns do you see in the data. Does
-species have an effect? What about sex? Does there appear to be an
-interaction between the two variables?</p>
-<p>Looking at our boxplot, the variances look fairly equal between the
-two groups, so let’s proceed with building our models. Now that we are
-working with two predictor models, we will have multiple alternative
-models representing four different hypotheses: (1) only sex matters, (2)
-only species matters, (3) both sex and species matter but don’t
-interact, (4) both sex and species matter and they interact. The models
-are built in this order after the null model below.</p>
-<pre class="r"><code>mill_null &lt;- lm(Alanine ~ 1, data = mill)
-mill_sex &lt;- lm(Alanine ~ sex, data = mill)
-mill_species &lt;- lm(Alanine ~ species, data = mill)
-mill_both &lt;- lm(Alanine ~ sex + species, data = mill)
-mill_int &lt;- lm(Alanine ~ sex*species, data = mill)</code></pre>
-<p>To view the output of your models, type the name of each model. Just
-like when we have worked with this model before, the null model will
-have just an intercept. However, the alternative models will have
-multiple coefficients. Let’s take a look at a couple of them.</p>
-<p>First, view the coefficients of the <code>mill_both</code> model. You
-should see four coefficients. After the intercept, the first coefficient
-you will see is labeled “sexm”. This is the value you would add to the
-intercept to get the alanine levels in male millipedes. Then you will
-see two intercepts for species. The first (species2) tells you what to
-add to the intercept to get alanine leves for species 2 (for a male of
-species 2, you would add both the sexm and species2 coefficients). The
-final coefficient is what you would add to the intercept to get the
-alanine levels for species 3.</p>
-<p>Now, view the coefficients of the <code>mill_int</code> model. Now,
-you will see two additional coefficients representing interactions
-between the sex and species variables. Based on this model, if you had a
-male of species 2, in addition to adding the sexm and species2
-coefficients, you would also add the sexm:species2 coefficient, which
-account for how sex interacts with being species 2. For a male of
-species 3, you would similarly add the coefficient for
-sexm:species3.</p>
-<p>I personally find it difficult to interpret what the interaction
-looks like just based on the coefficients. This is where our graphs can
-come in handy. Looking at our boxplot can help us see the nature of the
-interaction, if any, between our variables.</p>
-<p>Before we move on to testing our models, lets also check our
-assumption of normality. We will save the residuals from each model and
-look at the associated qqplots (you could make histograms instead if you
-find those easier to interpret).</p>
-<pre class="r"><code>resid_null &lt;- resid(mill_null)
-resid_sex &lt;- resid(mill_sex)
-resid_species &lt;- resid(mill_species)
-resid_both &lt;- resid(mill_both)
-resid_int &lt;- resid(mill_int)</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value
+## with `binwidth`.</code></pre>
+<p><img src="RHandbook_11_files/figure-html/residnull_hist-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(residuals, aes(x=resid_alt)) +
+  geom_histogram() +
+  labs(x=&quot;Extinction time&quot;, y=&quot;Frequency&quot;) +
+  theme_classic()</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value
+## with `binwidth`.</code></pre>
+<p><img src="RHandbook_11_files/figure-html/residalt_hist-1.png" width="672" /></p>
+<p>Do the residuals look normally distributed?</p>
+</div>
+<div id="qqplot" class="section level4">
+<h4>qqplot</h4>
+<p>There is another type of graph that is useful for visualizing the
+normality of residuals, called a qqplot. This type of graph compares the
+residuals from a model with residuals that would be predicted based on a
+normal distribution. If we graph the residuals from our model against
+the predicted residuals, we would expect them to form a straight line if
+the residuals are normally distributed. If they do not form a straight
+line, that suggests the residuals are not normally distributed.</p>
+<p>To make a qqplot to test for a normal distribution, we can use the
+<code>qqnorm</code> function. Then we can ues the <code>qqline</code>
+function to add a reference line to the plot, showing where the points
+should fall if the data are normally distributed. Let’s make these plots
+for both of our models.</p>
 <pre class="r"><code>qqnorm(resid_null)
 qqline(resid_null)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/mill_qq-1.png" width="672" /></p>
-<pre class="r"><code>qqnorm(resid_sex)
-qqline(resid_sex)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/mill_qq-2.png" width="672" /></p>
-<pre class="r"><code>qqnorm(resid_species)
-qqline(resid_species)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/mill_qq-3.png" width="672" /></p>
-<pre class="r"><code>qqnorm(resid_both)
-qqline(resid_both)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/mill_qq-4.png" width="672" /></p>
-<pre class="r"><code>qqnorm(resid_int)
-qqline(resid_int)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/mill_qq-5.png" width="672" /></p>
-<p>The distributions of some of the residuals probably aren’t normal for
-most of the models, but there is also no sign of a lot of skew. The ones
-that are not normal are probably fairly flat distributions. Therefore,
-we can probably be comfortable moving ahead with the tests.</p>
-</div>
-<div id="testing-the-models" class="section level4">
-<h4>Testing the models</h4>
-<p>Again, for testing our models with multiple predictors, we will just
-focus on using the likelihood approach. As we have for previous tests,
-we will use the <code>AIC</code> function to compare our models, but
-this time we have five different models to compare, instead of just two.
-We can compare all five at the same time.</p>
-<pre class="r"><code>AIC(mill_null,mill_sex,mill_species,mill_both,mill_int)</code></pre>
-<pre><code>##              df       AIC
-## mill_null     2 127.25979
-## mill_sex      3 108.40041
-## mill_species  4 124.94574
-## mill_both     5  93.14672
-## mill_int      7  93.14888</code></pre>
-<p>Based on the output table, which model was the best? Was it
-significantly better than the next best model? What do the differences
-in AIC values tell you about the effects of each predictor and their
-interaction?</p>
+<p><img src="RHandbook_11_files/figure-html/qqplots-1.png" width="672" /></p>
+<pre class="r"><code>qqnorm(resid_alt)
+qqline(resid_alt)</code></pre>
+<p><img src="RHandbook_11_files/figure-html/qqplots-2.png" width="672" /></p>
+<p>When the points form a curve like this, instead of a straight line,
+that usually suggests that the data are skewed, which aligns with what
+we saw in the histograms. Based on both tests, it looks like our data
+are not normally distributed.</p>
 </div>
 </div>
-<div id="two-continuous-predictors-multiple-regression"
-class="section level3">
-<h3>11.2 Two continuous predictors (multiple regression)</h3>
-<p>For our next example, we will work with two continuous predictor
-variable, sometimes called a multiple regression. We will use the carbon
-storage data set that we worked with once before, but this time will
-will look at some additional variables and consider how the levels of
-active bacteria and active fungi in the soil affect total carbon
-storage.</p>
-<div id="visualizing-and-building-the-models-1" class="section level4">
-<h4>Visualizing and building the models</h4>
-<p>First, load the data.</p>
-<pre class="r"><code>carbon &lt;- read.csv(&quot;carbon.csv&quot;)</code></pre>
-<p>There are many variables in the data set, but we will just focus on a
-few. “Tc” will be our response variable and “Active_Bacteria” and
-“Active_Lifespan” will be our two predictor variables.</p>
-<p>Now let’s graph our data. It is challenging to visualize two
-continuous predictor variable at the same time (I think 3D graphs are
-hard to read). One option is just to make separate scatter plots for
-each predictor, but that does not allow you to see interactions between
-the two variables. What I often do is convert one of the predictors to a
-categorical variable (just for the graph, not for the test), and graph
-both of the predictors at the same time. We’ll try that.</p>
-<p>First, we will use the <code>mutate</code> function to create a new
-variable that converts active fungi to a category. We will just use two
-categories: high and low. High active fungi will be anything above the
-median active fungi from our data set, and low weight will be anything
-less than or equal to the median. To to this, we will use the
-<code>ifelse</code> function. This function allows us to set a value for
-something <strong>if</strong> it matches certain criteria (in this case,
-if the active fungi is greater than the median) and set a different
-values if it does not match the criteria.</p>
-<pre class="r"><code>library(tidyverse)
+<div id="the-log-transform" class="section level3">
+<h3>10.2 The log transform</h3>
+<p>We have established that our data are not normally distributed? What
+can we do about it. Well, when we have skewed data like we saw above,
+often a good option is to log transform our data. The log tranformed
+data will often be more normally distributed, and if they are, we can
+run our test on the log-transformed data. Let’s try this on our lizard
+data!</p>
+<p>First, we will add a new column to our data frame with the log
+transformed TTE data.</p>
+<pre class="r"><code>lizard$log_TTE &lt;- log(lizard$TTE)</code></pre>
+<p>Now we will check to see if the log transformed data are normal,
+using the same approach as above.</p>
+<p>First, run the two models, this time using “log_TTE” as our dependent
+variable, and save the residuals.</p>
+<pre class="r"><code>lizard_null_log &lt;- lm(log_TTE ~ 1, lizard)
+lizard_alt_log &lt;- lm(log_TTE~ Plan, lizard)
 
-med &lt;- median(carbon$Active_Fungi)
-carbon &lt;- mutate(carbon,Fungi_cat = ifelse(Active_Fungi &gt; med, &quot;High&quot;, &quot;Low&quot;))</code></pre>
-<p>If you view the data set, you will now see a new variable called
-“Weight_cat” that we will use to graph our data. Let’s make that graph
-now. We will use “Lifespan” as our x variable, and we will use two
-different colors to represent our two weight categories.</p>
-<pre class="r"><code>ggplot(data=carbon, aes(x=Active_Bacteria,y=Tc,color=Fungi_cat)) +
-  geom_point() +
-  geom_smooth(method=&quot;lm&quot;) +
-  scale_color_manual(values=c(&quot;#ce9642&quot;,&quot;#3b7c70&quot;)) +
-  labs(x=&quot;Active bacteria&quot;, y=&quot;Total carbon storage&quot;,color=&quot;Active fungi&quot;) +
+resid_null_log &lt;- resid(lizard_null_log)
+resid_alt_log &lt;- resid(lizard_alt_log)
+
+residuals_log &lt;- data.frame(resid_null = resid_null_log, resid_alt = resid_alt_log)</code></pre>
+<p>Now, we will make our graphs to check normality. Start with the
+histograms:</p>
+<pre class="r"><code>ggplot(residuals_log, aes(x=resid_null)) +
+  geom_histogram() +
+  labs(x=&quot;Extinction time&quot;, y=&quot;Frequency&quot;) +
   theme_classic()</code></pre>
-<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
-<p><img src="RHandbook_11_files/figure-html/carbon_scat-1.png" width="672" /></p>
-<p>What are your initial interpretations based on the graph?</p>
-<p>Now, let’s build our models. Just like our first example, we will
-have multiple alternative models that we test.</p>
-<pre class="r"><code>carbon_null &lt;- lm(Tc ~ 1, data = carbon)
-carbon_bac &lt;- lm(Tc ~ Active_Bacteria, data = carbon)
-carbon_fungi &lt;- lm(Tc ~ Active_Fungi, data = carbon)
-carbon_both &lt;- lm(Tc ~ Active_Bacteria + Active_Fungi, data = carbon)
-carbon_int &lt;- lm(Tc ~ Active_Bacteria*Active_Fungi, data = carbon)</code></pre>
-<p>Look at the summaries for some of your models. Do the coefficients
-for the different variable make sense based on what you saw in your
-graph?</p>
-<p>We will again check our assumption of normality before testing the
-models.</p>
-<pre class="r"><code>resid_null_carbon &lt;- resid(carbon_null)
-resid_bac_carbon &lt;- resid(carbon_bac)
-resid_fungi_carbon &lt;- resid(carbon_fungi)
-resid_both_carbon &lt;- resid(carbon_both)
-resid_int_carbon &lt;- resid(carbon_int)</code></pre>
-<pre class="r"><code>qqnorm(resid_null_carbon)
-qqline(resid_null_carbon)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/carbon_qq-1.png" width="672" /></p>
-<pre class="r"><code>qqnorm(resid_bac_carbon)
-qqline(resid_bac_carbon)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/carbon_qq-2.png" width="672" /></p>
-<pre class="r"><code>qqnorm(resid_fungi_carbon)
-qqline(resid_fungi_carbon)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/carbon_qq-3.png" width="672" /></p>
-<pre class="r"><code>qqnorm(resid_both_carbon)
-qqline(resid_both_carbon)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/carbon_qq-4.png" width="672" /></p>
-<pre class="r"><code>qqnorm(resid_int_carbon)
-qqline(resid_int_carbon)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/carbon_qq-5.png" width="672" /></p>
-<p>Yikes, this time, it looks like we have some skew in our data based
-on the curved shape of the points in our qqplots. Before we run the
-tests, we’ll try a log transform to see if that makes our residuals less
-skewed. We can actually do this transform right in the formula of our
-linear model, instead of adding a new variable. We will just add the
-<code>log</code> function to our dependent variable (Tc).</p>
-<pre class="r"><code>carbon_null &lt;- lm(log(Tc) ~ 1, data = carbon)
-carbon_bac &lt;- lm(log(Tc) ~ Active_Bacteria, data = carbon)
-carbon_fungi &lt;- lm(log(Tc) ~ Active_Fungi, data = carbon)
-carbon_both &lt;- lm(log(Tc) ~ Active_Bacteria + Active_Fungi, data = carbon)
-carbon_int &lt;- lm(log(Tc) ~ Active_Bacteria*Active_Fungi, data = carbon)</code></pre>
-<p>Look at the summaries for some of your models. Do the coefficients
-for the different variable make sense based on what you saw in your
-graph?</p>
-<p>Now, we will check the residuals again, using the models with the log
-transformed data.</p>
-<pre class="r"><code>resid_null_carbon &lt;- resid(carbon_null)
-resid_bac_carbon &lt;- resid(carbon_bac)
-resid_fungi_carbon &lt;- resid(carbon_fungi)
-resid_both_carbon &lt;- resid(carbon_both)
-resid_int_carbon &lt;- resid(carbon_int)</code></pre>
-<pre class="r"><code>qqnorm(resid_null_carbon)
-qqline(resid_null_carbon)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/logcarbon_qq-1.png" width="672" /></p>
-<pre class="r"><code>qqnorm(resid_bac_carbon)
-qqline(resid_bac_carbon)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/logcarbon_qq-2.png" width="672" /></p>
-<pre class="r"><code>qqnorm(resid_fungi_carbon)
-qqline(resid_fungi_carbon)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/logcarbon_qq-3.png" width="672" /></p>
-<pre class="r"><code>qqnorm(resid_both_carbon)
-qqline(resid_both_carbon)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/logcarbon_qq-4.png" width="672" /></p>
-<pre class="r"><code>qqnorm(resid_int_carbon)
-qqline(resid_int_carbon)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/logcarbon_qq-5.png" width="672" /></p>
-<p>These look better now, so we’ll move on with testing our models.</p>
-</div>
-<div id="testing-the-models-1" class="section level4">
-<h4>Testing the models</h4>
-<p>To test the models, we will use the same approach that we used with
-the first example.</p>
-<pre class="r"><code>AIC(carbon_null,carbon_bac,carbon_fungi,carbon_both,carbon_int)</code></pre>
-<pre><code>##              df      AIC
-## carbon_null   2 177.1537
-## carbon_bac    3 154.9944
-## carbon_fungi  3 167.1470
-## carbon_both   4 154.3212
-## carbon_int    5 145.0235</code></pre>
-<p>Based on the AIC models, which model is the best? Is it significantly
-better than the others? Given this, along with the coefficients from the
-best model and the patterns you see in your graph, what can you conclude
-about the effects of the two predictor variables (bacteria and fungi
-levels)?</p>
-</div>
-</div>
-<div id="continuous-and-categorial-predictors" class="section level3">
-<h3>11.3 Continuous and categorial predictors</h3>
-<p>For our final example, we will look at a blend of the previous two
-types of predictors and consider a case where we have one continuous and
-one categorical predictor. We will use an example of butterfly endurance
-and how it is affected by both temperature and the genotype of the
-butterfly.</p>
-<div id="visualizing-and-building-the-models-2" class="section level4">
-<h4>Visualizing and building the models</h4>
-<pre class="r"><code>butterfly &lt;- read.csv(&quot;butterfly.csv&quot;)</code></pre>
-<pre class="r"><code>ggplot(data=butterfly, aes(x=Temp,y=Endurance,color=Genotype)) +
-  geom_point() +
-  geom_smooth(method=&quot;lm&quot;) +
-  scale_color_manual(values=c(&quot;#ce9642&quot;,&quot;#3b7c70&quot;,&quot;#3b3a3e&quot;)) +
-  labs(x=&quot;Temperature&quot;) +
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value
+## with `binwidth`.</code></pre>
+<p><img src="RHandbook_11_files/figure-html/residlog_hist-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(residuals_log, aes(x=resid_alt)) +
+  geom_histogram() +
+  labs(x=&quot;Extinction time&quot;, y=&quot;Frequency&quot;) +
   theme_classic()</code></pre>
-<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
-<p><img src="RHandbook_11_files/figure-html/butterfly_scat-1.png" width="672" /></p>
-<p>What is your initial interpretation for how temperature and genotype
-affect the endurance of butterflies, based on the graph? Does unequal
-variances seem to be a problem?</p>
-<p>We will now move on to building our models: one null model and our
-four different alternative models.</p>
-<pre class="r"><code>butter_null &lt;- lm(Endurance ~ 1, data=butterfly)
-butter_temp &lt;- lm(Endurance ~ Temp, data=butterfly)
-butter_geno &lt;- lm(Endurance ~ Genotype, data=butterfly)
-butter_both &lt;- lm(Endurance ~ Temp + Genotype, data=butterfly)
-butter_int &lt;- lm(Endurance ~ Temp*Genotype, data=butterfly)</code></pre>
-<p>Before testing these models, we’ll check our residuals for
-normality.</p>
-<pre class="r"><code>resid_null_butter &lt;- resid(butter_null)
-resid_temp_butter &lt;- resid(butter_temp)
-resid_geno_butter &lt;- resid(butter_geno)
-resid_both_butter &lt;- resid(butter_both)
-resid_int_butter &lt;- resid(butter_int)</code></pre>
-<pre class="r"><code>qqnorm(resid_null_butter)
-qqline(resid_null_butter)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/butterfly_qq-1.png" width="672" /></p>
-<pre class="r"><code>qqnorm(resid_temp_butter)
-qqline(resid_temp_butter)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/butterfly_qq-2.png" width="672" /></p>
-<pre class="r"><code>qqnorm(resid_geno_butter)
-qqline(resid_geno_butter)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/butterfly_qq-3.png" width="672" /></p>
-<pre class="r"><code>qqnorm(resid_both_butter)
-qqline(resid_both_butter)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/butterfly_qq-4.png" width="672" /></p>
-<pre class="r"><code>qqnorm(resid_int_butter)
-qqline(resid_int_butter)</code></pre>
-<p><img src="RHandbook_11_files/figure-html/butterfly_qq-5.png" width="672" /></p>
-<p>Once again, the residuals don’t look quite normal, but there doesn’t
-seem to be a lot of skew, so we’ll move on with testing our models.</p>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value
+## with `binwidth`.</code></pre>
+<p><img src="RHandbook_11_files/figure-html/residlog_hist-2.png" width="672" /></p>
+<p>Next, make the qqplots:</p>
+<pre class="r"><code>qqnorm(resid_null_log)
+qqline(resid_null_log)</code></pre>
+<p><img src="RHandbook_11_files/figure-html/qqplots_log-1.png" width="672" /></p>
+<pre class="r"><code>qqnorm(resid_alt_log)
+qqline(resid_alt_log)</code></pre>
+<p><img src="RHandbook_11_files/figure-html/qqplots_log-2.png" width="672" /></p>
+<p>They don’t look perfect, but they look much better than before! In
+this case, it would be better to use the models with the log transformed
+data to draw inferences about the effect of the management plans on the
+estimated extinction time of the lizards.</p>
 </div>
-<div id="testing-the-models-2" class="section level4">
-<h4>Testing the models</h4>
-<p>Using the likelihood approach, we can again just use the
-<code>AIC</code> function to compare our five models:</p>
-<pre class="r"><code>AIC(butter_null,butter_temp,butter_geno,butter_both,butter_int)</code></pre>
-<pre><code>##             df       AIC
-## butter_null  2 103.12351
-## butter_temp  3  73.47012
-## butter_geno  4 105.64924
-## butter_both  5  55.27518
-## butter_int   7  58.88042</code></pre>
-<p>Based on these AIC values, what can you conclude about the effects of
-temperature, genotype, and their interaction on butterfly endurance?</p>
+<div id="testing-for-equal-variances" class="section level3">
+<h3>10.3 Testing for equal variances</h3>
+<p>Another assumption of linear models is that the variance of our
+dependent variable is equal for different values of our independent
+variable. To look at this assumption, we are going to return to the
+lodgepole pine data set we worked with when you learned to run an ANOVA.
+Remember, our question was whether cone size varied between islands
+without squirrels (“ia”), islands with squirrels (“ip”), and the
+mainland with squirrels (“mp”).</p>
+<p>First load the data set, and then we will start testing the
+assumption of equal variance.</p>
+<pre class="r"><code>cone &lt;- read.csv(&quot;lodgepole.csv&quot;)</code></pre>
+<p>For this one, we do not need to run the models first, so let’s jump
+right into the testing.</p>
+<div id="graphs-to-visualize-variance" class="section level4">
+<h4>Graphs to visualize variance</h4>
+<p>We will start with a simple visual test: making a box plot to compare
+the variation between the different categories.</p>
+<pre class="r"><code>ggplot(cone, aes(x=type, y= conesize)) +
+  geom_boxplot() +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_11_files/figure-html/cone_boxplot-1.png" width="672" /></p>
+<p>It looks like the variances are pretty similar for the ia and mp
+categories, but the ip category has much higher variation. We can check
+this with a formal test.</p>
+<p>If you are working with two continuous variables, you can make a
+scatter plot to check the variance. Just look from left to right along
+the graph and see if it looks like the scatter around the best fit line
+is about equal.</p>
 </div>
+<div id="levenes-test" class="section level4">
+<h4>Levene’s test</h4>
+<p>Levene’s test is a formal test that will check for equal variances.
+Note that is tends to be a bit sensitive, so it will sometimes pick up
+small differences in the variances that are not a problem, particularly
+if you have large sample sizes. With the Levene’s test, we are testing
+the null hypothesis that the variances are equal. Therefore if the
+p-value is less than 0.05, that suggests that the variances are not
+equal.</p>
+<p>The function for the Levene’s test is in the <code>car</code>
+package, so install (<code>install.packages("car")</code>) and load that
+package first.</p>
+<pre class="r"><code>library(car)</code></pre>
+<pre><code>## Warning: package &#39;car&#39; was built under R version 4.2.3</code></pre>
+<pre><code>## Loading required package: carData</code></pre>
+<pre><code>## Warning: package &#39;carData&#39; was built under R version 4.2.3</code></pre>
+<p>Now we can run the test:</p>
+<pre class="r"><code>leveneTest(conesize ~ type, data = cone)</code></pre>
+<pre><code>## Warning in leveneTest.default(y = y, group = group, ...): group coerced to
+## factor.</code></pre>
+<pre><code>## Levene&#39;s Test for Homogeneity of Variance (center = median)
+##       Df F value  Pr(&gt;F)  
+## group  2  4.7096 0.02895 *
+##       13                  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Don’t worry if you get a warning message. It is just telling you that
+when it ran the test, it converted “type” from a character variable to a
+factor variable. Take a look at the p-value for the test. Based on this
+p-value, are the variances equal?</p>
+</div>
+</div>
+<div id="the-square-root-transform" class="section level3">
+<h3>10.4 The square root transform</h3>
+<p>We have established that we don’t have equal variance between are
+categories, so what can we do? The first thing we can try is
+transforming our data. If our data are skewed (not normally
+distributed), a log transform might help. However, if our data have a
+pretty symmetrical distribution (which they would for these cone data if
+we checked), a log transform is unlikely to help. Instead, we can try a
+square root transform. Let’s see if that helps here.</p>
+<p>Like with the log tranform, we will add a new variable to our data
+frame, but this time we will take the square root of our cone size
+variable.</p>
+<pre class="r"><code>cone$sqrt_conesize &lt;- sqrt(cone$conesize)</code></pre>
+<p>Now, we can use our tests again to see if this helped.</p>
+<p>Start with the boxplot:</p>
+<pre class="r"><code>ggplot(cone, aes(x=type, y= sqrt_conesize)) +
+  geom_boxplot() +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_11_files/figure-html/sqrt_boxplot-1.png" width="672" /></p>
+<p>It still doesn’t look great, but we will check our Levene’s test
+too.</p>
+<pre class="r"><code>leveneTest(sqrt_conesize ~ type, data = cone)</code></pre>
+<pre><code>## Warning in leveneTest.default(y = y, group = group, ...): group coerced to
+## factor.</code></pre>
+<pre><code>## Levene&#39;s Test for Homogeneity of Variance (center = median)
+##       Df F value  Pr(&gt;F)  
+## group  2  5.2235 0.02163 *
+##       13                  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Okay, it still doesn’t look good, so our transform did not work. But
+never fear! Move on to the next section for the solution.</p>
+</div>
+<div id="welchs-tests" class="section level3">
+<h3>10.5 Welch’s tests</h3>
+<p>If the variances still aren’t equal after transforming the data, we
+can use a test that doesn’t assume equal variances. This will work for
+both a t-test and and ANOVA.</p>
+<p>To run the Welch’s test for an ANOVA, which is what we need to use
+here because our independent variable has three categories, we will use
+a new function: <code>oneway.test</code>. This function will allow us to
+include an argument indicating that we do not want to assume equal
+variances. Otherwise the syntax is the same as for the aov function, and
+our hypotheses are the same as they would be for a normal ANOVA. Let’s
+run the test.</p>
+<pre class="r"><code>oneway.test(conesize~type,cone,var.equal=FALSE)</code></pre>
+<pre><code>## 
+##  One-way analysis of means (not assuming equal variances)
+## 
+## data:  conesize and type
+## F = 39.747, num df = 2.0000, denom df = 7.6354, p-value = 9.192e-05</code></pre>
+<p>The output is similar to what you have seen before. You should see
+the F statistic, the degrees of freedom (df) and the p-value. Based on
+the p-value, would you reject the null hypothesis that habitat type does
+not affect cones size?</p>
+<p>We have a bit of a conundrum now, though. Just like a regular ANOVA
+the Welch’s ANOVA just does an overall comparison of the categories, so
+this output tells us that at least one group is different, but it
+doesn’t tell us which group is different. Unfortunately, we can’t use a
+Tukey HSD test as a follow up, because the Tukey HSD test does not let
+us assume unequal variances. It only works when our variances are equal.
+However, we do have another option. We can run pairwise Welch’s t-tests
+between our categories, and use a Bonferonni correction to choose a
+lower threshold p-value. Let’s work through this process.</p>
+<p>First, we need data sets that just have two of the three categories.
+We want one data set for each combination of pairs, so we will make
+three data sets, excluding one category in each set. To do this, we will
+use the <code>filter</code> function from the <strong>tidyverse</strong>
+package. In the second argument of the <code>filter</code> fuction, we
+will use the <code>!=</code> (does not equal) operator to tell R to
+exclude observations with that value for habitat type.</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ────────── tidyverse 1.3.2 ──
+## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
+## ✔ tidyr   1.3.0      ✔ stringr 1.5.0 
+## ✔ readr   2.1.3      ✔ forcats 1.0.0 
+## ✔ purrr   1.0.1      
+## ── Conflicts ───────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+## ✖ dplyr::recode() masks car::recode()
+## ✖ purrr::some()   masks car::some()</code></pre>
+<pre class="r"><code>cone_ia_ip &lt;- filter(cone, type != &quot;mp&quot;) 
+cone_ia_mp &lt;- filter(cone, type != &quot;ip&quot;)
+cone_ip_mp &lt;- filter(cone, type != &quot;ia&quot;) </code></pre>
+<p>Now we can run our t-tests on each of these data sets. We’ll start
+with the first one and look at the output before moving on to the other
+two tests. The only difference in the syntax between the Welch’s t-test
+and the regular t-test is that will the change the “var.equal” argument
+to “FALSE”.</p>
+<pre class="r"><code>t.test(conesize ~ type, data=cone_ia_ip, var.equal=FALSE)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  conesize by type
+## t = 2.8342, df = 4.8472, p-value = 0.0378
+## alternative hypothesis: true difference in means between group ia and group ip is not equal to 0
+## 95 percent confidence interval:
+##  0.1669797 3.7930203
+## sample estimates:
+## mean in group ia mean in group ip 
+##             8.90             6.92</code></pre>
+<p>Look through the output. The p-value from this test is 0.0378.
+Normally, we would reject the null hypothesis because it is below 0.05,
+but remember, we are doing multiple comparisons here, so we need to
+account for that. Doing multiple comparisons makes it more likely that
+we will reject the null hypothesis, even if it is true. With the
+Bonferonni correction, we choose a new threshold p-value, so that our
+overall chance of incorrectly rejecting the null hypothesis is still 5%.
+To choose the new threshold, we simply divide 0.05 (are usual threshold)
+by the number of comparisons we are making (3, in this example). Our new
+threshold is therefore about 0.0167. Based on this new threshold, would
+you reject the null hypothesis?</p>
+<p>Now we will repeat the Welch’s t-test for our other pairs of habitat
+types:</p>
+<pre class="r"><code>t.test(conesize ~ type, data=cone_ia_mp, var.equal=FALSE)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  conesize by type
+## t = 9.2632, df = 8.9492, p-value = 7.01e-06
+## alternative hypothesis: true difference in means between group ia and group mp is not equal to 0
+## 95 percent confidence interval:
+##  2.100514 3.459486
+## sample estimates:
+## mean in group ia mean in group mp 
+##             8.90             6.12</code></pre>
+<pre class="r"><code>t.test(conesize ~ type, data=cone_ip_mp, var.equal=FALSE)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  conesize by type
+## t = 1.149, df = 4.7791, p-value = 0.3048
+## alternative hypothesis: true difference in means between group ip and group mp is not equal to 0
+## 95 percent confidence interval:
+##  -1.015011  2.615011
+## sample estimates:
+## mean in group ip mean in group mp 
+##             6.92             6.12</code></pre>
+<p>Look at the output from both of the tests. Using our new threshold
+p-value of 0.0167, would you reject the null hypothesis for either
+comparison.</p>
+<p>Overall, what would you conclude about the effect of habitat on cone
+size. Which pair(s) of habitats was significantly different from each
+other?</p>
 </div>
 </div>
 
