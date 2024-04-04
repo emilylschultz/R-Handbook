@@ -23,7 +23,7 @@ navbar:
         href: RHandbook_7.html
       - text: "Lesson 8: ANOVA"
         href: RHandbook_8.html
-      - text: "Lesson 9: Regressions"
+      - text: "Lesson 9: Two-way ANOVA"
         href: RHandbook_9.html
       - text: "Lesson 10: Assumptions and transformations"
         href: RHandbook_10.html

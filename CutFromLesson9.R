@@ -1,0 +1,192 @@
+### 11.2 Two continuous predictors (multiple regression)
+For our next example, we will work with two continuous predictor variable, sometimes called a multiple regression. We will use the carbon storage data set that we worked with once before, but this time will will look at some additional variables and consider how the levels of active bacteria and active fungi in the soil affect total carbon storage.
+
+#### Visualizing and building the models
+First, load the data.
+
+```{r carbon_data}
+carbon <- read.csv("carbon.csv")
+```
+
+There are many variables in the data set, but we will just focus on a few. "Tc" will be our response variable and "Active_Bacteria" and "Active_Lifespan" will be our two predictor variables.
+
+Now let's graph our data. It is challenging to visualize two continuous predictor variable at the same time (I think 3D graphs are hard to read). One option is just to make separate scatter plots for each predictor, but that does not allow you to see interactions between the two variables. What I often do is convert one of the predictors to a categorical variable (just for the graph, not for the test), and graph both of the predictors at the same time. We'll try that.
+
+First, we will use the `mutate` function to create a new variable that converts active fungi to a category. We will just use two categories: high and low. High active fungi will be anything above the median active fungi from our data set, and low weight will be anything less than or equal to the median. To to this, we will use the `ifelse` function. This function allows us to set a value for something **if** it matches certain criteria (in this case, if the active fungi is greater than the median) and set a different values if it does not match the criteria.
+
+```{r fungi_cat}
+library(tidyverse)
+
+med <- median(carbon$Active_Fungi)
+carbon <- mutate(carbon,Fungi_cat = ifelse(Active_Fungi > med, "High", "Low"))
+```
+
+If you view the data set, you will now see a new variable called "Weight_cat" that we will use to graph our data. Let's make that graph now. We will use "Lifespan" as our x variable, and we will use two different colors to represent our two weight categories.
+
+```{r carbon_scat}
+ggplot(data=carbon, aes(x=Active_Bacteria,y=Tc,color=Fungi_cat)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  scale_color_manual(values=c("#ce9642","#3b7c70")) +
+  labs(x="Active bacteria", y="Total carbon storage",color="Active fungi") +
+  theme_classic()
+```
+
+What are your initial interpretations based on the graph?
+
+Now, let's build our models. Just like our first example, we will have multiple alternative models that we test.
+
+```{r carbon_lm}
+carbon_null <- lm(Tc ~ 1, data = carbon)
+carbon_bac <- lm(Tc ~ Active_Bacteria, data = carbon)
+carbon_fungi <- lm(Tc ~ Active_Fungi, data = carbon)
+carbon_both <- lm(Tc ~ Active_Bacteria + Active_Fungi, data = carbon)
+carbon_int <- lm(Tc ~ Active_Bacteria*Active_Fungi, data = carbon)
+```
+
+Look at the summaries for some of your models. Do the coefficients for the different variable make sense based on what you saw in your graph?
+  
+  We will again check our assumption of normality before testing the models.
+
+```{r carbon_resid}
+resid_null_carbon <- resid(carbon_null)
+resid_bac_carbon <- resid(carbon_bac)
+resid_fungi_carbon <- resid(carbon_fungi)
+resid_both_carbon <- resid(carbon_both)
+resid_int_carbon <- resid(carbon_int)
+```
+
+```{r carbon_qq}
+qqnorm(resid_null_carbon)
+qqline(resid_null_carbon)
+
+qqnorm(resid_bac_carbon)
+qqline(resid_bac_carbon)
+
+qqnorm(resid_fungi_carbon)
+qqline(resid_fungi_carbon)
+
+qqnorm(resid_both_carbon)
+qqline(resid_both_carbon)
+
+qqnorm(resid_int_carbon)
+qqline(resid_int_carbon)
+```
+
+Yikes, this time, it looks like we have some skew in our data based on the curved shape of the points in our qqplots. Before we run the tests, we'll try a log transform to see if that makes our residuals less skewed. We can actually do this transform right in the formula of our linear model, instead of adding a new variable. We will just add the `log` function to our dependent variable (Tc).
+
+```{r logcarbon_lm}
+carbon_null <- lm(log(Tc) ~ 1, data = carbon)
+carbon_bac <- lm(log(Tc) ~ Active_Bacteria, data = carbon)
+carbon_fungi <- lm(log(Tc) ~ Active_Fungi, data = carbon)
+carbon_both <- lm(log(Tc) ~ Active_Bacteria + Active_Fungi, data = carbon)
+carbon_int <- lm(log(Tc) ~ Active_Bacteria*Active_Fungi, data = carbon)
+```
+
+Look at the summaries for some of your models. Do the coefficients for the different variable make sense based on what you saw in your graph?
+
+Now, we will check the residuals again, using the models with the log transformed data.
+
+```{r logcarbon_resid}
+resid_null_carbon <- resid(carbon_null)
+resid_bac_carbon <- resid(carbon_bac)
+resid_fungi_carbon <- resid(carbon_fungi)
+resid_both_carbon <- resid(carbon_both)
+resid_int_carbon <- resid(carbon_int)
+```
+
+```{r logcarbon_qq}
+qqnorm(resid_null_carbon)
+qqline(resid_null_carbon)
+
+qqnorm(resid_bac_carbon)
+qqline(resid_bac_carbon)
+
+qqnorm(resid_fungi_carbon)
+qqline(resid_fungi_carbon)
+
+qqnorm(resid_both_carbon)
+qqline(resid_both_carbon)
+
+qqnorm(resid_int_carbon)
+qqline(resid_int_carbon)
+```
+
+These look better now, so we'll move on with testing our models.
+
+#### Testing the models
+To test the models, we will use the same approach that we used with the first example.
+
+```{r carbon_AIC}
+AIC(carbon_null,carbon_bac,carbon_fungi,carbon_both,carbon_int)
+```
+
+Based on the AIC models, which model is the best? Is it significantly better than the others? Given this, along with the coefficients from the best model and the patterns you see in your graph, what can you conclude about the effects of the two predictor variables (bacteria and fungi levels)?
+  
+  ### 11.3 Continuous and categorial predictors
+  For our final example, we will look at a blend of the previous two types of predictors and consider a case where we have one continuous and one categorical predictor. We will use an example of butterfly endurance and how it is affected by both temperature and the genotype of the butterfly.
+
+#### Visualizing and building the models
+
+```{r butterfly_data}
+butterfly <- read.csv("butterfly.csv")
+```
+
+```{r butterfly_scat}
+ggplot(data=butterfly, aes(x=Temp,y=Endurance,color=Genotype)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  scale_color_manual(values=c("#ce9642","#3b7c70","#3b3a3e")) +
+  labs(x="Temperature") +
+  theme_classic()
+```
+
+What is your initial interpretation for how temperature and genotype affect the endurance of butterflies, based on the graph? Does unequal variances seem to be a problem?
+  
+  We will now move on to building our models: one null model and our four different alternative models.
+
+```{r butterfly_lm}
+butter_null <- lm(Endurance ~ 1, data=butterfly)
+butter_temp <- lm(Endurance ~ Temp, data=butterfly)
+butter_geno <- lm(Endurance ~ Genotype, data=butterfly)
+butter_both <- lm(Endurance ~ Temp + Genotype, data=butterfly)
+butter_int <- lm(Endurance ~ Temp*Genotype, data=butterfly)
+```
+
+Before testing these models, we'll check our residuals for normality.
+
+```{r butterfly_resid}
+resid_null_butter <- resid(butter_null)
+resid_temp_butter <- resid(butter_temp)
+resid_geno_butter <- resid(butter_geno)
+resid_both_butter <- resid(butter_both)
+resid_int_butter <- resid(butter_int)
+```
+
+```{r butterfly_qq}
+qqnorm(resid_null_butter)
+qqline(resid_null_butter)
+
+qqnorm(resid_temp_butter)
+qqline(resid_temp_butter)
+
+qqnorm(resid_geno_butter)
+qqline(resid_geno_butter)
+
+qqnorm(resid_both_butter)
+qqline(resid_both_butter)
+
+qqnorm(resid_int_butter)
+qqline(resid_int_butter)
+```
+
+Once again, the residuals don't look quite normal, but there doesn't seem to be a lot of skew, so we'll move on with testing our models.
+
+#### Testing the models
+Using the likelihood approach, we can again just use the `AIC` function to compare our five models:
+  
+  ```{r butterfly_AIC}
+AIC(butter_null,butter_temp,butter_geno,butter_both,butter_int)
+```
+
+Based on these AIC values, what can you conclude about the effects of temperature, genotype, and their interaction on butterfly endurance?
