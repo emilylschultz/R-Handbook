@@ -1,5 +1,5 @@
 ---
-title: "ESS 3500 R Handbook, Lesson 9"
+title: "ESS 3500 R Handbook, Lesson 10"
 author: "Emily Schultz"
 date: "2023-02-15"
 output: 
@@ -12,61 +12,260 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Lesson 9: Regressions in R
-In this lesson, you will tackle your third type of statistical test: linear regressions. Linear regressions are used when both your independent and dependent variables are continuous.
+## Lesson 10: Assumptions and Transformations
+In this lesson, we will cover how to test two assumptions of linear models (normality and equal variances) and what to do when the assumptions are violated
 
-For this lesson, we will work with the temperature and plant size example we have used before. Our question will be: does the bite strength of lizards affect the area of the territory they are able to occupy.
+### 10.1 Testing for normality
+Technically, the assumption of linear models is that the residuals (the leftover variation that is not explained by our model) are normally distributed. Therefore, in order to test this assumption, we need to run our model and save the residuals.
 
-### 9.1 Building and visualizing your models
+For this example, we will work with a new data set on the Coachella Valley fringe-toed lizard. This lizard is very endangered, so we are interested in how to best manage the species to improve the chances of persistence. We have data based on a simulation that estimates the time to extinction (TTE) for three different management plans: no reserve ("none"), a single reserve ("single"), and multiple reserves in a network ("network").
 
-We'll start off by building our null and alternative models for this question. 
+Download the lizard data and load the data into R.
 
-First, load the data set. Be sure your working directory is set to the location of the lizard bite data file.
-
-```{r plant_data}
-plant <- read.csv("DataFrameExample.csv")
+```{r lizard_data}
+lizard <- read.csv("lizard.csv")
 ```
 
-Next, build the two models.
+Now we will build our two models, so we can save the residuals.
 
-```{r plant_lm}
-plant_null <- lm(Growth ~ 1, plant)
-plant_alt <- lm(Growth~ Temperature, plant)
+```{r lizard_lm}
+lizard_null <- lm(TTE ~ 1, lizard)
+lizard_alt <- lm(TTE~ Plan, lizard)
 ```
 
-To view the output of your models, type the name of each model. Just like when we have worked with this model before, the null model will have just an intercept, and the alternative model will have a intercept and a slope term (labeled "Temperature") for the effect of temperature on plant growth. Based on the slope term, are higher temperatures likely to lead to slower or faster plant growth? Does it seem like a strong effect?
+We will save the residuals from each model using the `resid` function. Then we will save the residuals in a data frame, so we can graph them using `ggplot`.
 
-Now, let's create a graph to visualize our data. Because we have two continuous variables, a scatterplot is a good option. We will also include a best fit line based on our alternative model. If you haven't already, load the `ggplot2` package first.
+```{r lizard_resid}
+resid_null <- resid(lizard_null)
+resid_alt <- resid(lizard_alt)
 
-```{r plant_scatter}
+residuals <- data.frame(resid_null = resid_null, resid_alt = resid_alt)
+```
+
+#### Histogram of residuals
+The first way to check for normality of residuals is to make a histogram to determine if the residuals look like they are normally distributed, or at least symmetrical.
+
+```{r residnull_hist}
 library(ggplot2)
-ggplot(plant, aes(x=Temperature, y=Growth)) +
-  geom_point() +
-  geom_smooth(method="lm")+
-  labs(x="Temperature", y="Plant Growth") +
+ggplot(residuals, aes(x=resid_null)) +
+  geom_histogram() +
+  labs(x="Extinction time", y="Frequency") +
   theme_classic()
 ```
 
-### 9.2 Testing the models
-
-#### Classical Frequentist Approach
-Let's again start by analyzing the models using a frequentist approach. We don't actually need to run any additional tests for this. We can just look at some additional output from the models we already ran.
-
-To view the additional output, use the `summary` function.
-
-```{r lm_out}
-summary(plant_alt)
+```{r residalt_hist}
+ggplot(residuals, aes(x=resid_alt)) +
+  geom_histogram() +
+  labs(x="Extinction time", y="Frequency") +
+  theme_classic()
 ```
 
-When you view the output, you will see a number of things. First, you will be able to see the the formula you used to build the models. Then you will see some information on the distribution of the residuals (the leftover variation not explained by your model). Next, you will see the coefficients from your model, along with standard error od the estimates. The coefficients section will also show you t-values and p-values for each coefficient. These are one-sample t-tests comparing the value of the coefficient to zero.
+Do the residuals look normally distributed?
 
-The information we really want for our linear regression test is down at the very bottom. In the final section, you will see some R-squared values. These are a measure of how much variation in your dependent variable is explained by your independent variable (we will talk about this more in class). Below that, you will see the output of the linear regression test. First is the F-statistic (the same statistic that was calculated for the ANOVA). Then you will see the p-value. Based on these values, would your reject or accept the null hypothesis? What does this tell you about the effect of temperature on plant growth?
+#### qqplot
+There is another type of graph that is useful for visualizing the normality of residuals, called a qqplot. This type of graph compares the residuals from a model with residuals that would be predicted based on a normal distribution. If we graph the residuals from our model against the predicted residuals, we would expect them to form a straight line if the residuals are normally distributed. If they do not form a straight line, that suggests the residuals are not normally distributed.
 
-#### Likelihood-based approach
-Next we will use a likelihood-based approach to test the same question. Once again, the approach is the same as what you used for the t-test and ANOVA, using the `AIC` function to compare the two models.
+To make a qqplot to test for a normal distribution, we can use the `qqnorm` function. Then we can ues the `qqline` function to add a reference line to the plot, showing where the points should fall if the data are normally distributed. Let's make these plots for both of our models.
 
-```{r cone_aic}
-AIC(plant_null, plant_alt)
+```{r qqplots}
+qqnorm(resid_null)
+qqline(resid_null)
+
+qqnorm(resid_alt)
+qqline(resid_alt)
 ```
 
-Based on this output, what would you conclude about the effect of temperature on plant growth?
+When the points form a curve like this, instead of a straight line, that usually suggests that the data are skewed, which aligns with what we saw in the histograms. Based on both tests, it looks like our data are not normally distributed.
+
+#### Shapiro-Wilks test
+Now we will cover a formal test for normality: the Shapiro-Wilks test. Our null hypothesis for this test is that the residuals are normally distributed.
+
+Running the test is pretty straightforward. We will use the `shapiro.test` function, and the only argument we need to input is our residuals from the models we built.
+
+```{r shapiro}
+shapiro.test(resid_null)
+shapiro.test(resid_alt)
+```
+
+Based on the output of the tests, are the residuals normally distributed?
+
+Remember, though, there are downsides to this test. When you interpret the results, be sure to interpret them in the context of your sample size.
+
+### 10.2 The log transform
+We have established that our data are not normally distributed. What can we do about it? Well, when we have skewed data like we saw above, often a good option is to log transform our data. The log-transformed data will often be more normally distributed, and if they are, we can run our test on the log-transformed data. Let's try this on our lizard data!
+
+First, we will add a new column to our data frame with the log transformed TTE data.
+
+```{r ln_transform}
+lizard$log_TTE <- log(lizard$TTE)
+```
+
+Now we will check to see if the log transformed data are normal, using the same approach as above.
+
+First, run the two models, this time using "log_TTE" as our dependent variable, and save the residuals.
+
+```{r lizard_lmlog}
+lizard_null_log <- lm(log_TTE ~ 1, lizard)
+lizard_alt_log <- lm(log_TTE~ Plan, lizard)
+
+resid_null_log <- resid(lizard_null_log)
+resid_alt_log <- resid(lizard_alt_log)
+
+residuals_log <- data.frame(resid_null = resid_null_log, resid_alt = resid_alt_log)
+```
+
+Now, we will make our graphs to check normality. Start with the histograms:
+
+```{r residlog_hist}
+ggplot(residuals_log, aes(x=resid_null)) +
+  geom_histogram() +
+  labs(x="Extinction time", y="Frequency") +
+  theme_classic()
+
+ggplot(residuals_log, aes(x=resid_alt)) +
+  geom_histogram() +
+  labs(x="Extinction time", y="Frequency") +
+  theme_classic()
+```
+
+Next, make the qqplots:
+
+```{r qqplots_log}
+qqnorm(resid_null_log)
+qqline(resid_null_log)
+
+qqnorm(resid_alt_log)
+qqline(resid_alt_log)
+```
+
+And finally, we'll run the Shapiro-Wilks test on the new residuals:
+
+```{r shapiro_log}
+shapiro.test(resid_null_log)
+shapiro.test(resid_alt_log)
+```
+
+Our graphs don't look perfect, but they look much better than before! Furthermore, based on the Shapiro-Wilks tests, we would not reject the null hypothesis that the residuals are normally-distributed. In this case, it would be better to use the models with the log transformed data to draw inferences about the effect of the management plans on the estimated extinction time of the lizards.
+
+#### Running the test
+This is a good chance to practice choosing and running a statistical test! Now that we have created our log-transformed variable, select the appropriate test and run the test, using the log-transformed variable as your response (dependent) variable. You may choose either the classical frequentist approach or the likelihood approach.
+
+### 10.3 Testing for equal variances
+Another assumption of linear models is that the variance of our dependent variable is equal for different values of our independent variable. To look at this assumption, we are going to return to the lodgepole pine data set we worked with when you learned to run an ANOVA. Remember, our question was whether cone size varied between islands without squirrels ("ia"), islands with squirrels ("ip"), and the mainland with squirrels ("mp").
+
+First load the data set, and then we will start testing the assumption of equal variance.
+
+```{r cone_data}
+cone <- read.csv("lodgepole.csv")
+```
+
+For this one, we do not need to run the models first, so let's jump right into the testing.
+
+#### Graphs to visualize variance
+We will start with a simple visual test: making a box plot to compare the variation between the different categories.
+
+```{r cone_boxplot}
+ggplot(cone, aes(x=type, y= conesize)) +
+  geom_boxplot() +
+  theme_classic()
+```
+
+It looks like the variances are pretty similar for the ia and mp categories, but the ip category has much higher variation. We can check this with a formal test.
+
+If you are working with two continuous variables, you can make a scatter plot to check the variance. Just look from left to right along the graph and see if it looks like the scatter around the best fit line is about equal.
+
+#### Levene's test
+Levene's test is a formal test that will check for equal variances. Note that is tends to be a bit sensitive, so it will sometimes pick up small differences in the variances that are not a problem, particularly if you have large sample sizes. With the Levene's test, we are testing the null hypothesis that the variances are equal. Therefore if the p-value is less than 0.05, that suggests that the variances are not equal.
+
+The function for the Levene's test is in the `car` package, so install (`install.packages("car")`) and load that package first.
+
+```{r install_car}
+library(car)
+```
+
+Now we can run the test:
+
+```{r levene}
+leveneTest(conesize ~ type, data = cone)
+```
+
+Don't worry if you get a warning message. It is just telling you that when it ran the test, it converted "type" from a character variable to a factor variable. Take a look at the p-value for the test. Based on this p-value, are the variances equal?
+
+### 10.4 The square root transform
+We have established that we don't have equal variance between are categories, so what can we do? The first thing we can try is transforming our data. If our data are skewed (not normally distributed), a log transform might help. However, if our data have a pretty symmetrical distribution (which they would for these cone data if we checked), a log transform is unlikely to help. Instead, we can try a square root transform. Let's see if that helps here.
+
+Like with the log transform, we will add a new variable to our data frame, but this time we will take the square root of our cone size variable.
+
+```{r sqrt_trans}
+cone$sqrt_conesize <- sqrt(cone$conesize)
+```
+
+Now, we can use our tests again to see if this helped.
+
+Start with the boxplot:
+
+```{r sqrt_boxplot}
+ggplot(cone, aes(x=type, y= sqrt_conesize)) +
+  geom_boxplot() +
+  theme_classic()
+```
+
+It still doesn't look great, but we will check our Levene's test too.
+
+```{r levene_sqrt}
+leveneTest(sqrt_conesize ~ type, data = cone)
+```
+
+Okay, it still doesn't look good, so our transform did not work. But never fear! Move on to the next section for the solution.
+
+### 10.5 Welch's tests
+If the variances still aren't equal after transforming the data, we can use a test that doesn't assume equal variances. This will work for both a t-test and and ANOVA.
+
+To run the Welch's test for an ANOVA, which is what we need to use here because our independent variable has three categories, we will use a new function: `oneway.test`. This function will allow us to include an argument indicating that we do not want to assume equal variances. Otherwise the syntax is the same as for the aov function, and our hypotheses are the same as they would be for a normal ANOVA. Let's run the test.
+
+```{r welch_anova}
+oneway.test(conesize~type,cone,var.equal=FALSE)
+```
+
+The output is similar to what you have seen before. You should see the F statistic, the degrees of freedom (df) and the p-value. Based on the p-value, would you reject the null hypothesis that habitat type does not affect cones size?
+
+We have a bit of a conundrum now, though. Just like a regular ANOVA the Welch's ANOVA just does an overall comparison of the categories, so this output tells us that at least one group is different, but it doesn't tell us which group is different. Unfortunately, we can't use a Tukey HSD test as a follow up, because the Tukey HSD test does not let us assume unequal variances. It only works when our variances are equal. However, we do have another option. We can run pairwise Welch's t-tests between our categories, and use a Bonferonni correction to choose a lower threshold p-value. Let's work through this process.
+
+First, we need data sets that just have two of the three categories. We want one data set for each combination of pairs, so we will make three data sets, excluding one category in each set. To do this, we will use the `filter` function from the **tidyverse** package. In the second argument of the `filter` fuction, we will use the `!=` (does not equal) operator to tell R to exclude observations with that value for habitat type.
+
+```{r pairwise}
+library(tidyverse)
+cone_ia_ip <- filter(cone, type != "mp") 
+cone_ia_mp <- filter(cone, type != "ip")
+cone_ip_mp <- filter(cone, type != "ia") 
+```
+
+Now we can run our t-tests on each of these data sets. We'll start with the first one and look at the output before moving on to the other two tests. The only difference in the syntax between the Welch's t-test and the regular t-test is that will the change the "var.equal" argument to "FALSE".
+
+```{r ttest_iaip}
+t.test(conesize ~ type, data=cone_ia_ip, var.equal=FALSE)
+```
+
+Look through the output. The p-value from this test is 0.0378. Normally, we would reject the null hypothesis because it is below 0.05, but remember, we are doing multiple comparisons here, so we need to account for that. Doing multiple comparisons makes it more likely that we will reject the null hypothesis, even if it is true. With the Bonferonni correction, we choose a new threshold p-value, so that our overall chance of incorrectly rejecting the null hypothesis is still 5%. To choose the new threshold, we simply divide 0.05 (are usual threshold) by the number of comparisons we are making (3, in this example). Our new threshold is therefore about 0.0167. Based on this new threshold, would you reject the null hypothesis?
+
+Now we will repeat the Welch's t-test for our other pairs of habitat types:
+
+```{r ttests}
+t.test(conesize ~ type, data=cone_ia_mp, var.equal=FALSE)
+t.test(conesize ~ type, data=cone_ip_mp, var.equal=FALSE)
+```
+
+Look at the output from both of the tests. Using our new threshold p-value of 0.0167, would you reject the null hypothesis for either comparison.
+
+Overall, what would you conclude about the effect of habitat on cone size. Which pair(s) of habitats was significantly different from each other?
+
+### Optional practice problems
+Download the InvasiveGrass.csv file from Canvas. This file contains data from an experiment that was done to test for the effect of invasive grass removal on the plant community. As a first pass, the researchers simply wanted to know if removing the grasses from the plot at the start of the growing season was effective for reducing the invasive grass cover in the plot at the end of the growing season. You will work with two variables from this data set. Your independent variable is weed removal (the name of this variable is "Weed" in the data set), and your dependent variable is grass cover (the name of this variable is "Grass_cover" in the data set).
+
+1. What are your null and alternative hypotheses for this question?
+2. Build your null and alternative models. Save the model residuals.
+3. Use histograms and qqplots to determine if the residuals are normally-distributed.
+4. Use a boxplot and a Levene's test to check for equal variances.
+5. Based on your exploration in questions 3 and 4, select an approach for addressing any violations of the assumptions.
+6. Run an appropriate test (addressing any violations of assumptions) to answer the original question (Does grass removal affect end-of-season grass cover?).
+7. Write you conclusions, including any necessary statistics backing them up.
