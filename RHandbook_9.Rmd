@@ -27,7 +27,7 @@ mill <- read.csv("millipedes.csv")
 mill$species <- as.factor(mill$species)
 ```
 
-Now, let's make a box plot to visualize our data set. This will allow us to start looking at the patterns in the data, including possible interactions. We will put species on the x-axis and group and color our boxes by sex.
+Now, let's make a box plot to visualize our data set. This will allow us to start looking at the patterns in the data, including possible interactions. We will put species on the x-axis and group and color our boxes by sex. This code includes a new `scale_fill_manual` function that allows us to manually select the colors we want to use. (See [A note about color in R] for more information about using colors in R.)
 
 ```{r mill_boxplot}
 library(ggplot2)
@@ -68,7 +68,7 @@ summary(mill_2way)
 
 In the output, you should see a table with a row for each of the main effects (sex and species) and a row showing the results for the interaction between the variables (sex:species). Let's start by looking at the interaction effect, because that affect how we interpret the main effects. We can see from the table that the p-value for the interaction is greater than 0.05, so the interaction affect is not significant. This makes things easier for us because we can interpret the main effects based on the graph and the model coefficients, without worrying about how they interact!
 
-However, just like with a one-way ANOVA, when we have a categorical variable with more than two groups, such a species in this example, the ANOVA only tells us that at least one group is different. It doesn't tell us which specific groups are different. We therefore need to do a post hoc test to look at those pairwise differences. We can use the same `TukeyHSD` function that we used for post hoc tests after a one-way ANOVA. However, because we have more than one independent variable, we can choose to include both variables in the Tukey HSD test or only one variable. In this case, our sex variable has only two groups, so it is not necessary to include it in the post hoc test. We only need to include species, as shown in the code below.
+However, just like with a one-way ANOVA, when we have a categorical variable with more than two groups, such a species in this example, the ANOVA only tells us that at least one group is different. It doesn't tell us which specific groups are different. We therefore need to do a post hoc test to look at those pairwise differences. We can use the same `TukeyHSD` function that we used for post hoc tests after a one-way ANOVA. However, because we have more than one independent variable, we can choose to include both variables in the Tukey HSD test or only one variable. In this case, our sex variable has only two groups, so it is not necessary to include it in the post hoc test. We only need to include species, as shown in the code below. (If we needed to include both variable, we would list them both in the `c` function: `which=c("species","sex")`. If you don't list any variables, it will give the results for both variables independently, as well as their interaction.)
 
 ```{r mill_tukey}
 TukeyHSD(mill_2way,which=c("species"))
@@ -96,7 +96,7 @@ We'll start off by loading and visualizing our data. Be sure your working direct
 kidney <- read.csv("kidney.csv")
 ```
 
-Now, let's make a box plot to visualize our data set. We will put site on the x-axis and group and color our boxes by lab rat strain.
+Now, let's make a box plot to visualize our data set. We will put site on the x-axis and group and color our boxes by lab rat strain. 
 
 ```{r kidney_boxplot}
 library(ggplot2)
@@ -155,7 +155,7 @@ AIC(kidney_null,kidney_hyper,kidney_site,kidney_both,kidney_int)
 Based on the output table, which model was the best? Was it significantly better than the next best model? What do the differences in AIC values tell you about the effects of each predictor and their interaction?
 
 ### Optional practice problems
-Download the algae.csv file from Canvas. This data set contains data on the growth of algae under 4 different light levels (low, med low, med high, and high) and three different wave intensity (low, med, high). Researchers want to know if the light level and wave intensity affect algae growth.
+Download the algae.csv file from Canvas. This data set contains data on the growth of algae under 4 different light levels (low, med low, med high, and high) and three different wave intensity (low, med, high). Researchers want to know if the light level and wave intensity affect algae growth. For the algae growth variable, we will be working with the natural log of growth (log_growth).
 
 1. Write the null and alternative hypotheses for the main effects and the interaction effect.
 
@@ -166,6 +166,23 @@ Download the algae.csv file from Canvas. This data set contains data on the grow
 4. Build and compare your models using the likelihood approach. Don't forget to build models for both predictors individually, the predictors together, and the predictor together plus their interaction.
 
 5. State your conclusions from your analysis, including all necessary statistics.
+
+### A note about color in R
+When we made our graphs for the two-way ANOVA, we included the `scale_fill_manual` function to specify the colors we wanted to use in the graph. You are not required to include this function. If you leave it out, ggplot will automatically choose colors based on its default color package. However, the ggplot's default color palette is not colorblind-friendly, so it is usually better to choose a different color palette. Below are some links to websites that can help you choose colors. When you list the colors you want to use, you can list the hex codes (as we do in our code in this lesson) or the name of the color (e.g., "blue"). If you use the `scale_fill_manual` function, or a similar function, to specify colors, be sure to include one color for every group in your variable. In our examples, the variables displayed by the colors only had two groups (e.g., in the millipede example, there are only two sexes). If you have a variable with more than two groups, you need to list more than two colors.
+
+List of useful R color websites:
+
+1. [ggplot 2 Quick reference: colors](https://sape.inf.usi.ch/quick-reference/ggplot2/colour). This website includes a chart will color names in R, along with additional information about using color in ggplot.
+
+2. [ColorBrewer](https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3). The ColorBrewer website provides a set of color palettes that you can use in R. You can choose sequential, diverging, or qualitative palettes, and there is an option for colorblind-friendly palettes. The website will provide the hex codes for the colors in the palette.
+
+3. [MetBrewer](https://github.com/BlakeRMills/MetBrewer?tab=readme-ov-file). MetBrewer, which also has an associated R package, provides a set of color palettes based on works of art at the Metropolitan Museum of Art. Not all of the palettes are colorblind-friendly, but you can find a list of colorblind-friendly palettes at the bottom of the webpage.
+
+4. [Introduction to the viridis color maps](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html). Viridis is an R package that has colorblind-friendly palettes. This website provides information on the use of the package. You can also see what some different R color palettes would look like to people with different forms of colorblindness.
+
+5. [Best Color Palettes for Scientific Figures and Data Visualizations](https://www.simplifiedsciencepublishing.com/resources/best-color-palettes-for-scientific-figures-and-data-visualizations) This website has some general guidelines for the use of color in scientific publishing, along with some specific colorblind-friendly palettes, including the hex codes.
+
+6. [PNW colors](https://github.com/jakelawlor/PNWColors). This R package has a set of colorblind friendly palettes based on photographs of the Pacific Northwest.
 
 
 

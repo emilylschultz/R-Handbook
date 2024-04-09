@@ -325,6 +325,8 @@ Example 1: millipedes</a></li>
 id="toc-example-2-hypertension">9.2 Example 2: hypertension</a></li>
 <li><a href="#optional-practice-problems"
 id="toc-optional-practice-problems">Optional practice problems</a></li>
+<li><a href="#a-note-about-color-in-r"
+id="toc-a-note-about-color-in-r">A note about color in R</a></li>
 </ul></li>
 </ul>
 </div>
@@ -356,7 +358,10 @@ mill$species &lt;- as.factor(mill$species)</code></pre>
 <p>Now, let’s make a box plot to visualize our data set. This will allow
 us to start looking at the patterns in the data, including possible
 interactions. We will put species on the x-axis and group and color our
-boxes by sex.</p>
+boxes by sex. This code includes a new <code>scale_fill_manual</code>
+function that allows us to manually select the colors we want to use.
+(See <a href="#a-note-about-color-in-r">A note about color in R</a> for
+more information about using colors in R.)</p>
 <pre class="r"><code>library(ggplot2)
 ggplot(mill, aes(x=species, y=Alanine, fill=sex)) +
   geom_boxplot() +
@@ -444,7 +449,11 @@ one-way ANOVA. However, because we have more than one independent
 variable, we can choose to include both variables in the Tukey HSD test
 or only one variable. In this case, our sex variable has only two
 groups, so it is not necessary to include it in the post hoc test. We
-only need to include species, as shown in the code below.</p>
+only need to include species, as shown in the code below. (If we needed
+to include both variable, we would list them both in the <code>c</code>
+function: <code>which=c("species","sex")</code>. If you don’t list any
+variables, it will give the results for both variables independently, as
+well as their interaction.)</p>
 <pre class="r"><code>TukeyHSD(mill_2way,which=c(&quot;species&quot;))</code></pre>
 <pre><code>##   Tukey multiple comparisons of means
 ##     95% family-wise confidence level
@@ -607,7 +616,8 @@ interaction?</p>
 on the growth of algae under 4 different light levels (low, med low, med
 high, and high) and three different wave intensity (low, med, high).
 Researchers want to know if the light level and wave intensity affect
-algae growth.</p>
+algae growth. For the algae growth variable, we will be working with the
+natural log of growth (log_growth).</p>
 <ol style="list-style-type: decimal">
 <li><p>Write the null and alternative hypotheses for the main effects
 and the interaction effect.</p></li>
@@ -621,6 +631,60 @@ predictors together, and the predictor together plus their
 interaction.</p></li>
 <li><p>State your conclusions from your analysis, including all
 necessary statistics.</p></li>
+</ol>
+</div>
+<div id="a-note-about-color-in-r" class="section level3">
+<h3>A note about color in R</h3>
+<p>When we made our graphs for the two-way ANOVA, we included the
+<code>scale_fill_manual</code> function to specify the colors we wanted
+to use in the graph. You are not required to include this function. If
+you leave it out, ggplot will automatically choose colors based on its
+default color package. However, the ggplot’s default color palette is
+not colorblind-friendly, so it is usually better to choose a different
+color palette. Below are some links to websites that can help you choose
+colors. When you list the colors you want to use, you can list the hex
+codes (as we do in our code in this lesson) or the name of the color
+(e.g., “blue”). If you use the <code>scale_fill_manual</code> function,
+or a similar function, to specify colors, be sure to include one color
+for every group in your variable. In our examples, the variables
+displayed by the colors only had two groups (e.g., in the millipede
+example, there are only two sexes). If you have a variable with more
+than two groups, you need to list more than two colors.</p>
+<p>List of useful R color websites:</p>
+<ol style="list-style-type: decimal">
+<li><p><a
+href="https://sape.inf.usi.ch/quick-reference/ggplot2/colour">ggplot 2
+Quick reference: colors</a>. This website includes a chart will color
+names in R, along with additional information about using color in
+ggplot.</p></li>
+<li><p><a
+href="https://colorbrewer2.org/#type=sequential&amp;scheme=BuGn&amp;n=3">ColorBrewer</a>.
+The ColorBrewer website provides a set of color palettes that you can
+use in R. You can choose sequential, diverging, or qualitative palettes,
+and there is an option for colorblind-friendly palettes. The website
+will provide the hex codes for the colors in the palette.</p></li>
+<li><p><a
+href="https://github.com/BlakeRMills/MetBrewer?tab=readme-ov-file">MetBrewer</a>.
+MetBrewer, which also has an associated R package, provides a set of
+color palettes based on works of art at the Metropolitan Museum of Art.
+Not all of the palettes are colorblind-friendly, but you can find a list
+of colorblind-friendly palettes at the bottom of the webpage.</p></li>
+<li><p><a
+href="https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html">Introduction
+to the viridis color maps</a>. Viridis is an R package that has
+colorblind-friendly palettes. This website provides information on the
+use of the package. You can also see what some different R color
+palettes would look like to people with different forms of
+colorblindness.</p></li>
+<li><p><a
+href="https://www.simplifiedsciencepublishing.com/resources/best-color-palettes-for-scientific-figures-and-data-visualizations">Best
+Color Palettes for Scientific Figures and Data Visualizations</a> This
+website has some general guidelines for the use of color in scientific
+publishing, along with some specific colorblind-friendly palettes,
+including the hex codes.</p></li>
+<li><p><a href="https://github.com/jakelawlor/PNWColors">PNW colors</a>.
+This R package has a set of colorblind friendly palettes based on
+photographs of the Pacific Northwest.</p></li>
 </ol>
 </div>
 </div>
