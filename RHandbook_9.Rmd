@@ -154,3 +154,18 @@ AIC(kidney_null,kidney_hyper,kidney_site,kidney_both,kidney_int)
 
 Based on the output table, which model was the best? Was it significantly better than the next best model? What do the differences in AIC values tell you about the effects of each predictor and their interaction?
 
+### Optional practice problems
+Download the algae.csv file from Canvas. This data set contains data on the growth of algae under 4 different light levels (low, med low, med high, and high) and three different wave intensity (low, med, high). Researchers want to know if the light level and wave intensity affect algae growth.
+
+1. Write the null and alternative hypotheses for the main effects and the interaction effect.
+
+2. Make a box plot to visualize the effect of both independent variables (light and wave) on algae growth.
+
+3. Run a two-way ANOVA using the classical frequentist approach. Run any follow-up tests as necessary.
+
+4. Build and compare your models using the likelihood approach. Don't forget to build models for both predictors individually, the predictors together, and the predictor together plus their interaction.
+
+5. State your conclusions from your analysis, including all necessary statistics.
+
+
+
