@@ -1,5 +1,5 @@
 ---
-title: "ESS 3500 R Handbook, Lesson 9"
+title: "ESS 3500 R Handbook, Lesson11"
 author: "Emily Schultz"
 date: "2023-02-15"
 output: 
@@ -9,45 +9,77 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
 ```
 
-## Lesson 9: Regressions in R
-In this lesson, you will tackle your third type of statistical test: linear regressions. Linear regressions are used when both your independent and dependent variables are continuous.
+## Lesson 11: Correlations and regressions in R
+In this lesson, you will tackle two types of tests that can be used when you have two continuous variables: correlations and regressions. Correlations are typically used when we think there might be a relationship between the two variables, but not a causal relationship (i.e., you don't have clear independent and dependent variables). A regression is used when we hypothesize that there is a causal relationship between our variables or if we want to be able to use one variable to predict the value of the other, even if there isn't a causal relationship. 
 
-For this lesson, we will work with the temperature and plant size example we have used before. Our question will be: does the bite strength of lizards affect the area of the territory they are able to occupy.
+For this lesson, we will work with a summarized version of the plant cover data set that we worked with once before (comparing cover of native and invasive plants), but this time we will look at some climate variables as possible predictor of native plant cover.
 
-### 9.1 Building and visualizing your models
+### 11.1 Correlations
+For our correlation analysis, we are going to look at correlations between our three climate variables: total precipitation (Totprecip), mean temperature (Mean_tempC), and maximum temperature (Max_tempC). There are often relationships between different climate variables, but those relationships are not usual causal (e.g., higher precipitation doesn't cause higher temperatures), so a correlation analysis is the right way to go for analyzing these relationships.
 
-We'll start off by building our null and alternative models for this question. 
-
-First, load the data set. Be sure your working directory is set to the location of the lizard bite data file.
+#### Visualizing our data
+First, load the data set. Be sure your working directory is set correctly.
 
 ```{r plant_data}
-plant <- read.csv("DataFrameExample.csv")
+plant <- read.csv("PlantSumm.csv")
 ```
 
-Next, build the two models.
+To visualize relationships between two continuous variables, a scatterplot is a good approach. With a correlation, we don't always add a best fit line (the best fit line is the output of a regression analysis). Here we have three climate variables, so we want to look at the pairwise relationships between each pair of variables. We could do that with three completely separate plots, but there's a faster way! With the `pairs` function, we can generate a grid of plots that shows the relationship between all pairs of variables we want to include in our analysis. We just provide a formula with the variables we want to include and the data set from which they come.
+
+```{r corr_plot}
+pairs(~ Totprecip + Mean_tempC + Max_tempC, data = plant) 
+```
+
+In the output, you can see the variables on the diagonal and the scatterplot for each pair of variables. (Note that the plots below the diagonal are just repeats of the plots above the diagonal, but with the axes switched). Which variables appear to have a strong correlation?
+
+#### Running the correlation test
+Now we will run a formal test to see if the correlations are significant. You can download additional packages that will automatically run the test for all pairs of variables in our data set, but we will just use the base R function (`cor.test`), so we'll run a separate test for each pair of variables. Because we are running three tests on the same data set, it's a good idea to do a Bonferroni correction. What will our new threshold p-value be?
+
+To run the pairwise tests, we'll use the `with` function in combination with the `cor.test` function, to pull out the two variables we want from the plant data set and run the correlation for those two variables.
+
+```{r corr_test}
+with(plant,cor.test(Mean_tempC,Max_tempC))
+with(plant,cor.test(Mean_tempC,Totprecip))
+with(plant,cor.test(Max_tempC,Totprecip))
+```
+
+Based on the output of these tests, which are statistically significant (don't forget to use the new threshold p-value from your Bonferroni correction).
+
+### 11.2 Linear regression
+Now we will test the effect of climate variables on the plant cover. In this case, it would make sense for there to be a causal relationship between the climate variables and plant cover, so we will use a linear regression.
+
+Good news! You don't have to learn any new code for this!
+
+#### Building and visualizing the models
+To keep things simpler, we will just test the effects of the two temperature variables on the total plant cover. For now, we'll build three models: the null model, an alternative model for mean temperature, and an alternative model for maximum temperature.
 
 ```{r plant_lm}
-plant_null <- lm(Growth ~ 1, plant)
-plant_alt <- lm(Growth~ Temperature, plant)
+plant_null <- lm(tot_cover ~ 1, plant)
+plant_mean <- lm(tot_cover ~ Mean_tempC, plant)
+plant_max <- lm(tot_cover ~ Max_tempC, plant)
 ```
 
-To view the output of your models, type the name of each model. Just like when we have worked with this model before, the null model will have just an intercept, and the alternative model will have a intercept and a slope term (labeled "Temperature") for the effect of temperature on plant growth. Based on the slope term, are higher temperatures likely to lead to slower or faster plant growth? Does it seem like a strong effect?
+To view the output of your models, type the name of each model. Just like when we have worked with this model before, the null model will have just an intercept, and the alternative model will have a intercept and a slope term for the effect of either mean or maximum temperature on plant cover.
 
-Now, let's create a graph to visualize our data. Because we have two continuous variables, a scatterplot is a good option. We will also include a best fit line based on our alternative model. If you haven't already, load the `ggplot2` package first.
+Now, let's create graphs to visualize our data. Because we have two continuous variables, a scatterplot is a good option. We will also include a best fit line based on our alternative model. We'll make two graphs, one for each of our independent variables. If you haven't already, load the `tidyverse` package first.
 
 ```{r plant_scatter}
 library(ggplot2)
-ggplot(plant, aes(x=Temperature, y=Growth)) +
+ggplot(plant, aes(x=Mean_tempC, y=tot_cover)) +
   geom_point() +
   geom_smooth(method="lm")+
-  labs(x="Temperature", y="Plant Growth") +
+  labs(x="Mean temperature (C)", y="Total plant cover") +
+  theme_classic()
+
+ggplot(plant, aes(x=Max_tempC, y=tot_cover)) +
+  geom_point() +
+  geom_smooth(method="lm")+
+  labs(x="Max temperature (C)", y="Total plant cover") +
   theme_classic()
 ```
-
-### 9.2 Testing the models
 
 #### Classical Frequentist Approach
 Let's again start by analyzing the models using a frequentist approach. We don't actually need to run any additional tests for this. We can just look at some additional output from the models we already ran.
@@ -55,10 +87,11 @@ Let's again start by analyzing the models using a frequentist approach. We don't
 To view the additional output, use the `summary` function.
 
 ```{r lm_out}
-summary(plant_alt)
+summary(plant_mean)
+summary(plant_max)
 ```
 
-When you view the output, you will see a number of things. First, you will be able to see the the formula you used to build the models. Then you will see some information on the distribution of the residuals (the leftover variation not explained by your model). Next, you will see the coefficients from your model, along with standard error od the estimates. The coefficients section will also show you t-values and p-values for each coefficient. These are one-sample t-tests comparing the value of the coefficient to zero.
+When you view the output, you will see a number of things. First, you will be able to see the the formula you used to build the models. Then you will see some information on the distribution of the residuals (the leftover variation not explained by your model). Next, you will see the coefficients from your model, along with standard error of the estimates. The coefficients section will also show you t-values and p-values for each coefficient. These are one-sample t-tests comparing the value of the coefficient to zero.
 
 The information we really want for our linear regression test is down at the very bottom. In the final section, you will see some R-squared values. These are a measure of how much variation in your dependent variable is explained by your independent variable (we will talk about this more in class). Below that, you will see the output of the linear regression test. First is the F-statistic (the same statistic that was calculated for the ANOVA). Then you will see the p-value. Based on these values, would your reject or accept the null hypothesis? What does this tell you about the effect of temperature on plant growth?
 
@@ -66,7 +99,29 @@ The information we really want for our linear regression test is down at the ver
 Next we will use a likelihood-based approach to test the same question. Once again, the approach is the same as what you used for the t-test and ANOVA, using the `AIC` function to compare the two models.
 
 ```{r cone_aic}
-AIC(plant_null, plant_alt)
+AIC(plant_null, plant_mean, plant_max)
 ```
 
-Based on this output, what would you conclude about the effect of temperature on plant growth?
+Based on this output, what would you conclude about the effect of mean and maximum temperature on plant growth?
+
+### 11.3 Multiple regression
+In the previous section, we ran two regressions: one for each of our two models. However, we have discussed the problems with running multiple tests on the same data set. To address this, we can instead run a multiple regression, which is essentially the regression version of the two-way ANOVA. You can include multiple predictors in the same model, but this time, the predictor models are both continuous rather than categorical.
+
+```{r mult_models}
+plant_both <- lm(tot_cover ~ Mean_tempC + Max_tempC, plant)
+plant_int <- lm(tot_cover ~ Mean_tempC * Max_tempC, plant)
+```
+
+```{r mult_freq}
+summary(plant_both)
+summary(plant_int)
+```
+
+```{r mult_AIC}
+AIC(plant_null, plant_mean, plant_max, plant_both, plant_int)
+```
+
+#### Comparison between simple and multiple regression
+Look back at the conclusions you drew about the effects of your predictor variables from your single and multiple regressions. Do your conclusions match? Why do you think this is (hint: think about the results of your correlation analysis, where you looked at correlations between the predictor variables)?
+
+We'll discuss this as a class, but think on your own/and or discuss in small groups first.

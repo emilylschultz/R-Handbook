@@ -27,7 +27,7 @@ navbar:
         href: RHandbook_9.html
       - text: "Lesson 10: Assumptions and transformations"
         href: RHandbook_10.html
-      - text: "Lesson 11: Multiple predictors"
+      - text: "Lesson 11: Correlations and regressions"
         href: RHandbook_11.html
       - text: "Lesson 12: Categorical data"
         href: RHandbook_12.html

@@ -13,7 +13,7 @@
 
 <meta name="date" content="2023-02-15" />
 
-<title>ESS 3500 R Handbook, Lesson 9</title>
+<title>ESS 3500 R Handbook, Lesson11</title>
 
 <script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -285,7 +285,7 @@ $(document).ready(function () {
       <a href="RHandbook_10.html">Lesson 10: Assumptions and transformations</a>
     </li>
     <li>
-      <a href="RHandbook_11.html">Lesson 11: Multiple predictors</a>
+      <a href="RHandbook_11.html">Lesson 11: Correlations and regressions</a>
     </li>
     <li>
       <a href="RHandbook_12.html">Lesson 12: Categorical data</a>
@@ -307,7 +307,7 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 9</h1>
+<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson11</h1>
 <h4 class="author">Emily Schultz</h4>
 <h4 class="date">2023-02-15</h4>
 
@@ -315,59 +315,161 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#lesson-9-regressions-in-r"
-id="toc-lesson-9-regressions-in-r">Lesson 9: Regressions in R</a>
+<li><a href="#lesson-11-correlations-and-regressions-in-r"
+id="toc-lesson-11-correlations-and-regressions-in-r">Lesson 11:
+Correlations and regressions in R</a>
 <ul>
-<li><a href="#building-and-visualizing-your-models"
-id="toc-building-and-visualizing-your-models">9.1 Building and
-visualizing your models</a></li>
-<li><a href="#testing-the-models" id="toc-testing-the-models">9.2
-Testing the models</a></li>
+<li><a href="#correlations" id="toc-correlations">11.1
+Correlations</a></li>
+<li><a href="#linear-regression" id="toc-linear-regression">11.2 Linear
+regression</a></li>
+<li><a href="#multiple-regression" id="toc-multiple-regression">11.3
+Multiple regression</a></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="lesson-9-regressions-in-r" class="section level2">
-<h2>Lesson 9: Regressions in R</h2>
-<p>In this lesson, you will tackle your third type of statistical test:
-linear regressions. Linear regressions are used when both your
-independent and dependent variables are continuous.</p>
-<p>For this lesson, we will work with the temperature and plant size
-example we have used before. Our question will be: does the bite
-strength of lizards affect the area of the territory they are able to
-occupy.</p>
-<div id="building-and-visualizing-your-models" class="section level3">
-<h3>9.1 Building and visualizing your models</h3>
-<p>We’ll start off by building our null and alternative models for this
-question.</p>
-<p>First, load the data set. Be sure your working directory is set to
-the location of the lizard bite data file.</p>
-<pre class="r"><code>plant &lt;- read.csv(&quot;DataFrameExample.csv&quot;)</code></pre>
-<p>Next, build the two models.</p>
-<pre class="r"><code>plant_null &lt;- lm(Growth ~ 1, plant)
-plant_alt &lt;- lm(Growth~ Temperature, plant)</code></pre>
+<div id="lesson-11-correlations-and-regressions-in-r"
+class="section level2">
+<h2>Lesson 11: Correlations and regressions in R</h2>
+<p>In this lesson, you will tackle two types of tests that can be used
+when you have two continuous variables: correlations and regressions.
+Correlations are typically used when we think there might be a
+relationship between the two variables, but not a causal relationship
+(i.e., you don’t have clear independent and dependent variables). A
+regression is used when we hypothesize that there is a causal
+relationship between our variables or if we want to be able to use one
+variable to predict the value of the other, even if there isn’t a causal
+relationship.</p>
+<p>For this lesson, we will work with a summarized version of the plant
+cover data set that we worked with once before (comparing cover of
+native and invasive plants), but this time we will look at some climate
+variables as possible predictor of native plant cover.</p>
+<div id="correlations" class="section level3">
+<h3>11.1 Correlations</h3>
+<p>For our correlation analysis, we are going to look at correlations
+between our three climate variables: total precipitation (Totprecip),
+mean temperature (Mean_tempC), and maximum temperature (Max_tempC).
+There are often relationships between different climate variables, but
+those relationships are not usual causal (e.g., higher precipitation
+doesn’t cause higher temperatures), so a correlation analysis is the
+right way to go for analyzing these relationships.</p>
+<div id="visualizing-our-data" class="section level4">
+<h4>Visualizing our data</h4>
+<p>First, load the data set. Be sure your working directory is set
+correctly.</p>
+<pre class="r"><code>plant &lt;- read.csv(&quot;PlantSumm.csv&quot;)</code></pre>
+<p>To visualize relationships between two continuous variables, a
+scatterplot is a good approach. With a correlation, we don’t always add
+a best fit line (the best fit line is the output of a regression
+analysis). Here we have three climate variables, so we want to look at
+the pairwise relationships between each pair of variables. We could do
+that with three completely separate plots, but there’s a faster way!
+With the <code>pairs</code> function, we can generate a grid of plots
+that shows the relationship between all pairs of variables we want to
+include in our analysis. We just provide a formula with the variables we
+want to include and the data set from which they come.</p>
+<pre class="r"><code>pairs(~ Totprecip + Mean_tempC + Max_tempC, data = plant) </code></pre>
+<p><img src="RHandbook_11_files/figure-html/corr_plot-1.png" width="672" /></p>
+<p>In the output, you can see the variables on the diagonal and the
+scatterplot for each pair of variables. (Note that the plots below the
+diagonal are just repeats of the plots above the diagonal, but with the
+axes switched). Which variables appear to have a strong correlation?</p>
+</div>
+<div id="running-the-correlation-test" class="section level4">
+<h4>Running the correlation test</h4>
+<p>Now we will run a formal test to see if the correlations are
+significant. You can download additional packages that will
+automatically run the test for all pairs of variables in our data set,
+but we will just use the base R function (<code>cor.test</code>), so
+we’ll run a separate test for each pair of variables. Because we are
+running three tests on the same data set, it’s a good idea to do a
+Bonferroni correction. What will our new threshold p-value be?</p>
+<p>To run the pairwise tests, we’ll use the <code>with</code> function
+in combination with the <code>cor.test</code> function, to pull out the
+two variables we want from the plant data set and run the correlation
+for those two variables.</p>
+<pre class="r"><code>with(plant,cor.test(Mean_tempC,Max_tempC))</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  Mean_tempC and Max_tempC
+## t = 8.4936, df = 17, p-value = 1.6e-07
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.7531352 0.9611007
+## sample estimates:
+##       cor 
+## 0.8996063</code></pre>
+<pre class="r"><code>with(plant,cor.test(Mean_tempC,Totprecip))</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  Mean_tempC and Totprecip
+## t = -1.6944, df = 17, p-value = 0.1084
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.71147981  0.08956702
+## sample estimates:
+##        cor 
+## -0.3801058</code></pre>
+<pre class="r"><code>with(plant,cor.test(Max_tempC,Totprecip))</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  Max_tempC and Totprecip
+## t = -2.5001, df = 17, p-value = 0.02294
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.78728864 -0.08407849
+## sample estimates:
+##        cor 
+## -0.5184872</code></pre>
+<p>Based on the output of these tests, which are statistically
+significant (don’t forget to use the new threshold p-value from your
+Bonferroni correction).</p>
+</div>
+</div>
+<div id="linear-regression" class="section level3">
+<h3>11.2 Linear regression</h3>
+<p>Now we will test the effect of climate variables on the plant cover.
+In this case, it would make sense for there to be a causal relationship
+between the climate variables and plant cover, so we will use a linear
+regression.</p>
+<p>Good news! You don’t have to learn any new code for this!</p>
+<div id="building-and-visualizing-the-models" class="section level4">
+<h4>Building and visualizing the models</h4>
+<p>To keep things simpler, we will just test the effects of the two
+temperature variables on the total plant cover. For now, we’ll build
+three models: the null model, an alternative model for mean temperature,
+and an alternative model for maximum temperature.</p>
+<pre class="r"><code>plant_null &lt;- lm(tot_cover ~ 1, plant)
+plant_mean &lt;- lm(tot_cover ~ Mean_tempC, plant)
+plant_max &lt;- lm(tot_cover ~ Max_tempC, plant)</code></pre>
 <p>To view the output of your models, type the name of each model. Just
 like when we have worked with this model before, the null model will
 have just an intercept, and the alternative model will have a intercept
-and a slope term (labeled “Temperature”) for the effect of temperature
-on plant growth. Based on the slope term, are higher temperatures likely
-to lead to slower or faster plant growth? Does it seem like a strong
-effect?</p>
-<p>Now, let’s create a graph to visualize our data. Because we have two
+and a slope term for the effect of either mean or maximum temperature on
+plant cover.</p>
+<p>Now, let’s create graphs to visualize our data. Because we have two
 continuous variables, a scatterplot is a good option. We will also
-include a best fit line based on our alternative model. If you haven’t
-already, load the <code>ggplot2</code> package first.</p>
+include a best fit line based on our alternative model. We’ll make two
+graphs, one for each of our independent variables. If you haven’t
+already, load the <code>tidyverse</code> package first.</p>
 <pre class="r"><code>library(ggplot2)
-ggplot(plant, aes(x=Temperature, y=Growth)) +
+ggplot(plant, aes(x=Mean_tempC, y=tot_cover)) +
   geom_point() +
   geom_smooth(method=&quot;lm&quot;)+
-  labs(x=&quot;Temperature&quot;, y=&quot;Plant Growth&quot;) +
+  labs(x=&quot;Mean temperature (C)&quot;, y=&quot;Total plant cover&quot;) +
   theme_classic()</code></pre>
-<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
 <p><img src="RHandbook_11_files/figure-html/plant_scatter-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(plant, aes(x=Max_tempC, y=tot_cover)) +
+  geom_point() +
+  geom_smooth(method=&quot;lm&quot;)+
+  labs(x=&quot;Max temperature (C)&quot;, y=&quot;Total plant cover&quot;) +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_11_files/figure-html/plant_scatter-2.png" width="672" /></p>
 </div>
-<div id="testing-the-models" class="section level3">
-<h3>9.2 Testing the models</h3>
 <div id="classical-frequentist-approach" class="section level4">
 <h4>Classical Frequentist Approach</h4>
 <p>Let’s again start by analyzing the models using a frequentist
@@ -376,30 +478,51 @@ We can just look at some additional output from the models we already
 ran.</p>
 <p>To view the additional output, use the <code>summary</code>
 function.</p>
-<pre class="r"><code>summary(plant_alt)</code></pre>
+<pre class="r"><code>summary(plant_mean)</code></pre>
 <pre><code>## 
 ## Call:
-## lm(formula = Growth ~ Temperature, data = plant)
+## lm(formula = tot_cover ~ Mean_tempC, data = plant)
 ## 
 ## Residuals:
-##       Min        1Q    Median        3Q       Max 
-## -0.041734 -0.012130  0.000796  0.010496  0.060543 
+##     Min      1Q  Median      3Q     Max 
+## -21.707 -13.027   4.722  10.964  21.556 
 ## 
 ## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)  
-## (Intercept)  0.32926    0.09938   3.313   0.0106 *
-## Temperature -0.01497    0.01201  -1.246   0.2480  
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   40.812      4.359   9.362 1.42e-06 ***
+## Mean_tempC    -2.451      3.993  -0.614    0.552    
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
-## Residual standard error: 0.03042 on 8 degrees of freedom
-## Multiple R-squared:  0.1626, Adjusted R-squared:  0.05787 
-## F-statistic: 1.553 on 1 and 8 DF,  p-value: 0.248</code></pre>
+## Residual standard error: 15.47 on 11 degrees of freedom
+##   (6 observations deleted due to missingness)
+## Multiple R-squared:  0.03311,    Adjusted R-squared:  -0.05479 
+## F-statistic: 0.3767 on 1 and 11 DF,  p-value: 0.5518</code></pre>
+<pre class="r"><code>summary(plant_max)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = tot_cover ~ Max_tempC, data = plant)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -26.058  -7.017   3.003   7.405  19.695 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   41.846      3.913  10.695 3.76e-07 ***
+## Max_tempC     -6.526      3.583  -1.821   0.0958 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 13.79 on 11 degrees of freedom
+##   (6 observations deleted due to missingness)
+## Multiple R-squared:  0.2317, Adjusted R-squared:  0.1618 
+## F-statistic: 3.317 on 1 and 11 DF,  p-value: 0.09585</code></pre>
 <p>When you view the output, you will see a number of things. First, you
 will be able to see the the formula you used to build the models. Then
 you will see some information on the distribution of the residuals (the
 leftover variation not explained by your model). Next, you will see the
-coefficients from your model, along with standard error od the
+coefficients from your model, along with standard error of the
 estimates. The coefficients section will also show you t-values and
 p-values for each coefficient. These are one-sample t-tests comparing
 the value of the coefficient to zero.</p>
@@ -419,12 +542,86 @@ tell you about the effect of temperature on plant growth?</p>
 question. Once again, the approach is the same as what you used for the
 t-test and ANOVA, using the <code>AIC</code> function to compare the two
 models.</p>
-<pre class="r"><code>AIC(plant_null, plant_alt)</code></pre>
-<pre><code>##            df       AIC
-## plant_null  2 -37.93176
-## plant_alt   3 -37.70574</code></pre>
+<pre class="r"><code>AIC(plant_null, plant_mean, plant_max)</code></pre>
+<pre><code>##            df      AIC
+## plant_null  2 110.3634
+## plant_mean  3 111.9256
+## plant_max   3 108.9372</code></pre>
 <p>Based on this output, what would you conclude about the effect of
-temperature on plant growth?</p>
+mean and maximum temperature on plant growth?</p>
+</div>
+</div>
+<div id="multiple-regression" class="section level3">
+<h3>11.3 Multiple regression</h3>
+<p>In the previous section, we ran two regressions: one for each of our
+two models. However, we have discussed the problems with running
+multiple tests on the same data set. To address this, we can instead run
+a multiple regression, which is essentially the regression version of
+the two-way ANOVA. You can include multiple predictors in the same
+model, but this time, the predictor models are both continuous rather
+than categorical.</p>
+<pre class="r"><code>plant_both &lt;- lm(tot_cover ~ Mean_tempC + Max_tempC, plant)
+plant_int &lt;- lm(tot_cover ~ Mean_tempC * Max_tempC, plant)</code></pre>
+<pre class="r"><code>summary(plant_both)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = tot_cover ~ Mean_tempC + Max_tempC, data = plant)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -20.256  -4.771   2.463   8.113  14.108 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   42.056      3.224  13.043 1.33e-07 ***
+## Mean_tempC    16.066      6.447   2.492   0.0319 *  
+## Max_tempC    -20.930      6.491  -3.225   0.0091 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 11.36 on 10 degrees of freedom
+##   (6 observations deleted due to missingness)
+## Multiple R-squared:  0.526,  Adjusted R-squared:  0.4312 
+## F-statistic: 5.549 on 2 and 10 DF,  p-value: 0.02392</code></pre>
+<pre class="r"><code>summary(plant_int)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = tot_cover ~ Mean_tempC * Max_tempC, data = plant)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -16.493  -7.352   1.749   6.354  11.995 
+## 
+## Coefficients:
+##                      Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)            44.582      4.095  10.887 1.76e-06 ***
+## Mean_tempC             17.897      6.701   2.671   0.0256 *  
+## Max_tempC             -19.882      6.574  -3.024   0.0144 *  
+## Mean_tempC:Max_tempC   -2.931      2.929  -1.001   0.3431    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 11.36 on 9 degrees of freedom
+##   (6 observations deleted due to missingness)
+## Multiple R-squared:  0.5735, Adjusted R-squared:  0.4313 
+## F-statistic: 4.034 on 3 and 9 DF,  p-value: 0.04507</code></pre>
+<pre class="r"><code>AIC(plant_null, plant_mean, plant_max, plant_both, plant_int)</code></pre>
+<pre><code>##            df      AIC
+## plant_null  2 110.3634
+## plant_mean  3 111.9256
+## plant_max   3 108.9372
+## plant_both  4 104.6580
+## plant_int   5 105.2864</code></pre>
+<div id="comparison-between-simple-and-multiple-regression"
+class="section level4">
+<h4>Comparison between simple and multiple regression</h4>
+<p>Look back at the conclusions you drew about the effects of your
+predictor variables from your single and multiple regressions. Do your
+conclusions match? Why do you think this is (hint: think about the
+results of your correlation analysis, where you looked at correlations
+between the predictor variables)?</p>
+<p>We’ll discuss this as a class, but think on your own/and or discuss
+in small groups first.</p>
 </div>
 </div>
 </div>
