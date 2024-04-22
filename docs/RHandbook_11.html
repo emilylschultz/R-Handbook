@@ -559,30 +559,16 @@ multiple tests on the same data set. To address this, we can instead run
 a multiple regression, which is essentially the regression version of
 the two-way ANOVA. You can include multiple predictors in the same
 model, but this time, the predictor models are both continuous rather
-than categorical.</p>
+than categorical. We already built our null model and our models with
+only one predictor, now lets build our two models with both predictors
+(one without and one with interactions).</p>
 <pre class="r"><code>plant_both &lt;- lm(tot_cover ~ Mean_tempC + Max_tempC, plant)
 plant_int &lt;- lm(tot_cover ~ Mean_tempC * Max_tempC, plant)</code></pre>
-<pre class="r"><code>summary(plant_both)</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = tot_cover ~ Mean_tempC + Max_tempC, data = plant)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -20.256  -4.771   2.463   8.113  14.108 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)   42.056      3.224  13.043 1.33e-07 ***
-## Mean_tempC    16.066      6.447   2.492   0.0319 *  
-## Max_tempC    -20.930      6.491  -3.225   0.0091 ** 
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 11.36 on 10 degrees of freedom
-##   (6 observations deleted due to missingness)
-## Multiple R-squared:  0.526,  Adjusted R-squared:  0.4312 
-## F-statistic: 5.549 on 2 and 10 DF,  p-value: 0.02392</code></pre>
+<div id="classical-frequentist-approach-1" class="section level4">
+<h4>Classical frequentist approach</h4>
+<p>For the classical frequentist approach, all we have to do is take a
+look at the output of our full model (both variables with an
+interaction), so we can interpret the effects of our predictors.</p>
 <pre class="r"><code>summary(plant_int)</code></pre>
 <pre><code>## 
 ## Call:
@@ -605,6 +591,18 @@ plant_int &lt;- lm(tot_cover ~ Mean_tempC * Max_tempC, plant)</code></pre>
 ##   (6 observations deleted due to missingness)
 ## Multiple R-squared:  0.5735, Adjusted R-squared:  0.4313 
 ## F-statistic: 4.034 on 3 and 9 DF,  p-value: 0.04507</code></pre>
+<p>First, look at the statistics for the overall regression (the last
+line of the output). Based on this, does at least one of the predictors
+have a significant effect?</p>
+<p>Now look at the p-values from the t-test that compare each slope term
+to zero (in the Coefficients section). Based on these p-values, which
+effects (mean temperature, maximum temperature, interaction between mean
+and maximum temperature) are statistically significant?</p>
+</div>
+<div id="maximum-likelihood-approach" class="section level4">
+<h4>Maximum likelihood approach</h4>
+<p>You know the drill here. As usual, which just have to compare the AIC
+values between all of our models.</p>
 <pre class="r"><code>AIC(plant_null, plant_mean, plant_max, plant_both, plant_int)</code></pre>
 <pre><code>##            df      AIC
 ## plant_null  2 110.3634
@@ -612,6 +610,10 @@ plant_int &lt;- lm(tot_cover ~ Mean_tempC * Max_tempC, plant)</code></pre>
 ## plant_max   3 108.9372
 ## plant_both  4 104.6580
 ## plant_int   5 105.2864</code></pre>
+<p>Based on the AIC values, which model(s) is(are) the best? What does
+this tell you about which predictor are important for explaining plant
+cover?</p>
+</div>
 <div id="comparison-between-simple-and-multiple-regression"
 class="section level4">
 <h4>Comparison between simple and multiple regression</h4>

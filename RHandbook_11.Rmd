@@ -105,21 +105,34 @@ AIC(plant_null, plant_mean, plant_max)
 Based on this output, what would you conclude about the effect of mean and maximum temperature on plant growth?
 
 ### 11.3 Multiple regression
-In the previous section, we ran two regressions: one for each of our two models. However, we have discussed the problems with running multiple tests on the same data set. To address this, we can instead run a multiple regression, which is essentially the regression version of the two-way ANOVA. You can include multiple predictors in the same model, but this time, the predictor models are both continuous rather than categorical.
+In the previous section, we ran two regressions: one for each of our two models. However, we have discussed the problems with running multiple tests on the same data set. To address this, we can instead run a multiple regression, which is essentially the regression version of the two-way ANOVA. You can include multiple predictors in the same model, but this time, the predictor models are both continuous rather than categorical. We already built our null model and our models with only one predictor, now lets build our two models with both predictors (one without and one with interactions).
 
 ```{r mult_models}
 plant_both <- lm(tot_cover ~ Mean_tempC + Max_tempC, plant)
 plant_int <- lm(tot_cover ~ Mean_tempC * Max_tempC, plant)
 ```
 
+#### Classical frequentist approach
+
+For the classical frequentist approach, all we have to do is take a look at the output of our full model (both variables with an interaction), so we can interpret the effects of our predictors.
+
 ```{r mult_freq}
-summary(plant_both)
 summary(plant_int)
 ```
+
+First, look at the statistics for the overall regression (the last line of the output). Based on this, does at least one of the predictors have a significant effect?
+
+Now look at the p-values from the t-test that compare each slope term to zero (in the Coefficients section). Based on these p-values, which effects (mean temperature, maximum temperature, interaction between mean and maximum temperature) are statistically significant?
+
+#### Maximum likelihood approach
+
+You know the drill here. As usual, which just have to compare the AIC values between all of our models.
 
 ```{r mult_AIC}
 AIC(plant_null, plant_mean, plant_max, plant_both, plant_int)
 ```
+
+Based on the AIC values, which model(s) is(are) the best? What does this tell you about which predictor are important for explaining plant cover?
 
 #### Comparison between simple and multiple regression
 Look back at the conclusions you drew about the effects of your predictor variables from your single and multiple regressions. Do your conclusions match? Why do you think this is (hint: think about the results of your correlation analysis, where you looked at correlations between the predictor variables)?
