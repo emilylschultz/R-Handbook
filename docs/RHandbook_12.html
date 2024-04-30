@@ -446,7 +446,7 @@ test to see if patients who tested positive for heart stress were more
 likely to have a heart attack within the next year than patients who
 tested negative for heart stress. This time, we do not have to provide
 the expected frequencies because we are testing whether the frequency of
-heart attacks differs between the two test result, NOT is the frequence
+heart attacks differs between the two test results, NOT if the frequency
 matches some specific expected frequency.</p>
 <pre class="r"><code>myo_test &lt;- chisq.test(myo_table)</code></pre>
 <pre><code>## Warning in chisq.test(myo_table): Chi-squared approximation may be incorrect</code></pre>
@@ -456,10 +456,26 @@ matches some specific expected frequency.</p>
 ## 
 ## data:  myo_table
 ## X-squared = 0.0013321, df = 1, p-value = 0.9709</code></pre>
+<p>Notice when you run this test, you get a warning saying that the
+“Chi-square approximation may be incorrect”. This is because you have a
+low sample size in one of your groups, so your count data might not be
+roughly normal. We can deal with this easily by adding an argument to
+our test. This argument will tell R to use simulations to estimate the
+p-value, which can be a better approach when you have low expected
+values for some groups.</p>
+<pre class="r"><code>myo_test &lt;- chisq.test(myo_table, simulate.p.value = TRUE)
+myo_test</code></pre>
+<pre><code>## 
+##  Pearson&#39;s Chi-squared test with simulated p-value (based on 2000
+##  replicates)
+## 
+## data:  myo_table
+## X-squared = 0.10722, df = NA, p-value = 0.7856</code></pre>
 <p>Based on the test result, what do you conclude about whether the
 dobutamine stress test was a good predictor of heart attack risk?</p>
-<p>For helping to interpret the data, we can again look at the observed
-and expected frequencies in each category.</p>
+<p>To help interpret the data (e.g., see which observed values might be
+higher or lower than expected), we can again look at the observed and
+expected frequencies in each category.</p>
 <pre class="r"><code>myo_test$observed</code></pre>
 <pre><code>##         
 ##          neg pos
