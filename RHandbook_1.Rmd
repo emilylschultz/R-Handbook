@@ -75,10 +75,11 @@ One nice thing about R is that it is opensource software. This means it is free,
 #### Time to write your first piece of code in R!
 The two packages we will use in this class are the **tidyverse** package (useful for data management and visualization; it is actually a set of several packages) and the **lme4** package (useful for the type of statistical model we will use most in this class). We will install these two packages now.
 
-This is one of the rare cases where it is fine to type the code directly into the console because once you install the packages, you won’t need to install them again unless you update R. It will just take a single line of code to install both packages. Put your cursor in the console, next to the “>” symbol and type the following line of code:
+This is one of the rare cases where it is fine to type the code directly into the console because once you install the packages, you won’t need to install them again unless you update R. It will just take a single line of code to install both packages. Put your cursor in the console, next to the “>” symbol and type the following lines of code (be sure to pay attention to punctuation and case):
 
 ```{r install_packages, eval=FALSE}
-install.packages("tidyverse","lme4")
+install.packages("dplyr")
+install.packages("lme4")
 ```
 
 Then hit enter. You should see a bunch of text pop up in the console as the packages install. Once the packages install, you should see the “>” in the console again, indicating that you can type more code into the console. Sometimes warnings will show up in the console when you install packages, but they are usually nothing to worry about. We can deal with them on a case-by-case basis if necessary. If, after you run the line of code, you see only a few lines of text show up in the console, and then it stops, check for a dialogue box asking if you want to install the package in your personal library. If you get this message, click “yes”, and the packages should continue to install.
