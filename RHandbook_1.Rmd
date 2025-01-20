@@ -18,7 +18,7 @@ knitr::opts_chunk$set(echo = TRUE)
 For this course, there are two (free) associated programs you will need to install: R and RStudio. R is an opensource programming language designed for statistical computing. It is widely used by ecologists for quantitative analyses. RStudio is an environment for R that is more user-friendly than the standard R environment, so it is the environment we will use in this class. We will also install an addition set of tools, RTools, which is needed to run one of the packages that we will use in this class.
 
 #### Installing R
-To install R, first go to the [R website](https://www.r-project.org/). Under the “Getting Started” heading, you should see a link to download R. Click on this link, and it will take you to a page to select a CRAN mirror (a webserver that stores versions of R). You will want to select the CRAN mirror at the nearest location, so scroll down to the list of USA locations and click on the link for Iowa State University. On the new page, choose the correct R download for your system (Linus, Mac, or Windows) from the “Download and Install R” box at the top of the page. Details for each are below.
+To install R, first go to the [R website](https://www.r-project.org/). Under the “Getting Started” heading, you should see a link to download R. Click on this link, and it will take you to a page to select a CRAN mirror (a webserver that stores versions of R). You will want to select the CRAN mirror at the nearest location, so scroll down to the list of USA locations and click on the link for Iowa State University. On the new page, choose the correct R download for your system (Linux, Mac, or Windows) from the “Download and Install R” box at the top of the page. Details for each are below.
 
 ##### Linux:
 Each of the Linux options (Debian, Fedora/Redhat, or Ubuntu) will provide you with the commands you need to run to install the latest version of R. If you have problems with the installation, please get in touch with me.
@@ -43,7 +43,7 @@ xcode-select --install
 You might need to enter your computer password to allow the installation. Next, follow any onscreen instructions and allow the installation to finish. Once this is done, you should be good to go!
 
 ##### Windows:
-If you have a PC, you will need to install RTools. Go to the [RTools download website](https://cran.r-project.org/bin/windows/Rtools/). Unless you are running an old version of R (you probably are not, unless you installed R years ago and have not updated), select the "RTools 4.3" link. On the new page, look for the Rtools43 installer link about halfway down the page, in the Installing Rtools 43 section. Click on this link to download the exe file. Run the file and follow the onscreen instructions to complete the installation. You may use the default settings. After the installation has finished, you should be set!
+If you have a PC, you will need to install RTools. Go to the [RTools download website](https://cran.r-project.org/bin/windows/Rtools/). Unless you are running an old version of R (you probably are not, unless you installed R years ago and have not updated), select the "RTools 4.4" link. On the new page, look for the Rtools44 installer link about halfway down the page, in the Installing Rtools 44 section. Click on this link to download the exe file. Run the file and follow the onscreen instructions to complete the installation. You may use the default settings. After the installation has finished, you should be set!
 
 ### 1.2	Layout of RStudio
 To run R via RStudio, simply open the RStudio application. It will automatically connect with R, so you do not need to open R separately. When you open RStudio, the page should look something like this:
@@ -79,6 +79,7 @@ This is one of the rare cases where it is fine to type the code directly into th
 
 ```{r install_packages, eval=FALSE}
 install.packages("dplyr")
+install.packages("ggplot2")
 install.packages("lme4")
 ```
 
