@@ -91,13 +91,13 @@ We can see that the Tree variable is now a factor with two different levels: A a
 
 There are equivalent functions to convert to the other variable types: `as.numeric()`, `as.integer`, and `as.character()`.
 
-### 3.4 Manipulating data frames with the **Tidyverse** package
-There are any number of ways we might want to manipulate our data sets, and, like with many aspects of programming, there are various ways to go about it. In this class, we will focus on using the **Tidyverse** packages. We will look at a few different ways of manipulating our data frames, but there are many more! There is a great resource online called [R for Data Science](https://r4ds.had.co.nz/). It is a comprehensive guide to using R for managing, visualizing, and analyzing data in R, with a particular focus on **Tidyverse**. Check it out if you want/need to learn more!
+### 3.4 Manipulating data frames with the **dplyr** package
+There are any number of ways we might want to manipulate our data sets, and, like with many aspects of programming, there are various ways to go about it. In this class, we will focus on using the **dplyr** packages. We will look at a few different ways of manipulating our data frames, but there are many more! There is a great resource online called [R for Data Science](https://r4ds.had.co.nz/). It is a comprehensive guide to using R for managing, visualizing, and analyzing data in R, with a particular focus on **dplyr**. Check it out if you want/need to learn more!
 
-For this section, you will need to activate the **Tidyverse** packages. This is something that needs to be done every time you start a new R session if there are packages in addition to base R that you want to use. Enter the following code to activate **Tidyverse**:
+For this section, you will need to activate the **dplyr** packages. This is something that needs to be done every time you start a new R session if there are packages in addition to base R that you want to use. Enter the following code to activate **dplyr**:
 
-```{r tidyverse, results = 'hide', message = FALSE}
-library(tidyverse)
+```{r dplyr, results = 'hide', message = FALSE}
+library(dplyr)
 ```
 
 
@@ -129,7 +129,7 @@ DATA_CONES
 ```
 
 #### Creating new variables
-One common manipulation we might want to make to a data frame is to calculate a new variable, possibly based on data we already have in our data frame. For example, we might have measured the length and width of a plant and then want to multiply the length and width variable together to calculate the area covered by the plant. We can use the `mutate()` function in the **tidyverse** package to create new variables. In our example, we will log transform (i.e., take the natural log of) our temperature variable:
+One common manipulation we might want to make to a data frame is to calculate a new variable, possibly based on data we already have in our data frame. For example, we might have measured the length and width of a plant and then want to multiply the length and width variable together to calculate the area covered by the plant. We can use the `mutate()` function in the **dplyr** package to create new variables. In our example, we will log transform (i.e., take the natural log of) our temperature variable:
 
 ```{r mutate}
 DATA_LOG <- mutate(DATA,log_Temperature = log(Temperature))

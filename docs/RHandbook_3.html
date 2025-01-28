@@ -326,9 +326,9 @@ data</a></li>
 <li><a href="#getting-information-about-your-data-frame"
 id="toc-getting-information-about-your-data-frame">3.3 Getting
 information about your data frame</a></li>
-<li><a href="#manipulating-data-frames-with-the-tidyverse-package"
-id="toc-manipulating-data-frames-with-the-tidyverse-package">3.4
-Manipulating data frames with the <strong>Tidyverse</strong>
+<li><a href="#manipulating-data-frames-with-the-dplyr-package"
+id="toc-manipulating-data-frames-with-the-dplyr-package">3.4
+Manipulating data frames with the <strong>dplyr</strong>
 package</a></li>
 <li><a href="#data-frames-team-challenge"
 id="toc-data-frames-team-challenge">Data Frames Team Challenge</a></li>
@@ -499,26 +499,25 @@ types: <code>as.numeric()</code>, <code>as.integer</code>, and
 <code>as.character()</code>.</p>
 </div>
 </div>
-<div id="manipulating-data-frames-with-the-tidyverse-package"
+<div id="manipulating-data-frames-with-the-dplyr-package"
 class="section level3">
-<h3>3.4 Manipulating data frames with the <strong>Tidyverse</strong>
+<h3>3.4 Manipulating data frames with the <strong>dplyr</strong>
 package</h3>
 <p>There are any number of ways we might want to manipulate our data
 sets, and, like with many aspects of programming, there are various ways
 to go about it. In this class, we will focus on using the
-<strong>Tidyverse</strong> packages. We will look at a few different
-ways of manipulating our data frames, but there are many more! There is
-a great resource online called <a href="https://r4ds.had.co.nz/">R for
-Data Science</a>. It is a comprehensive guide to using R for managing,
+<strong>dplyr</strong> packages. We will look at a few different ways of
+manipulating our data frames, but there are many more! There is a great
+resource online called <a href="https://r4ds.had.co.nz/">R for Data
+Science</a>. It is a comprehensive guide to using R for managing,
 visualizing, and analyzing data in R, with a particular focus on
-<strong>Tidyverse</strong>. Check it out if you want/need to learn
-more!</p>
+<strong>dplyr</strong>. Check it out if you want/need to learn more!</p>
 <p>For this section, you will need to activate the
-<strong>Tidyverse</strong> packages. This is something that needs to be
-done every time you start a new R session if there are packages in
-addition to base R that you want to use. Enter the following code to
-activate <strong>Tidyverse</strong>:</p>
-<pre class="r"><code>library(tidyverse)</code></pre>
+<strong>dplyr</strong> packages. This is something that needs to be done
+every time you start a new R session if there are packages in addition
+to base R that you want to use. Enter the following code to activate
+<strong>dplyr</strong>:</p>
+<pre class="r"><code>library(dplyr)</code></pre>
 <div id="filtering-data" class="section level4">
 <h4>Filtering data</h4>
 <p>Filtering is used to select a subset of observations from your data
@@ -581,9 +580,9 @@ calculate a new variable, possibly based on data we already have in our
 data frame. For example, we might have measured the length and width of
 a plant and then want to multiply the length and width variable together
 to calculate the area covered by the plant. We can use the
-<code>mutate()</code> function in the <strong>tidyverse</strong> package
-to create new variables. In our example, we will log transform (i.e.,
-take the natural log of) our temperature variable:</p>
+<code>mutate()</code> function in the <strong>dplyr</strong> package to
+create new variables. In our example, we will log transform (i.e., take
+the natural log of) our temperature variable:</p>
 <pre class="r"><code>DATA_LOG &lt;- mutate(DATA,log_Temperature = log(Temperature))
 DATA_LOG</code></pre>
 <pre><code>##    Tree Year Number.cones Growth Temperature log_Temperature
