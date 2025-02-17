@@ -348,11 +348,10 @@ your working directory first, and save your code in a script file):</p>
 <div id="graphing-distributions" class="section level3">
 <h3>4.1 Graphing distributions</h3>
 <p>In this section, we will make our first foray into graphing! We will
-use the <strong>ggplot2</strong> package (part of the
-<strong>tidyverse</strong> set of packages) for making graphs because it
-is easier to make nice looking graphs in ggplot than in base R.</p>
+use the <strong>ggplot2</strong> package for making graphs because it is
+easier to make nice looking graphs in ggplot than in base R.</p>
 <p>Load the <strong>tidyverse</strong> package for this session:</p>
-<pre class="r"><code>library(tidyverse)</code></pre>
+<pre class="r"><code>library(ggplot2)</code></pre>
 <p>In this section, you will learn to make histograms. Making this type
 of graph is often one of the first steps in exploratory data analysis,
 which gives us a feel for what our data look like before we start formal
@@ -389,12 +388,12 @@ use, and we aren’t changing any default settings.</p>
 <p>Now let’s take a look at a few ways we can modify our graph to make
 it look nicer. First, let’s change our axis labels. “JULJAN” is sensible
 for a column heading because it’s brief and it doesn’t have any spaces,
-but it’ looks a little odd on a graph’s not descriptive enough for an
-axis label. I also like to start my axis titles with a capital letter.
-We will add another line to the code with the <code>labs</code> function
-to change the axis labels. Don’t forget to add a plus sign to the end of
-the geom_histogram line to indicate that you are adding more code for
-the graph below.</p>
+but it looks a little odd on a graph, and it’s not descriptive enough
+for an axis label. I also like to start my axis titles with a capital
+letter. We will add another line to the code with the <code>labs</code>
+function to change the axis labels. Don’t forget to add a plus sign to
+the end of the geom_histogram line to indicate that you are adding more
+code for the graph below.</p>
 <pre class="r"><code>ggplot(data = snow, aes(x = JULJAN)) +
   geom_histogram() +
   labs(x = &quot;Snowfall from July to January&quot;, y = &quot;Frequency&quot;)</code></pre>
@@ -503,7 +502,7 @@ the mean and median:</p>
   labs(x = &quot;Snowfall from July to January&quot;, y = &quot;Frequency&quot;) +
   theme_classic()</code></pre>
 <p><img src="RHandbook_4_files/figure-html/compare-1.png" width="672" /></p>
-<p>Based on this new graph, is our current July to January snowfall
+<p>Based on this new graph, is the 2023-2024 July to January snowfall
 lower than normal or higher than normal?</p>
 </div>
 <div id="variation" class="section level4">
@@ -531,7 +530,7 @@ other.</p>
 data, but we have been discussing using formal statistical distributions
 to represent our data. Now we will practice calculating a formal
 distribution (the normal distribution) and comparing it to our data.</p>
-<p>R has a function, <code>dnorm</code>, that can be used to calculte
+<p>R has a function, <code>dnorm</code>, that can be used to calculate
 the probability density of a value for a particular outcome. We can use
 this function to graph the probability density function for snowfall in
 Breckenridge by using the function to calculate the probability density

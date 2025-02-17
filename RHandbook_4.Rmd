@@ -23,12 +23,12 @@ snow <- read.csv("BKSnow.csv")
 ```
 
 ### 4.1 Graphing distributions
-In this section, we will make our first foray into graphing! We will use the **ggplot2** package (part of the **tidyverse** set of packages) for making graphs because it is easier to make nice looking graphs in ggplot than in base R.
+In this section, we will make our first foray into graphing! We will use the **ggplot2** package for making graphs because it is easier to make nice looking graphs in ggplot than in base R.
 
 Load the **tidyverse** package for this session:
 
 ```{r load_ggplot}
-library(tidyverse)
+library(ggplot2)
 ```
 
 In this section, you will learn to make histograms. Making this type of graph is often one of the first steps in exploratory data analysis, which gives us a feel for what our data look like before we start formal analysis.
@@ -44,7 +44,7 @@ ggplot(data = snow, aes(x = JULJAN)) +
 
 In the first line of code above, we start with the `ggplot` function. The first argument of the function (data) is the data frame that contains the data you want to graph (it needs to be a data frame object). We want to use our `snow` dataframe. Next is the aesthetics argument (aes), where you list the variables you want to graph. Notice that "aes" is followed by parentheses. This is because you can list multiple variable for this argument, so you put the list of variable inside the parentheses. For our histogram, we are only using one variable (JULJAN), and this is our x variable. We end the line with a + sign to indicate that we are adding additional code on the next line to create the graph. In the second line of code, we are telling ggplot that we want to use the data from the first line of code to create a histogram. We don't need to add any arguments to the `geom_histogram` because we already told ggplot what data to use, and we aren't changing any default settings.
 
-Now let's take a look at a few ways we can modify our graph to make it look nicer. First, let's change our axis labels. "JULJAN" is sensible for a column heading because it's brief and it doesn't have any spaces, but it' looks a little odd on a graph's not descriptive enough for an axis label. I also like to start my axis titles with a capital letter. We will add another line to the code with the `labs` function to change the axis labels. Don't forget to add a plus sign to the end of the geom_histogram line to indicate that you are adding more code for the graph below.
+Now let's take a look at a few ways we can modify our graph to make it look nicer. First, let's change our axis labels. "JULJAN" is sensible for a column heading because it's brief and it doesn't have any spaces, but it looks a little odd on a graph, and it's not descriptive enough for an axis label. I also like to start my axis titles with a capital letter. We will add another line to the code with the `labs` function to change the axis labels. Don't forget to add a plus sign to the end of the geom_histogram line to indicate that you are adding more code for the graph below.
 
 ```{r axis_labels}
 ggplot(data = snow, aes(x = JULJAN)) +
@@ -138,7 +138,7 @@ ggplot(data = snow, aes(x = JULJAN)) +
   theme_classic()
 ```
 
-Based on this new graph, is our current July to January snowfall lower than normal or higher than normal?
+Based on this new graph, is the 2023-2024 July to January snowfall lower than normal or higher than normal?
 
 #### Variation
 
@@ -160,7 +160,7 @@ Notice the relationship between the two. The standard deviation is the square ro
 ### 4.3 Adding probability distributions
 So far, we have been working with frequency distributions of our data, but we have been discussing using formal statistical distributions to represent our data. Now we will practice calculating a formal distribution (the normal distribution) and comparing it to our data.
 
-R has a function, `dnorm`, that can be used to calculte the probability density of a value for a particular outcome. We can use this function to graph the probability density function for snowfall in Breckenridge by using the function to calculate the probability density for a wide range a values and graphing the output.
+R has a function, `dnorm`, that can be used to calculate the probability density of a value for a particular outcome. We can use this function to graph the probability density function for snowfall in Breckenridge by using the function to calculate the probability density for a wide range a values and graphing the output.
 
 Based on the histogram we made, a good range of values to use is 1 to 200 because that covers the full range of snowfall values that we observed. When we use the `dnorm` function, we will provide this range as the first argument. We can create this sequence of numbers using the `:` symbol. Then, to calculate the probability density of all of these snowfall values, we have to provide the mean and standard deviation of our distribution as the next two arguments. We will use the mean and standard deviation we calculated for our JULJAN variable above. We will save the probability densities values that we calculate in a vector called "pdens".
 
