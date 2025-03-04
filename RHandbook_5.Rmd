@@ -1,5 +1,5 @@
 ---
-title: "ESS 3500 R Handbook, Lesson 7"
+title: "ESS 3500 R Handbook, Lesson 5"
 author: "Emily Schultz"
 date: "2023-02-15"
 output: 
@@ -12,7 +12,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Lesson 7: Two-sample t-tests
+## Lesson 5: Two-sample t-tests
 In this lesson, you will practice running your first formal statistical test, a t-test! You will use both a classical frequentist and a likelihood-based approach to run the test.
 
 For this test, we will use the *civu.csv* data file. The civu data set contains data from an experiment designed to test the affects of native insect herbivory on a invasive bull thistles. We will use this data set to answer the following question: does insect herbivory affect the density of thistle plants?
@@ -75,7 +75,7 @@ In this next line down, we use the geom_density function that we have used befor
 
 The final line that is different is the addition of the "scale_fill_manual" function. This line is not required, but it allows you to choose the colors in your graph. If you do not include this line, R will use ggplot's default color palette (be aware: the default color palette is not colorblind-friendly). The values I input in to the function are the hex codes for the colors I wanted to use. You can use either hex codes or the names of the colors. I like to use hex codes because they are more universal. Note that if you manually select your colors, you need to choose one color for each category. Here, we only have two categories: herbivory and no herbivory.
 
-Playing around with colors in R can be fun! If you want to explore different color palettes, I included some information and resources in section 7.3 at the bottom of this lesson.
+Playing around with colors in R can be fun! If you want to explore different color palettes, I included some information and resources in section 7.4 at the bottom of this lesson.
 
 ### 7.2 Classical frequentist approach
 Now that we have visualized the data, let's run the t-test itself. We will set up the model using the t-test function: `t.test`. The first argument for this function is the formula for our model, where we tell R our independent and dependent variables. The dependent variable goes on the left and the independent variable goes on the right. The second argument is the name of the data set. Then then final argument "var.equal = TRUE" tells R that we are assuming our two treatments have equal variance.
@@ -102,7 +102,7 @@ You should see the following pieces in your output:
 
 Based on this output, would you reject the null hypothesis and tentatively accept the alternative hypothesis?
 
-### 7.2 Likelihood-based approach
+### 7.3 Likelihood-based approach
 Next we will use a likelihood-based approach to test the same question. For this, we will start by building our two linear models, just as we did in the Model Building lesson:
 
 ```{r civu_lm}
@@ -122,7 +122,7 @@ Based on this output, which is the better model? Is it significantly better?
 
 Does your conclusion from this approach match your conclusion from the classical frequentist approach?
 
-### 7.3 A note about color in R
+### 7.4 A note about color in R
 When we made our density plot, we included the `scale_fill_manual` function to specify the colors we wanted to use in the graph. You are not required to include this function. If you leave it out, ggplot will automatically choose colors based on its default color package. However, the ggplot's default color palette is not colorblind-friendly, so it is usually better to choose a different color palette. Below are some links to websites that can help you choose colors. When you list the colors you want to use, you can list the hex codes (as we do in our code in this lesson) or the name of the color (e.g., "blue"). If you use the `scale_fill_manual` function, or a similar function, to specify colors, be sure to include one color for every group in your variable. In our example, the variable displayed by the colors only had two groups (herbivory and no herbivory). If you have a variable with more than two groups, you need to list more than two colors.
 
 List of useful R color websites:
