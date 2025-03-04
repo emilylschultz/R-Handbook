@@ -1,5 +1,5 @@
 ---
-title: "ESS 3500 R Handbook, Lesson 11"
+title: "ESS 3500 R Handbook, Lesson 10"
 author: "Emily Schultz"
 date: "2023-02-15"
 output: 
@@ -12,7 +12,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Lesson 11: Multiple Predictors
+## Lesson 10: Multiple Predictors
 In the previous lessons, we have worked with models that have only one independent and one dependent variable. However, it is common to have more than one independent variable that we would like the test. This is often particularly true when we do observational studies, and there are a whole suite of variable that might affect the response we measure. In this lesson, we will cover models with multiple predictors. We will focus on examples with only two predictors, but the methods can easily be extended to include more than two predictors as well.
 
 For these examples, we will only look at the likelihood approach, which can be more powerful for testing multiple alternative hypothesis. However, similar tests can be done with a classic frequentist approach, using two-way ANOVAs, stepwise regression, and ANCOVAs for the three examples, respectively.

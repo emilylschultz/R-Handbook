@@ -13,7 +13,7 @@
 
 <meta name="date" content="2023-02-15" />
 
-<title>ESS 3500 R Handbook, Lesson 7</title>
+<title>ESS 3500 R Handbook, Lesson 5</title>
 
 <script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -307,7 +307,7 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 7</h1>
+<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 5</h1>
 <h4 class="author">Emily Schultz</h4>
 <h4 class="date">2023-02-15</h4>
 
@@ -315,25 +315,25 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#lesson-7-two-sample-t-tests"
-id="toc-lesson-7-two-sample-t-tests">Lesson 7: Two-sample t-tests</a>
+<li><a href="#lesson-5-two-sample-t-tests"
+id="toc-lesson-5-two-sample-t-tests">Lesson 5: Two-sample t-tests</a>
 <ul>
-<li><a href="#visualizing-the-data" id="toc-visualizing-the-data">7.1
+<li><a href="#visualizing-the-data" id="toc-visualizing-the-data">5.1
 Visualizing the data</a></li>
 <li><a href="#classical-frequentist-approach"
-id="toc-classical-frequentist-approach">7.2 Classical frequentist
+id="toc-classical-frequentist-approach">5.2 Classical frequentist
 approach</a></li>
 <li><a href="#likelihood-based-approach"
-id="toc-likelihood-based-approach">7.2 Likelihood-based
+id="toc-likelihood-based-approach">5.3 Likelihood-based
 approach</a></li>
 <li><a href="#a-note-about-color-in-r"
-id="toc-a-note-about-color-in-r">7.3 A note about color in R</a></li>
+id="toc-a-note-about-color-in-r">5.4 A note about color in R</a></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="lesson-7-two-sample-t-tests" class="section level2">
-<h2>Lesson 7: Two-sample t-tests</h2>
+<div id="lesson-5-two-sample-t-tests" class="section level2">
+<h2>Lesson 5: Two-sample t-tests</h2>
 <p>In this lesson, you will practice running your first formal
 statistical test, a t-test! You will use both a classical frequentist
 and a likelihood-based approach to run the test.</p>
@@ -364,7 +364,7 @@ a factor variable, as we have done before:</p>
 <pre class="r"><code>civu$herbivory &lt;- as.factor(civu$herbivory)</code></pre>
 <p>Now we’re ready to get started on our analysis!</p>
 <div id="visualizing-the-data" class="section level3">
-<h3>7.1 Visualizing the data</h3>
+<h3>5.1 Visualizing the data</h3>
 <p>First, we are going to visualize the data. We will use two
 approaches: a standard boxplot and a density plot that shows the full
 distributions of our data.</p>
@@ -437,11 +437,11 @@ colors, you need to choose one color for each category. Here, we only
 have two categories: herbivory and no herbivory.</p>
 <p>Playing around with colors in R can be fun! If you want to explore
 different color palettes, I included some information and resources in
-section 7.3 at the bottom of this lesson.</p>
+section 5.4 at the bottom of this lesson.</p>
 </div>
 </div>
 <div id="classical-frequentist-approach" class="section level3">
-<h3>7.2 Classical frequentist approach</h3>
+<h3>5.2 Classical frequentist approach</h3>
 <p>Now that we have visualized the data, let’s run the t-test itself. We
 will set up the model using the t-test function: <code>t.test</code>.
 The first argument for this function is the formula for our model, where
@@ -486,7 +486,7 @@ treatment groups.</li>
 tentatively accept the alternative hypothesis?</p>
 </div>
 <div id="likelihood-based-approach" class="section level3">
-<h3>7.2 Likelihood-based approach</h3>
+<h3>5.3 Likelihood-based approach</h3>
 <p>Next we will use a likelihood-based approach to test the same
 question. For this, we will start by building our two linear models,
 just as we did in the Model Building lesson:</p>
@@ -515,7 +515,7 @@ better?</p>
 the classical frequentist approach?</p>
 </div>
 <div id="a-note-about-color-in-r" class="section level3">
-<h3>7.3 A note about color in R</h3>
+<h3>5.4 A note about color in R</h3>
 <p>When we made our density plot, we included the
 <code>scale_fill_manual</code> function to specify the colors we wanted
 to use in the graph. You are not required to include this function. If
