@@ -13,7 +13,7 @@
 
 <meta name="date" content="2023-02-15" />
 
-<title>ESS 3500 R Handbook, Lesson 9</title>
+<title>ESS 3500 R Handbook, Lesson11</title>
 
 <script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -267,25 +267,25 @@ $(document).ready(function () {
       <a href="RHandbook_4.html">Lesson 4: Distributions and descriptive statistics</a>
     </li>
     <li>
-      <a href="RHandbook_5.html">Lesson 5: Linear models</a>
+      <a href="RHandbook_5.html">Lesson 5: Two-sample t-test</a>
     </li>
     <li>
-      <a href="RHandbook_6.html">Lesson 6: Data visualization</a>
+      <a href="RHandbook_6.html">Lesson 6: Assumptions and transformations</a>
     </li>
     <li>
-      <a href="RHandbook_7.html">Lesson 7: T-tests</a>
+      <a href="RHandbook_7.html">Lesson 7: Variations on the t-test</a>
     </li>
     <li>
       <a href="RHandbook_8.html">Lesson 8: ANOVA</a>
     </li>
     <li>
-      <a href="RHandbook_9.html">Lesson 9: Two-way ANOVA</a>
+      <a href="RHandbook_9.html">Lesson 9: Correlations</a>
     </li>
     <li>
-      <a href="RHandbook_10.html">Lesson 10: Assumptions and transformations</a>
+      <a href="RHandbook_10.html">Lesson 10: Regressions</a>
     </li>
     <li>
-      <a href="RHandbook_11.html">Lesson 11: Correlations and regressions</a>
+      <a href="RHandbook_11.html">Lesson 11: Multiple predictors</a>
     </li>
     <li>
       <a href="RHandbook_12.html">Lesson 12: Categorical data</a>
@@ -307,7 +307,7 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 9</h1>
+<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson11</h1>
 <h4 class="author">Emily Schultz</h4>
 <h4 class="date">2023-02-15</h4>
 
@@ -315,377 +315,353 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#lesson-9-multiple-predictors-two-way-anovas"
-id="toc-lesson-9-multiple-predictors-two-way-anovas">Lesson 9: Multiple
-Predictors: Two-way ANOVAs</a>
+<li><a href="#lesson-11-correlations-and-regressions-in-r"
+id="toc-lesson-11-correlations-and-regressions-in-r">Lesson 11:
+Correlations and regressions in R</a>
 <ul>
-<li><a href="#example-1-millipedes" id="toc-example-1-millipedes">9.1
-Example 1: millipedes</a></li>
-<li><a href="#example-2-hypertension"
-id="toc-example-2-hypertension">9.2 Example 2: hypertension</a></li>
-<li><a href="#optional-practice-problems"
-id="toc-optional-practice-problems">Optional practice problems</a></li>
-<li><a href="#a-note-about-color-in-r"
-id="toc-a-note-about-color-in-r">A note about color in R</a></li>
+<li><a href="#correlations" id="toc-correlations">11.1
+Correlations</a></li>
+<li><a href="#linear-regression" id="toc-linear-regression">11.2 Linear
+regression</a></li>
+<li><a href="#multiple-regression" id="toc-multiple-regression">11.3
+Multiple regression</a></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="lesson-9-multiple-predictors-two-way-anovas"
+<div id="lesson-11-correlations-and-regressions-in-r"
 class="section level2">
-<h2>Lesson 9: Multiple Predictors: Two-way ANOVAs</h2>
-<p>In the previous lessons, we have worked with models that have only
-one independent and one dependent variable. However, it is common to
-have more than one independent variable that we would like the test.
-This is often particularly true when we do observational studies, and
-there are a whole suite of variable that might affect the response we
-measure. In this lesson, we will cover models with multiple predictors.
-We will focus on examples with only two predictors, but the methods can
-easily be extended to include more than two predictors as well.</p>
-<div id="example-1-millipedes" class="section level3">
-<h3>9.1 Example 1: millipedes</h3>
-<p>For our first example, we will work with two categorical predictor
-variables. We will use a data set from the arthropod world this time,
-testing whether levels of an amino acid, alanine, vary between different
-species and different sexes of millipedes.</p>
-<div id="visualizing-and-building-the-models" class="section level4">
-<h4>Visualizing and building the models</h4>
-<p>We’ll start off by loading and visualizing our data. Be sure your
-working directory is set to the location of the millipedes data file. We
-will also need to change the “species” variable to a factor.</p>
-<pre class="r"><code>mill &lt;- read.csv(&quot;millipedes.csv&quot;)
-mill$species &lt;- as.factor(mill$species)</code></pre>
-<p>Now, let’s make a box plot to visualize our data set. This will allow
-us to start looking at the patterns in the data, including possible
-interactions. We will put species on the x-axis and group and color our
-boxes by sex. This code includes a new <code>scale_fill_manual</code>
-function that allows us to manually select the colors we want to use.
-(See <a href="#a-note-about-color-in-r">A note about color in R</a> for
-more information about using colors in R.)</p>
-<pre class="r"><code>library(ggplot2)
-ggplot(mill, aes(x=species, y=Alanine, fill=sex)) +
-  geom_boxplot() +
-  scale_fill_manual(values=c(&quot;#ce9642&quot;,&quot;#3b7c70&quot;)) +
-  labs(x=&quot;Species&quot;, y=&quot;Alanine levels&quot;, fill = &quot;Sex&quot;) +
-  theme_classic()</code></pre>
-<p><img src="RHandbook_9_files/figure-html/mill_boxplot-1.png" width="672" /></p>
-<p>Based just on the graph, what patterns do you see in the data. Does
-species have an effect? What about sex? Does there appear to be an
-interaction between the two variables?</p>
-<p>Let’s proceed with building our models. Now that we are working with
-two predictor models, we will have multiple alternative models
-representing four different hypotheses: (1) only sex matters, (2) only
-species matters, (3) both sex and species matter but don’t interact, (4)
-both sex and species matter and they interact. The models are built in
-this order after the null model below.</p>
-<pre class="r"><code>mill_null &lt;- lm(Alanine ~ 1, data = mill)
-mill_sex &lt;- lm(Alanine ~ sex, data = mill)
-mill_species &lt;- lm(Alanine ~ species, data = mill)
-mill_both &lt;- lm(Alanine ~ sex + species, data = mill)
-mill_int &lt;- lm(Alanine ~ sex*species, data = mill)</code></pre>
+<h2>Lesson 11: Correlations and regressions in R</h2>
+<p>In this lesson, you will tackle two types of tests that can be used
+when you have two continuous variables: correlations and regressions.
+Correlations are typically used when we think there might be a
+relationship between the two variables, but not a causal relationship
+(i.e., you don’t have clear independent and dependent variables). A
+regression is used when we hypothesize that there is a causal
+relationship between our variables or if we want to be able to use one
+variable to predict the value of the other, even if there isn’t a causal
+relationship.</p>
+<p>For this lesson, we will work with a summarized version of the plant
+cover data set that we worked with once before (comparing cover of
+native and invasive plants), but this time we will look at some climate
+variables as possible predictor of native plant cover.</p>
+<div id="correlations" class="section level3">
+<h3>11.1 Correlations</h3>
+<p>For our correlation analysis, we are going to look at correlations
+between our three climate variables: total precipitation (Totprecip),
+mean temperature (Mean_tempC), and maximum temperature (Max_tempC).
+There are often relationships between different climate variables, but
+those relationships are not usual causal (e.g., higher precipitation
+doesn’t cause higher temperatures), so a correlation analysis is the
+right way to go for analyzing these relationships.</p>
+<div id="visualizing-our-data" class="section level4">
+<h4>Visualizing our data</h4>
+<p>First, load the data set. Be sure your working directory is set
+correctly.</p>
+<pre class="r"><code>plant &lt;- read.csv(&quot;PlantSumm.csv&quot;)</code></pre>
+<p>To visualize relationships between two continuous variables, a
+scatterplot is a good approach. With a correlation, we don’t always add
+a best fit line (the best fit line is the output of a regression
+analysis). Here we have three climate variables, so we want to look at
+the pairwise relationships between each pair of variables. We could do
+that with three completely separate plots, but there’s a faster way!
+With the <code>pairs</code> function, we can generate a grid of plots
+that shows the relationship between all pairs of variables we want to
+include in our analysis. We just provide a formula with the variables we
+want to include and the data set from which they come.</p>
+<pre class="r"><code>pairs(~ Totprecip + Mean_tempC + Max_tempC, data = plant) </code></pre>
+<p><img src="RHandbook_9_files/figure-html/corr_plot-1.png" width="672" /></p>
+<p>In the output, you can see the variables on the diagonal and the
+scatterplot for each pair of variables. (Note that the plots below the
+diagonal are just repeats of the plots above the diagonal, but with the
+axes switched). Which variables appear to have a strong correlation?</p>
+</div>
+<div id="running-the-correlation-test" class="section level4">
+<h4>Running the correlation test</h4>
+<p>Now we will run a formal test to see if the correlations are
+significant. You can download additional packages that will
+automatically run the test for all pairs of variables in our data set,
+but we will just use the base R function (<code>cor.test</code>), so
+we’ll run a separate test for each pair of variables. Because we are
+running three tests on the same data set, it’s a good idea to do a
+Bonferroni correction. What will our new threshold p-value be?</p>
+<p>To run the pairwise tests, we’ll use the <code>with</code> function
+in combination with the <code>cor.test</code> function, to pull out the
+two variables we want from the plant data set and run the correlation
+for those two variables.</p>
+<pre class="r"><code>with(plant,cor.test(Mean_tempC,Max_tempC))</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  Mean_tempC and Max_tempC
+## t = 8.4936, df = 17, p-value = 1.6e-07
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  0.7531352 0.9611007
+## sample estimates:
+##       cor 
+## 0.8996063</code></pre>
+<pre class="r"><code>with(plant,cor.test(Mean_tempC,Totprecip))</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  Mean_tempC and Totprecip
+## t = -1.6944, df = 17, p-value = 0.1084
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.71147981  0.08956702
+## sample estimates:
+##        cor 
+## -0.3801058</code></pre>
+<pre class="r"><code>with(plant,cor.test(Max_tempC,Totprecip))</code></pre>
+<pre><code>## 
+##  Pearson&#39;s product-moment correlation
+## 
+## data:  Max_tempC and Totprecip
+## t = -2.5001, df = 17, p-value = 0.02294
+## alternative hypothesis: true correlation is not equal to 0
+## 95 percent confidence interval:
+##  -0.78728864 -0.08407849
+## sample estimates:
+##        cor 
+## -0.5184872</code></pre>
+<p>Based on the output of these tests, which are statistically
+significant (don’t forget to use the new threshold p-value from your
+Bonferroni correction).</p>
+</div>
+</div>
+<div id="linear-regression" class="section level3">
+<h3>11.2 Linear regression</h3>
+<p>Now we will test the effect of climate variables on the plant cover.
+In this case, it would make sense for there to be a causal relationship
+between the climate variables and plant cover, so we will use a linear
+regression.</p>
+<p>Good news! You don’t have to learn any new code for this!</p>
+<div id="building-and-visualizing-the-models" class="section level4">
+<h4>Building and visualizing the models</h4>
+<p>To keep things simpler, we will just test the effects of the two
+temperature variables on the total plant cover. For now, we’ll build
+three models: the null model, an alternative model for mean temperature,
+and an alternative model for maximum temperature.</p>
+<pre class="r"><code>plant_null &lt;- lm(tot_cover ~ 1, plant)
+plant_mean &lt;- lm(tot_cover ~ Mean_tempC, plant)
+plant_max &lt;- lm(tot_cover ~ Max_tempC, plant)</code></pre>
 <p>To view the output of your models, type the name of each model. Just
 like when we have worked with this model before, the null model will
-have just an intercept. However, the alternative models will have
-multiple coefficients. Let’s take a look at a couple of them.</p>
-<p>First, view the coefficients of the <code>mill_both</code> model. You
-should see four coefficients. After the intercept, the first coefficient
-you will see is labeled “sexm”. This is the value you would add to the
-intercept to get the alanine levels in male millipedes. Then you will
-see two intercepts for species. The first (species2) tells you what to
-add to the intercept to get alanine leves for species 2 (for a male of
-species 2, you would add both the sexm and species2 coefficients). The
-final coefficient is what you would add to the intercept to get the
-alanine levels for species 3.</p>
-<p>Now, view the coefficients of the <code>mill_int</code> model. Now,
-you will see two additional coefficients representing interactions
-between the sex and species variables. Based on this model, if you had a
-male of species 2, in addition to adding the sexm and species2
-coefficients, you would also add the sexm:species2 coefficient, which
-account for how sex interacts with being species 2. For a male of
-species 3, you would similarly add the coefficient for
-sexm:species3.</p>
-<p>I personally find it difficult to interpret what the interaction
-looks like just based on the coefficients. This is where our graphs can
-come in handy. Looking at our boxplot can help us see the nature of the
-interaction, if any, between our variables. Based on the graph, do you
-think the two independent variables interact?</p>
-</div>
-<div id="testing-the-models-classical-frequentist"
-class="section level4">
-<h4>Testing the models: Classical Frequentist</h4>
-<p>To test the models using a frequentist approach, we start with the
-same <code>aov</code> function that we used for a one-way ANOVA. The
-only difference is that we will include both of our independent
-variables in our formula. We will set up the formula in the same way we
-did for our interaction model above, because we want to test both the
-main effects and the interaction affect. Run the test and look at the
-output using the code below. Based on the output, we might have to run
-additional follow-up tests.</p>
-<pre class="r"><code>mill_2way &lt;- aov(Alanine ~ sex*species,data=mill)
-summary(mill_2way)</code></pre>
-<pre><code>##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
-## sex          1 138.72  138.72  65.679 2.04e-07 ***
-## species      2  55.26   27.63  13.082  0.00031 ***
-## sex:species  2   6.89    3.45   1.631  0.22331    
-## Residuals   18  38.02    2.11                     
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<p>In the output, you should see a table with a row for each of the main
-effects (sex and species) and a row showing the results for the
-interaction between the variables (sex:species). Let’s start by looking
-at the interaction effect, because that affect how we interpret the main
-effects. We can see from the table that the p-value for the interaction
-is greater than 0.05, so the interaction affect is not significant. This
-makes things easier for us because we can interpret the main effects
-based on the graph and the model coefficients, without worrying about
-how they interact!</p>
-<p>However, just like with a one-way ANOVA, when we have a categorical
-variable with more than two groups, such a species in this example, the
-ANOVA only tells us that at least one group is different. It doesn’t
-tell us which specific groups are different. We therefore need to do a
-post hoc test to look at those pairwise differences. We can use the same
-<code>TukeyHSD</code> function that we used for post hoc tests after a
-one-way ANOVA. However, because we have more than one independent
-variable, we can choose to include both variables in the Tukey HSD test
-or only one variable. In this case, our sex variable has only two
-groups, so it is not necessary to include it in the post hoc test. We
-only need to include species, as shown in the code below. (If we needed
-to include both variable, we would list them both in the <code>c</code>
-function: <code>which=c("species","sex")</code>. If you don’t list any
-variables, it will give the results for both variables independently, as
-well as their interaction.)</p>
-<pre class="r"><code>TukeyHSD(mill_2way,which=c(&quot;species&quot;))</code></pre>
-<pre><code>##   Tukey multiple comparisons of means
-##     95% family-wise confidence level
-## 
-## Fit: aov(formula = Alanine ~ sex * species, data = mill)
-## 
-## $species
-##        diff        lwr        upr     p adj
-## 2-1 -3.7125 -5.5670304 -1.8579696 0.0002068
-## 3-1 -2.0125 -3.8670304 -0.1579696 0.0322560
-## 3-2  1.7000 -0.1545304  3.5545304 0.0756331</code></pre>
-<p>You interpret this output in the same way you did following the
-one-way ANOVA. Which pairs of species show significant differences from
-each other?</p>
-</div>
-<div id="testing-the-models-likelihood" class="section level4">
-<h4>Testing the models: Likelihood</h4>
-<p>As we have for previous tests, we will use the <code>AIC</code>
-function to compare our models, but this time we have five different
-models to compare, instead of just two. We can compare all five at the
-same time.</p>
-<pre class="r"><code>AIC(mill_null,mill_sex,mill_species,mill_both,mill_int)</code></pre>
-<pre><code>##              df       AIC
-## mill_null     2 127.25979
-## mill_sex      3 108.40041
-## mill_species  4 124.94574
-## mill_both     5  93.14672
-## mill_int      7  93.14888</code></pre>
-<p>Based on the output table, which model was the best? Was it
-significantly better than the next best model? What do the differences
-in AIC values tell you about the effects of each predictor and their
-interaction?</p>
-</div>
-</div>
-<div id="example-2-hypertension" class="section level3">
-<h3>9.2 Example 2: hypertension</h3>
-<p>For our second example, we will again work with two categorical
-predictor variables. We will use a data set from a medical test related
-to hyptertension. One common cause of hypertension is high sodium
-levels, which are controlled in part by an enzyme in the kidney called
-Na-K-ATPase. Researchers tested the activity of Na-K-ATPase in two
-strains of lab rats: a control strain and a strain selected to
-spontaneously develop hypertension. They wanted to know if Na-K-ATPase
-activity varied between these two strains and, if so, what sites in the
-kidney varied in their enzyme activity. The two independent variables
-are the rat strain (normal or hypertensive) and the kidney site (DCT,
-CCD, or OMC).</p>
-<div id="visualizing-and-building-the-models-1" class="section level4">
-<h4>Visualizing and building the models</h4>
-<p>We’ll start off by loading and visualizing our data. Be sure your
-working directory is set to the location of the kidney data file.</p>
-<pre class="r"><code>kidney &lt;- read.csv(&quot;kidney.csv&quot;)</code></pre>
-<p>Now, let’s make a box plot to visualize our data set. We will put
-site on the x-axis and group and color our boxes by lab rat strain.</p>
+have just an intercept, and the alternative model will have a intercept
+and a slope term for the effect of either mean or maximum temperature on
+plant cover.</p>
+<p>Now, let’s create graphs to visualize our data. Because we have two
+continuous variables, a scatterplot is a good option. We will also
+include a best fit line based on our alternative model. We’ll make two
+graphs, one for each of our independent variables. If you haven’t
+already, load the <code>tidyverse</code> package first.</p>
 <pre class="r"><code>library(ggplot2)
-ggplot(kidney, aes(x=site, y=enzyme, fill=hyper)) +
-  geom_boxplot() +
-  scale_fill_manual(values=c(&quot;#ce9642&quot;,&quot;#3b7c70&quot;)) +
-  labs(x=&quot;Kidney Site&quot;, y=&quot;Enzyme levels&quot;, fill = &quot;Strain&quot;) +
+ggplot(plant, aes(x=Mean_tempC, y=tot_cover)) +
+  geom_point() +
+  geom_smooth(method=&quot;lm&quot;)+
+  labs(x=&quot;Mean temperature (C)&quot;, y=&quot;Total plant cover&quot;) +
   theme_classic()</code></pre>
-<p><img src="RHandbook_9_files/figure-html/kidney_boxplot-1.png" width="672" /></p>
-<p>Based just on the graph, what patterns do you see in the data. Do the
-strains differ in their enzyme activity? What the kidney sites? Does
-there appear to be an interaction between the two variables?</p>
-<p>Let’s proceed with building our models. Again, we will have multiple
-alternative models representing four different hypotheses: (1) only
-strain matters, (2) only site matters, (3) both strain and site matter
-but don’t interact, (4) both strain and site matter and they interact.
-The models are built in this order after the null model below.</p>
-<pre class="r"><code>kidney_null &lt;- lm(enzyme ~ 1, data = kidney)
-kidney_hyper &lt;- lm(enzyme ~ hyper, data = kidney)
-kidney_site &lt;- lm(enzyme ~ site, data = kidney)
-kidney_both &lt;- lm(enzyme ~ hyper + site, data = kidney)
-kidney_int &lt;- lm(enzyme ~ hyper*site, data = kidney)</code></pre>
-<p>View the output of your models by typing the name of each model.
-Based on the model outputs and the graph, without running the tests, how
-would you describe the patterns in your results.</p>
+<p><img src="RHandbook_9_files/figure-html/plant_scatter-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(plant, aes(x=Max_tempC, y=tot_cover)) +
+  geom_point() +
+  geom_smooth(method=&quot;lm&quot;)+
+  labs(x=&quot;Max temperature (C)&quot;, y=&quot;Total plant cover&quot;) +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_9_files/figure-html/plant_scatter-2.png" width="672" /></p>
 </div>
-<div id="testing-the-models-classical-frequentist-1"
-class="section level4">
-<h4>Testing the models: Classical Frequentist</h4>
-<p>As in the previous example, we will start by using the
-<code>aov</code> function to run the overall two-way ANOVA.</p>
-<pre class="r"><code>kidney_2way &lt;- aov(enzyme ~ hyper*site, data=kidney)
-summary(kidney_2way)</code></pre>
-<pre><code>##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
-## hyper        1    459     459   7.139   0.0156 *  
-## site         2   8287    4144  64.393 6.27e-09 ***
-## hyper:site   2    496     248   3.854   0.0404 *  
-## Residuals   18   1158      64                     
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
-<p>In the output, you should see a similar table as you saw in the
-millipede example. Let’s start by looking at the interaction effect
-again. We can see from the table that the p-value for the interaction is
-less than 0.05, so the interaction affect is significant this time. This
-makes things trickier because now we can’t evaluate each main effect
-independently. Because the two variables interact, the each main effect
-depends on the value of the other independent variable.</p>
-<p>One way to deal with this non-independence is to split up our data
-into groups and run multiple one-way ANOVAs (or t-tests, depending on
-how many categories we have. For example, in this case, we are primarily
-interested in the difference between normal and hypertensive rats.
-Therefore, we can split our data into three groups, one for each kidney
-site, and then run three tests to compare normal and hypertensive rats
-at each site.</p>
-<p>(Note: We do not want to split our data like this every time we run a
-two-way ANOVA. We only use this approach when there is a significant
-interaction.)</p>
-<p>A downside of this approach is that we are now running multiple tests
-on the same data set. We can’t use a Tukey HSD test in this particular
-scenario, but what is another strategy we discussed in the last class
-that could work here?</p>
-<p>Now we will run t-tests to compare the normal and hypertensive rats
-at each individual kidney site. We will take advantage of two new
-functions: the <code>subset</code> function and the <code>with</code>
-function. The <code>subset</code> function will allow us to take a
-subset of the data containing only the kidney site we want. The
-<code>with</code> function will tell R to apply the t.test to the subset
-of the data that we took. We include the code for the t-test as the
-second argument of the <code>with</code> function.</p>
-<pre class="r"><code>with(subset(kidney,site==&quot;CCD&quot;),t.test(enzyme~hyper))</code></pre>
+<div id="classical-frequentist-approach" class="section level4">
+<h4>Classical Frequentist Approach</h4>
+<p>Let’s again start by analyzing the models using a frequentist
+approach. We don’t actually need to run any additional tests for this.
+We can just look at some additional output from the models we already
+ran.</p>
+<p>To view the additional output, use the <code>summary</code>
+function.</p>
+<pre class="r"><code>summary(plant_mean)</code></pre>
 <pre><code>## 
-##  Welch Two Sample t-test
+## Call:
+## lm(formula = tot_cover ~ Mean_tempC, data = plant)
 ## 
-## data:  enzyme by hyper
-## t = -0.85682, df = 5.5936, p-value = 0.4267
-## alternative hypothesis: true difference in means between group hyp and group norm is not equal to 0
-## 95 percent confidence interval:
-##  -26.37137  12.87137
-## sample estimates:
-##  mean in group hyp mean in group norm 
-##              18.25              25.00</code></pre>
-<p>Now try adapting this code to run the t-test for the other two sites
-(DCT and OMCD). Based on the output of the three tests, which kidney
-sites show differences in enzyme activity between the two strains of
-mice? Don’t forget to adjust your threshold p-value based on the number
-of tests you ran.</p>
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -21.707 -13.027   4.722  10.964  21.556 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   40.812      4.359   9.362 1.42e-06 ***
+## Mean_tempC    -2.451      3.993  -0.614    0.552    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 15.47 on 11 degrees of freedom
+##   (6 observations deleted due to missingness)
+## Multiple R-squared:  0.03311,    Adjusted R-squared:  -0.05479 
+## F-statistic: 0.3767 on 1 and 11 DF,  p-value: 0.5518</code></pre>
+<pre class="r"><code>summary(plant_max)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = tot_cover ~ Max_tempC, data = plant)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -26.058  -7.017   3.003   7.405  19.695 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   41.846      3.913  10.695 3.76e-07 ***
+## Max_tempC     -6.526      3.583  -1.821   0.0958 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 13.79 on 11 degrees of freedom
+##   (6 observations deleted due to missingness)
+## Multiple R-squared:  0.2317, Adjusted R-squared:  0.1618 
+## F-statistic: 3.317 on 1 and 11 DF,  p-value: 0.09585</code></pre>
+<p>When you view the output, you will see a number of things. First, you
+will be able to see the the formula you used to build the models. Then
+you will see some information on the distribution of the residuals (the
+leftover variation not explained by your model). Next, you will see the
+coefficients from your model, along with standard error of the
+estimates. The coefficients section will also show you t-values and
+p-values for each coefficient. These are one-sample t-tests comparing
+the value of the coefficient to zero.</p>
+<p>The information we really want for our linear regression test is down
+at the very bottom. In the final section, you will see some R-squared
+values. These are a measure of how much variation in your dependent
+variable is explained by your independent variable (we will talk about
+this more in class). Below that, you will see the output of the linear
+regression test. First is the F-statistic (the same statistic that was
+calculated for the ANOVA). Then you will see the p-value. Based on these
+values, would your reject or accept the null hypothesis? What does this
+tell you about the effect of temperature on plant growth?</p>
 </div>
-<div id="testing-the-models-likelihood-1" class="section level4">
-<h4>Testing the models: Likelihood</h4>
-<p>Now we will use the likelihood approach and <code>AIC</code> function
-to compare our models, just like we did with the millipede models.</p>
-<pre class="r"><code>AIC(kidney_null,kidney_hyper,kidney_site,kidney_both,kidney_int)</code></pre>
-<pre><code>##              df      AIC
-## kidney_null   2 217.8267
-## kidney_hyper  3 218.7425
-## kidney_site   4 183.5836
-## kidney_both   5 179.7022
-## kidney_int    7 175.1477</code></pre>
-<p>Based on the output table, which model was the best? Was it
-significantly better than the next best model? What do the differences
-in AIC values tell you about the effects of each predictor and their
-interaction?</p>
+<div id="likelihood-based-approach" class="section level4">
+<h4>Likelihood-based approach</h4>
+<p>Next we will use a likelihood-based approach to test the same
+question. Once again, the approach is the same as what you used for the
+t-test and ANOVA, using the <code>AIC</code> function to compare the two
+models.</p>
+<pre class="r"><code>AIC(plant_null, plant_mean, plant_max)</code></pre>
+<pre><code>##            df      AIC
+## plant_null  2 110.3634
+## plant_mean  3 111.9256
+## plant_max   3 108.9372</code></pre>
+<p>Based on this output, what would you conclude about the effect of
+mean and maximum temperature on plant growth?</p>
 </div>
 </div>
-<div id="optional-practice-problems" class="section level3">
-<h3>Optional practice problems</h3>
-<p>Download the algae.csv file from Canvas. This data set contains data
-on the growth of algae under 4 different light levels (low, med low, med
-high, and high) and three different wave intensity (low, med, high).
-Researchers want to know if the light level and wave intensity affect
-algae growth. For the algae growth variable, we will be working with the
-natural log of growth (log_growth).</p>
-<ol style="list-style-type: decimal">
-<li><p>Write the null and alternative hypotheses for the main effects
-and the interaction effect.</p></li>
-<li><p>Make a box plot to visualize the effect of both independent
-variables (light and wave) on algae growth.</p></li>
-<li><p>Run a two-way ANOVA using the classical frequentist approach. Run
-any follow-up tests as necessary.</p></li>
-<li><p>Build and compare your models using the likelihood approach.
-Don’t forget to build models for both predictors individually, the
-predictors together, and the predictor together plus their
-interaction.</p></li>
-<li><p>State your conclusions from your analysis, including all
-necessary statistics.</p></li>
-</ol>
+<div id="multiple-regression" class="section level3">
+<h3>11.3 Multiple regression</h3>
+<p>In the previous section, we ran two regressions: one for each of our
+two models. However, we have discussed the problems with running
+multiple tests on the same data set. To address this, we can instead run
+a multiple regression, which is essentially the regression version of
+the two-way ANOVA. You can include multiple predictors in the same
+model, but this time, the predictor models are both continuous rather
+than categorical. We already built our null model and our models with
+only one predictor, now lets build our two models with both predictors
+(one without and one with interactions).</p>
+<pre class="r"><code>plant_both &lt;- lm(tot_cover ~ Mean_tempC + Max_tempC, plant)
+plant_int &lt;- lm(tot_cover ~ Mean_tempC * Max_tempC, plant)</code></pre>
+<div id="classical-frequentist-approach-1" class="section level4">
+<h4>Classical frequentist approach</h4>
+<p>For the classical frequentist approach, all we have to do is take a
+look at the output of our full model (both variables with an
+interaction), so we can interpret the effects of our predictors.</p>
+<pre class="r"><code>summary(plant_int)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = tot_cover ~ Mean_tempC * Max_tempC, data = plant)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -16.493  -7.352   1.749   6.354  11.995 
+## 
+## Coefficients:
+##                      Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)            44.582      4.095  10.887 1.76e-06 ***
+## Mean_tempC             17.897      6.701   2.671   0.0256 *  
+## Max_tempC             -19.882      6.574  -3.024   0.0144 *  
+## Mean_tempC:Max_tempC   -2.931      2.929  -1.001   0.3431    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 11.36 on 9 degrees of freedom
+##   (6 observations deleted due to missingness)
+## Multiple R-squared:  0.5735, Adjusted R-squared:  0.4313 
+## F-statistic: 4.034 on 3 and 9 DF,  p-value: 0.04507</code></pre>
+<p>First, look at the statistics for the overall regression (the last
+line of the output). Based on this, does at least one of the predictors
+have a significant effect?</p>
+<p>Now look at the p-values from the t-test that compare each slope term
+to zero (in the Coefficients section). Based on these p-values, which
+effects (mean temperature, maximum temperature, interaction between mean
+and maximum temperature) are statistically significant?</p>
 </div>
-<div id="a-note-about-color-in-r" class="section level3">
-<h3>A note about color in R</h3>
-<p>When we made our graphs for the two-way ANOVA, we included the
-<code>scale_fill_manual</code> function to specify the colors we wanted
-to use in the graph. You are not required to include this function. If
-you leave it out, ggplot will automatically choose colors based on its
-default color package. However, the ggplot’s default color palette is
-not colorblind-friendly, so it is usually better to choose a different
-color palette. Below are some links to websites that can help you choose
-colors. When you list the colors you want to use, you can list the hex
-codes (as we do in our code in this lesson) or the name of the color
-(e.g., “blue”). If you use the <code>scale_fill_manual</code> function,
-or a similar function, to specify colors, be sure to include one color
-for every group in your variable. In our examples, the variables
-displayed by the colors only had two groups (e.g., in the millipede
-example, there are only two sexes). If you have a variable with more
-than two groups, you need to list more than two colors.</p>
-<p>List of useful R color websites:</p>
-<ol style="list-style-type: decimal">
-<li><p><a
-href="https://sape.inf.usi.ch/quick-reference/ggplot2/colour">ggplot 2
-Quick reference: colors</a>. This website includes a chart will color
-names in R, along with additional information about using color in
-ggplot.</p></li>
-<li><p><a
-href="https://colorbrewer2.org/#type=sequential&amp;scheme=BuGn&amp;n=3">ColorBrewer</a>.
-The ColorBrewer website provides a set of color palettes that you can
-use in R. You can choose sequential, diverging, or qualitative palettes,
-and there is an option for colorblind-friendly palettes. The website
-will provide the hex codes for the colors in the palette.</p></li>
-<li><p><a
-href="https://github.com/BlakeRMills/MetBrewer?tab=readme-ov-file">MetBrewer</a>.
-MetBrewer, which also has an associated R package, provides a set of
-color palettes based on works of art at the Metropolitan Museum of Art.
-Not all of the palettes are colorblind-friendly, but you can find a list
-of colorblind-friendly palettes at the bottom of the webpage.</p></li>
-<li><p><a
-href="https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html">Introduction
-to the viridis color maps</a>. Viridis is an R package that has
-colorblind-friendly palettes. This website provides information on the
-use of the package. You can also see what some different R color
-palettes would look like to people with different forms of
-colorblindness.</p></li>
-<li><p><a
-href="https://www.simplifiedsciencepublishing.com/resources/best-color-palettes-for-scientific-figures-and-data-visualizations">Best
-Color Palettes for Scientific Figures and Data Visualizations</a> This
-website has some general guidelines for the use of color in scientific
-publishing, along with some specific colorblind-friendly palettes,
-including the hex codes.</p></li>
-<li><p><a href="https://github.com/jakelawlor/PNWColors">PNW colors</a>.
-This R package has a set of colorblind friendly palettes based on
-photographs of the Pacific Northwest.</p></li>
-</ol>
+<div id="maximum-likelihood-approach" class="section level4">
+<h4>Maximum likelihood approach</h4>
+<p>You know the drill here. As usual, which just have to compare the AIC
+values between all of our models.</p>
+<pre class="r"><code>AIC(plant_null, plant_mean, plant_max, plant_both, plant_int)</code></pre>
+<pre><code>##            df      AIC
+## plant_null  2 110.3634
+## plant_mean  3 111.9256
+## plant_max   3 108.9372
+## plant_both  4 104.6580
+## plant_int   5 105.2864</code></pre>
+<p>Based on the AIC values, which model(s) is(are) the best? What does
+this tell you about which predictor are important for explaining plant
+cover?</p>
+</div>
+<div id="comparison-between-simple-and-multiple-regression"
+class="section level4">
+<h4>Comparison between simple and multiple regression</h4>
+<p>Look back at the conclusions you drew about the effects of your
+predictor variables from your single and multiple regressions. Do your
+conclusions match? Why do you think this is (hint: think about the
+results of your correlation analysis, where you looked at correlations
+between the predictor variables)?</p>
+<p>We’ll discuss this as a class, but think on your own/and or discuss
+in small groups first.</p>
+</div>
+<div id="graphing-multiple-regressions" class="section level4">
+<h4>Graphing multiple regressions</h4>
+<p>It is challenging to visualize two continuous predictor variable at
+the same time (I think 3D graphs are hard to read). One option is just
+to make separate scatter plots for each predictor, like we did above for
+our single regressions, but that does not allow you to see interactions
+between the two variables. What I often do is convert one of the
+predictors to a categorical variable (just for the graph, not for the
+test), and graph both of the predictors at the same time. We’ll try
+that.</p>
+<p>First, we will use the <code>mutate</code> function to create a new
+variable that converts maximum temperature to a category. We will just
+use two categories: high and low. High maximum temperature will be
+anything above the median maximum temperature from our data set, and low
+maximum temperature will be anything less than or equal to the median.
+To to this, we will use the <code>ifelse</code> function. This function
+allows us to set a value for something <strong>if</strong> it matches
+certain criteria (in this case, if the maximum temperature is greater
+than the median) and set a different values if it does not match the
+criteria.</p>
+<pre class="r"><code>library(tidyverse)
+
+med &lt;- median(plant$Max_tempC)
+plant &lt;- mutate(plant,MaxT_cat = ifelse(Max_tempC &gt; med, &quot;High&quot;, &quot;Low&quot;))</code></pre>
+<p>If you view the data set, you will now see a new variable called
+“MaxT_cat” that we will use to graph our data. Let’s make that graph
+now. We will use “Mean_tempC” as our x variable, and we will use two
+different colors to represent our two maximum temperature
+categories.</p>
+<pre class="r"><code>ggplot(data=plant, aes(x=Mean_tempC,y=tot_cover,color=MaxT_cat)) +
+  geom_point() +
+  geom_smooth(method=&quot;lm&quot;) +
+  scale_color_manual(values=c(&quot;#ce9642&quot;,&quot;#3b7c70&quot;)) +
+  labs(x=&quot;Mean temperature&quot;, y=&quot;Total plant cover&quot;,color=&quot;Maximum temperature&quot;) +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_9_files/figure-html/temp_scat-1.png" width="672" /></p>
+</div>
 </div>
 </div>
 

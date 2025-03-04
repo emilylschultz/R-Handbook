@@ -15,19 +15,19 @@ navbar:
         href: RHandbook_3.html
       - text: "Lesson 4: Distributions and descriptive statistics"
         href: RHandbook_4.html
-      - text: "Lesson 5: Linear models"
+      - text: "Lesson 5: Two-sample t-test"
         href: RHandbook_5.html
-      - text: "Lesson 6: Data visualization"
+      - text: "Lesson 6: Assumptions and transformations"
         href: RHandbook_6.html
-      - text: "Lesson 7: T-tests"
+      - text: "Lesson 7: Variations on the t-test"
         href: RHandbook_7.html
       - text: "Lesson 8: ANOVA"
         href: RHandbook_8.html
-      - text: "Lesson 9: Two-way ANOVA"
+      - text: "Lesson 9: Correlations"
         href: RHandbook_9.html
-      - text: "Lesson 10: Assumptions and transformations"
+      - text: "Lesson 10: Regressions"
         href: RHandbook_10.html
-      - text: "Lesson 11: Correlations and regressions"
+      - text: "Lesson 11: Multiple predictors"
         href: RHandbook_11.html
       - text: "Lesson 12: Categorical data"
         href: RHandbook_12.html

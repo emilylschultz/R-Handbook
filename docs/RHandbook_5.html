@@ -13,7 +13,7 @@
 
 <meta name="date" content="2023-02-15" />
 
-<title>ESS 3500 R Handbook, Lesson 5</title>
+<title>ESS 3500 R Handbook, Lesson 7</title>
 
 <script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -267,25 +267,25 @@ $(document).ready(function () {
       <a href="RHandbook_4.html">Lesson 4: Distributions and descriptive statistics</a>
     </li>
     <li>
-      <a href="RHandbook_5.html">Lesson 5: Linear models</a>
+      <a href="RHandbook_5.html">Lesson 5: Two-sample t-test</a>
     </li>
     <li>
-      <a href="RHandbook_6.html">Lesson 6: Data visualization</a>
+      <a href="RHandbook_6.html">Lesson 6: Assumptions and transformations</a>
     </li>
     <li>
-      <a href="RHandbook_7.html">Lesson 7: T-tests</a>
+      <a href="RHandbook_7.html">Lesson 7: Variations on the t-test</a>
     </li>
     <li>
       <a href="RHandbook_8.html">Lesson 8: ANOVA</a>
     </li>
     <li>
-      <a href="RHandbook_9.html">Lesson 9: Two-way ANOVA</a>
+      <a href="RHandbook_9.html">Lesson 9: Correlations</a>
     </li>
     <li>
-      <a href="RHandbook_10.html">Lesson 10: Assumptions and transformations</a>
+      <a href="RHandbook_10.html">Lesson 10: Regressions</a>
     </li>
     <li>
-      <a href="RHandbook_11.html">Lesson 11: Correlations and regressions</a>
+      <a href="RHandbook_11.html">Lesson 11: Multiple predictors</a>
     </li>
     <li>
       <a href="RHandbook_12.html">Lesson 12: Categorical data</a>
@@ -307,7 +307,7 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 5</h1>
+<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 7</h1>
 <h4 class="author">Emily Schultz</h4>
 <h4 class="date">2023-02-15</h4>
 
@@ -315,305 +315,336 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#lesson-5-linear-models-in-r"
-id="toc-lesson-5-linear-models-in-r">Lesson 5: LINEAR MODELS IN R</a>
+<li><a href="#lesson-7-t-tests-in-r"
+id="toc-lesson-7-t-tests-in-r">Lesson 7: T-TESTS IN R</a>
 <ul>
-<li><a href="#discrete-predictor-variable"
-id="toc-discrete-predictor-variable">5.1 Discrete predictor
-variable</a></li>
-<li><a href="#continuous-predictor-variable"
-id="toc-continuous-predictor-variable">5.2 Continuous predictor
-variable</a></li>
-<li><a href="#team-challenge" id="toc-team-challenge">Team
-challenge</a></li>
+<li><a href="#two-sample-t-tests" id="toc-two-sample-t-tests">7.1
+Two-sample t-tests</a></li>
+<li><a href="#one-sample-t-tests" id="toc-one-sample-t-tests">7.2
+One-Sample t-tests</a></li>
+<li><a href="#paired-t-tests" id="toc-paired-t-tests">7.3 Paired
+t-tests</a></li>
+<li><a href="#optional-practice-problems"
+id="toc-optional-practice-problems">Optional practice problems</a></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="lesson-5-linear-models-in-r" class="section level2">
-<h2>Lesson 5: LINEAR MODELS IN R</h2>
-<p>Now that you have learned how to write statistical models
-(hypotheses), you will learn how to build these models in R. In this
-process, we will not only write the models, but we will get R to
-<em>parameterize</em> the models for us. What I mean by this is that
-once we set up the models, R will use our data to estimate the mean and
-variance for the true distribution of the variable in our population of
-interest. If we include predictor variables in our model, it will also
-estimate how the predictor variable affects the mean of our
-distribution.</p>
-<div id="discrete-predictor-variable" class="section level3">
-<h3>5.1 Discrete predictor variable</h3>
-<p>We will start with an example with a discrete (categorical)
-independent variable and a continuous dependent variable.</p>
-<p>Start off by reading in the civu data set that we have worked with
-before. Be sure to first set your working directory to the folder with
-the civu dataset. Then use the <code>head</code> function to view the
-top rows of the data set, as a reminder of what data we have in the data
-frame.</p>
+<div id="lesson-7-t-tests-in-r" class="section level2">
+<h2>Lesson 7: T-TESTS IN R</h2>
+<p>In this lesson, you will practice running your first formal
+statistical test, a t-test! You will use both a classical frequentist
+and a likelihood-based approach to run the test.</p>
+<div id="two-sample-t-tests" class="section level3">
+<h3>7.1 Two-sample t-tests</h3>
+<div id="classical-frequentist-approach" class="section level4">
+<h4>Classical Frequentist Approach</h4>
+<p>We will start by analyzing the civu thistle data using the classical
+frequentist approach. We will continue work with the same question you
+tackled in your previous lessons: does insect herbivory affect the
+density of thistle plants?</p>
+<p>You can start by re-running your code from the Model Building lesson,
+or you can just run the commands in this lesson to set up your data and
+build your models. Don’t forget to set your working directory first!</p>
 <pre class="r"><code>civu &lt;- read.csv(&quot;civu.csv&quot;)
-head(civu)</code></pre>
-<pre><code>##   herbivory plant_id density_2006 density_2007 survival_t.1
-## 1         0       15           20            3            0
-## 2         0        7           26            5            0
-## 3         0       16           17            1            0
-## 4         0       22           26            5            0
-## 5         0       23           26            5            0
-## 6         0       12           20            3            0</code></pre>
-<p>In this example, we will work with the same question you tackled in
-your Model Building Practice Problems: does insect herbivory affect the
-density of thistle plants? For this example we will build 2 models: one
-representing the null hypothesis and one representing the alternative
-hypothesis. Then we will practice interpreting the output of the
-models.</p>
-<div id="null-model" class="section level4">
-<h4>Null model</h4>
-<p>Let’s start with the null hypothesis: herbivory does not affect the
-density of thistles.</p>
-<p>To build linear models in R, we will use a new function, the
-<code>lm</code> function (short for “linear model”). The function
-requires two arguments: the formula for our model and the data set. The
-formula for our model needs to include the dependent variable on the
-left side of the formula and the predictor variable(s) on the right side
-of the formula. For our null model, saying that herbivory does not
-affect density is the equivalent of saying that we do not need to use
-herbivory as a predictor in the model. In this case, our null model will
-therefore not have a predictor variable. We tell R this by putting a 1
-in place of a predictor variable.</p>
-<p>The full code to set up the model is as follows. We will save the
-model as an object called “civu_null”.</p>
-<pre class="r"><code>civu_null &lt;- lm(density_2006 ~ 1, civu)</code></pre>
-<p>Now, lets view the basic output from this model. To do this, we
-simply type the name of our model object.</p>
-<pre class="r"><code>civu_null</code></pre>
+civu$herbivory &lt;- as.factor(civu$herbivory)</code></pre>
+<p>Now that we have the data set up, let’s run the t-test itself. The
+syntax is similar to what we used to set up our alternative model in the
+<code>lm</code> function, but this time we will use a new function:
+<code>t.test</code>. The first argument for this function is the formula
+for our alternative model, with the dependent variable on the left and
+the independent variable on the right. The second argument is the data
+set. Then then final argument “var.equal = TRUE” tells R that we are
+assuming our two treatments have equal variance.</p>
+<pre class="r"><code>civu_ttest &lt;- t.test(density_2006 ~ herbivory, data = civu, var.equal = TRUE)</code></pre>
+<p>To view the output, just type:</p>
+<pre class="r"><code>civu_ttest</code></pre>
 <pre><code>## 
-## Call:
-## lm(formula = density_2006 ~ 1, data = civu)
+##  Two Sample t-test
 ## 
-## Coefficients:
-## (Intercept)  
-##        34.6</code></pre>
-<p>This simple output will tell us two things. It will first remind us
-of the code we used to build the model, so we can see the independent
-and dependent variables we included. Second, it will show us the
-coefficients, or the parameters of our model. Because our null model did
-not have any predictors, it just has a single coefficient, the
-intercept, which in this case is 34.6. Remember, this model represents
-the mean of the distribution of our data, so, based on our null model,
-the mean density is 34.6, regardless of the herbivory treatment.</p>
-</div>
-<div id="alternative-model" class="section level4">
-<h4>Alternative model</h4>
-<p>Now, let’s compare this null model to our alternative model. Our
-alternative model is that herbivory does affect the density, so this
-time, we want it include it as a predictor in our model. We will then be
-able to see how the herbivory treatment affects our estimate of the mean
-density.</p>
-<p>We set up the model in the same way we did for the null model, but
-put our predictor variable in place of the 1.</p>
-<pre class="r"><code>civu_alt &lt;- lm(density_2006 ~ herbivory, civu)
-civu_alt</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = density_2006 ~ herbivory, data = civu)
-## 
-## Coefficients:
-## (Intercept)    herbivory  
-##          21           17</code></pre>
-<p>Now when we view the output, we see two coefficients. The intercept
-(21) and the herbivory coefficient (17). If we wrote this model out as
-an equation, it would be:</p>
-<p><span class="math display">\[
-\mu = 21 + 17*herbivory
-\]</span> where <span class="math inline">\(\mu\)</span> is the mean
-density. Recall that the categorical herbivory term in this equation can
-take on two values: 0 and 1. In this case, 0 is the control group, which
-is herbivores present and 1 is the treatment group, which is herbivores
-excluded. Therefore, the mean density in the presence of herbivores is
-21 and the mean density in the absence of herbivores is <span
-class="math inline">\(21+17=38\)</span>.</p>
-</div>
-<div id="model-variance" class="section level4">
-<h4>Model variance</h4>
-<p>We now have two models that describe the mean (or means) of our
-data:</p>
+## data:  density_2006 by herbivory
+## t = -8.2506, df = 148, p-value = 7.941e-14
+## alternative hypothesis: true difference in means between group 0 and group 1 is not equal to 0
+## 95 percent confidence interval:
+##  -21.07172 -12.92828
+## sample estimates:
+## mean in group 0 mean in group 1 
+##              21              38</code></pre>
+<p>You should see the following pieces in your output:</p>
 <ol style="list-style-type: decimal">
-<li>Null model: <span class="math inline">\(\mu=34.6\)</span></li>
-<li>Alternative model: <span
-class="math inline">\(\mu=21+17*herbivory\)</span></li>
+<li>data: This just tells you what variables went into your model</li>
+<li>t: This is the value of your test statistic (t)</li>
+<li>df: This is your degrees of freedom. We will discuss this in more
+detail later, but it is related to your sample size.</li>
+<li>p-value: This is the probability of observing your test statistic or
+a more extreme test statistic, assuming your null model is true.</li>
+<li>alternative hypothesis: This is a verbal statement of the
+alternative hypothesis being tested.</li>
+<li>95 percent confidence interval: If you repeated this experiment over
+and over, you would expect that 95% of the time, the difference in the
+sample means of the two treatment would fall between these two
+values.</li>
+<li>sample estimates: These are the means calculated for your two
+treatment groups.</li>
 </ol>
-<p>But remember, to describe data using a normal distribution, we need
-two parameters: the mean and the variance! We’ll now learn how to find
-the variance (<span class="math inline">\(\sigma^2\)</span>) (and
-standard deviation) in the model output. To do so, we will use the
-<code>summary</code> function. The summary function will give us
-additional output for our model. We will learn about most of the output
-later in the semester when we cover model testing. For now, we will just
-pull out the standard deviation from the summary for each model as
-follows:</p>
-<pre class="r"><code>null_sd_civu &lt;- summary(civu_null)$sigma
-alt_sd_civu &lt;- summary(civu_alt)$sigma</code></pre>
-<p>We can then calculate the variance by squaring the standard
-deviations:</p>
-<pre class="r"><code>null_var_civu &lt;- null_sd_civu^2
-alt_var_civu &lt;- alt_sd_civu^2</code></pre>
-<p>This variance is specifically what we refer to as the residual
-variance of the model, which we talked about earlier in the class. It is
-the variation in our data that is not explained by the predictors we
-included in our model. In this particular example, we can explain some
-variation in thistle density by herbivore presence (which is why the
-residual variance is lower in our alternative model than our null
-model), but within each treatment groups, there is still unexplained
-variation in density. In this type of model, we assume that the variance
-is equal, or close to equal, in both of our treatment groups, so we just
-have a single variance term.</p>
-<p>We now have two complete models, with both mean and variance terms to
-describe our data. If we write them out formally, they would look like
-this, where <span class="math inline">\(N\)</span> indicates a normal
-distribution:</p>
-<p>Null model: <span class="math display">\[
-density \sim N(\mu,\sigma^2)
-\]</span> <span class="math display">\[
-\mu = 34.6
-\]</span> <span class="math display">\[
-\sigma^2 = 12.16
-\]</span></p>
-<p>Alternative model: <span class="math display">\[
-density \sim N(\mu,\sigma^2)
-\]</span> <span class="math display">\[
-\mu = 21 + 17*herbivory
-\]</span> <span class="math display">\[
-\sigma^2 = 10.09
-\]</span></p>
+<p>Based on this output, would you reject the null hypothesis and
+tentatively accept the alternative hypothesis?</p>
+</div>
+<div id="likelihood-based-approach" class="section level4">
+<h4>Likelihood-based approach</h4>
+<p>Next we will use a likelihood-based approach to test the same
+question. For this, we will start by building our two linear models,
+just as we did in the Model Building lesson:</p>
+<pre class="r"><code>civu_null &lt;- lm(density_2006 ~ 1, civu)
+civu_alt &lt;- lm(density_2006 ~ herbivory, civu)</code></pre>
+<p>Now, we just need to calculate the Akaike’s Information Criterion
+(AIC) values for the two models. We can do this using the
+<code>AIC</code> function. As the arguments, we just need to list the
+models we want to compare. We can compare more than two models at once,
+but for this question, we just have our null model and one alternative
+model.</p>
+<pre class="r"><code>AIC(civu_null, civu_alt)</code></pre>
+<pre><code>##           df      AIC
+## civu_null  2 1178.015
+## civu_alt   3 1123.255</code></pre>
+<p>You should see the output automatically appear in a table. The first
+column lists the model. The second column (df) lists the number of
+parameters in each model (remember, AIC penalizes for adding
+parameters). The final column lists the AIC values for each model. The
+lower the AIC value, the better the model. A difference of 2 or more
+between the AIC values indicates that one model is significantly better
+than the other.</p>
+<p>Based on this output, which is the better model? Is it significantly
+better?</p>
+<p>Does your conclusion from this approach match your conclusion from
+the classical frequentist approach?</p>
 </div>
 </div>
-<div id="continuous-predictor-variable" class="section level3">
-<h3>5.2 Continuous predictor variable</h3>
-<p>We will now move on to an example with a continuous independent
-variable and a continuous dependent variable.</p>
-<p>Read in the DataFrameExample data set that we have worked with
-before. Be sure to first set your working directory to the folder with
-the DataFrameExample data set. Because this data set has data on tree
-growth, we will call it “tree”. Again use the <code>head</code> function
-to view the top rows of the data set to remind yourself what data we
-have in the data frame.</p>
-<pre class="r"><code>tree &lt;- read.csv(&quot;DataFrameExample.csv&quot;)
-head(tree)</code></pre>
-<pre><code>##   Tree Year Number.cones Growth Temperature
-## 1    A 2009            0   0.21        8.58
-## 2    A 2010           14   0.26        8.67
-## 3    A 2011            0   0.20        8.32
-## 4    A 2012           35   0.15        9.68
-## 5    A 2013           14   0.21        9.09
-## 6    B 2009           64   0.21        7.28</code></pre>
-<p>For this example, We will also work with the question you tackled in
-your Model Building Practice Problems for this data set: does
-temperature affect the growth of trees? Let’s build and interpret the
-null and alternative models for this example! The procedure is the same
-one used above, we will just interpret the output slightly
-differently.</p>
-<div id="null-model-1" class="section level4">
-<h4>Null model</h4>
-<p>Let’s start with the null hypothesis: temperature does not affect the
-growth of trees.</p>
-<p>As before, our null model will not have a predictor variable because
-we are assuming that temperature is not important for the growth of
-trees.</p>
-<p>The full code to set up the model is as follows:</p>
-<pre class="r"><code>tree_null &lt;- lm( Growth ~ 1, tree)</code></pre>
-<p>Now, lets view the basic output from this model.</p>
-<pre class="r"><code>tree_null</code></pre>
+<div id="one-sample-t-tests" class="section level3">
+<h3>7.2 One-Sample t-tests</h3>
+<p>We use a one-sample t-test in place of a two-sample t-test when we
+have a good estimate of the true mean for a variable in our underlying
+population. This true mean can effectively be used in place of a control
+group. Rather than having to estimate the true mean from the control
+group, we already have a value for the true mean that we can then
+compare to our sample group. For this test, we will only look at the
+classical frequentist approach.</p>
+<p>For simplicity, let’s keep working with the civu thistle data set.
+This time, let’s imagine we had good data from a long-term study on the
+density of thistles in the presence of herbivores. These data provide a
+good estimate of the true mean thistle density. This true mean density
+is 28 thistle plants.</p>
+<p>For this, we will want to use a data set that only includes
+observations in the absence of herbivores because that is what we want
+to compare to the true mean in the presence of herbivores. We’ll start
+by creating that data set:</p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.2 ──
+## ✔ ggplot2 3.4.0      ✔ purrr   1.0.1 
+## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
+## ✔ tidyr   1.3.0      ✔ stringr 1.5.0 
+## ✔ readr   2.1.3      ✔ forcats 1.0.0 
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>civu_noherb &lt;- filter(civu,herbivory == &quot;1&quot;)</code></pre>
+<p>Remember to use the double equals signs to tell R that you are
+looking for observations that match that criterion.</p>
+<p>Now, let’s run the t-test using the classical frequentist approach.
+We will still use the <code>t.test</code> function, but this time,
+because we are just comparing one sample to a true mean, we will not
+have a predictor variable. Instead of using a formula as the argument,
+we will provide two arguments: a vector with our data (the density
+values in the absence of herbivores) and the estimate for the true mean
+(28).</p>
+<pre class="r"><code>t.test(x = civu_noherb$density_2006, mu = 28)</code></pre>
 <pre><code>## 
-## Call:
-## lm(formula = Growth ~ 1, data = tree)
+##  One Sample t-test
 ## 
-## Coefficients:
-## (Intercept)  
-##       0.206</code></pre>
-<p>This output should look very similar to the output for the null model
-for the civu data. It just has a single coefficient, the intercept
-because we do not have any predictors. The mean tree growth, based on
-our null model, is therefore 0.206.</p>
+## data:  civu_noherb$density_2006
+## t = 9.8695, df = 119, p-value &lt; 2.2e-16
+## alternative hypothesis: true mean is not equal to 28
+## 95 percent confidence interval:
+##  35.99373 40.00627
+## sample estimates:
+## mean of x 
+##        38</code></pre>
+<p>The output includes the same components as the output from the
+two-sample t-test, but not the difference in the alternative hypothesis.
+This time, the alternative hypothesis compares the sample mean to the
+true mean, instead of comparing two sample means.</p>
+<p>Based on this output, would you reject or accept the null hypothesis?
+What does that say about the effect herbivory on thistle density?</p>
+<div id="visualing-one-sample-t-test-data" class="section level4">
+<h4>Visualing one-sample t-test data</h4>
+<p>We’ll wrap up this section by taking a look at one example of how you
+can visualize the data for a one sample t-test. This graph will be
+similar to some graphs you have made before; it will by a histogram of
+your data. However, in this case, instead of having two samples, we have
+one sample and a value for the true mean in the presence of herbivores.
+Therefore, we will create a histogram of our sample data with a vertical
+line (using the <code>geom_vline</code> function) showing the true mean.
+We set the value of the true mean for the vertical line using the “x
+intercept” argument of the <code>geom_vline</code> function.</p>
+<pre class="r"><code>ggplot(data = civu_noherb, aes(x = density_2006))+
+  geom_histogram(aes(y=after_stat(density)),fill = &quot;#3b7c70&quot;, colour = &quot;#3b7c70&quot; , bins = 6) +
+  geom_vline(xintercept = 28, linewidth = 1) +
+  labs(x = &quot;Density in 2006&quot;, y = &quot;Probability Density&quot;) +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_5_files/figure-html/one_density-1.png" width="672" /></p>
 </div>
-<div id="alternative-model-1" class="section level4">
-<h4>Alternative model</h4>
-<p>Now we’ll move on to our alternative model: temperature does affect
-the tree growth. This time, we will include temperature in our model to
-determine how the temperature affects tree growth.</p>
-<p>We set up the model in the same way we did for the null model, but
-this time including our temperature variable as a predictor.</p>
-<pre class="r"><code>tree_alt &lt;- lm(Growth ~ Temperature, tree)
-tree_alt</code></pre>
+</div>
+<div id="paired-t-tests" class="section level3">
+<h3>7.3 Paired t-tests</h3>
+<p>Paired sampling designs can be powerful designs for reducing the
+effects of variation between our samples, allowing us to better detect
+the effects of our predictor variable. In a paired design, our
+observations are paired, or matched, in some way. For example, each
+individual might be subjected to both treatments or we might compare two
+treatments applied to the same plot. Paired t-tests are a test we can
+use for paired sampling designs to make comparisons between the two
+treatments for each individual/sample. The mechanics of this test are
+actually similar to that of a one-sample t-test! We are comparing the
+difference in values of our paired samples with a “true” mean of
+zero.</p>
+<p>For this example, we will use a new data set with zinc concentrations
+at the surface and bottom of a lake. The samples were taken at 10
+different locations within the lake. At each site, one sample was taken
+at the surface and one sample was taken at the bottom. Therefore, we can
+use a paired t-test to compare between the surface and bottom samples at
+each location.</p>
+<div id="frequentist-approach" class="section level4">
+<h4>Frequentist approach</h4>
+<p>Start by loading your data. Be sure your new zinc data set is in your
+working directory.</p>
+<pre class="r"><code>zinc &lt;- read.csv(&quot;zinc.csv&quot;)</code></pre>
+<p>Now go ahead and view the entire data set, either using the
+<code>View</code> function or typing the data frame name into your
+console. One thing I want you to notice about the data set is that if
+you look at the sample number column, the samples are in the same order,
+from 1 to 10, for both the bottom and surface samples. When you use the
+<code>t.test</code> function for a paired t-test, it is important for
+your samples to be in the same order for both of your treatments.
+Otherwise R will not pair up the values correctly. For the likelihood
+approach, the order does not matter, as long a you have a column for the
+sample number.</p>
+<p>Next we will run the t-test. The syntax is the same as what you used
+for a two sample t-test. You will include the formula with your
+dependent and independent variables as the first argument and the data
+frame as the second argument. Then we will add one additional argument
+(“paired = TRUE”), which will tell R to run a paired t-test instead of a
+normal two-sample t-test.</p>
+<pre class="r"><code>paired &lt;- t.test(conc ~ type, data = zinc, paired = TRUE)</code></pre>
+<p>Again, the output should be similar to what you have seen before.
+Should you reject the null hypothesis that there is no difference in
+zinc concentration between the surface and bottom of the lake?</p>
+</div>
+<div id="likelihood-approach" class="section level4">
+<h4>Likelihood approach</h4>
+<p>We will now run the same test using the likelihood approach. To do
+this, we will be using a function similar to the <code>lm</code>
+function, but which will allow us to account for the paired design. The
+new function, <code>lmer</code>, can be found in the
+<strong>lme4</strong> package. If you haven’t already done so, install
+the packages using <code>install.packages("lme4")</code>.</p>
+<p>Then load the package for this session:</p>
+<pre class="r"><code>library(lme4)</code></pre>
+<pre><code>## Loading required package: Matrix</code></pre>
 <pre><code>## 
-## Call:
-## lm(formula = Growth ~ Temperature, data = tree)
+## Attaching package: &#39;Matrix&#39;</code></pre>
+<pre><code>## The following objects are masked from &#39;package:tidyr&#39;:
 ## 
-## Coefficients:
-## (Intercept)  Temperature  
-##     0.32926     -0.01497</code></pre>
-<p>Here we again see two coefficients. The intercept and the temperature
-coefficient (i.e., slope). If we wrote this model out as an equation, it
-would be:</p>
-<p><span class="math display">\[
-\mu = 0.32926 - 0.01497*temperature
-\]</span> where <span class="math inline">\(\mu\)</span> is the mean
-tree growth. The difference in the interpretation for this model is that
-temperature is a continuous variable, so it can take on a full range of
-values. Still, using this equation, we would be able to calculate the
-mean tree growth for any temperature value. We can also tell from the
-sign on the temperature coefficient that as temperature increases, we
-would expect the tree growth to decrease.</p>
+##     expand, pack, unpack</code></pre>
+<p>We are now ready to run the test. As I said, we will use the
+<code>lmer</code> function, which is very similar to the <code>lm</code>
+function. We will include the same arguments as usual: the formula for
+our model and the data. The only change we need to make is adding an
+additional piece to our formula. The syntax for the additional piece is
+<code>(1|sampnum)</code>. This additional piece of the formula will tell
+R to compare the zinc concentrations at the surface and bottom within
+each sampling location. We will build both a null an alternative model
+to compare.</p>
+<pre class="r"><code>zinc_null &lt;- lmer(conc ~ 1 + (1|sampnum), data = zinc)
+zinc_alt &lt;- lmer(conc ~ type + (1|sampnum), data = zinc)</code></pre>
+<p>Next, we will use our <code>AIC</code> function to compare our null
+and alternative models to each other:</p>
+<pre class="r"><code>AIC(zinc_null, zinc_alt)</code></pre>
+<pre><code>##           df       AIC
+## zinc_null  3 -20.78169
+## zinc_alt   4 -25.24908</code></pre>
+<p>The output should have the same structure that it had when we used
+AIC to compare models for the one sample t-test. Based on this output,
+which is the better model? (Notice that the AIC values are negative this
+time, so the better model will be more negative.) What does that tell
+you about whether zinc concentrations vary between the surface and
+bottom of the lake?</p>
 </div>
-<div id="model-variance-1" class="section level4">
-<h4>Model variance</h4>
-<p>Finally, we will calculate the residual variance for our two models,
-so we can fully describe the distribution of our tree growth data.</p>
-<pre class="r"><code>null_sd_tree &lt;- summary(tree_null)$sigma
-alt_sd_tree &lt;- summary(tree_alt)$sigma
-
-null_var_tree &lt;- null_sd_tree^2
-alt_var_tree &lt;- alt_sd_tree^2</code></pre>
-<p>We are now ready to write our full models, with both mean and
-variance terms (remember, we just have one variance term for each
-model), to describe our data.</p>
-<p>Null model: <span class="math display">\[
-growth \sim N(\mu,\sigma^2)
-\]</span> <span class="math display">\[
-\mu = 0.206
-\]</span> <span class="math display">\[
-\sigma^2 = 0.00098
-\]</span></p>
-<p>Alternative model: <span class="math display">\[
-growth \sim N(\mu,\sigma^2)
-\]</span> <span class="math display">\[
-\mu = 0.32926 - 0.01497*temperature
-\]</span> <span class="math display">\[
-\sigma^2 = 0.00093
-\]</span> In the next class, we will use these same examples to practice
-visualizing our data and model output, so be sure to save your code from
-this lesson, and make sure you add comments to your code so you remember
-what you were doing at each step!</p>
+<div id="visualing-paired-t-test-data" class="section level4">
+<h4>Visualing paired t-test data</h4>
+<p>There are many ways we could visualize paired t-test data, including
+a simple boxplot, as we would for a regular two-sample t-test. However,
+using a boxplot like that would show the full variation in each sample,
+without accounting for the paired design. A way around that is to
+instead make a histogram of the <em>difference</em> between our paired
+samples. As we did with the one sample t-test, we will again add a
+vertical line, this time at 0, to represent the difference we would
+expect to see under our null hypothesis.</p>
+<p>First we need to make a data frame with the difference in zinc
+concentrations between the surface and the bottom of the lake at each
+location. We will do this using the <code>group-by</code> and
+<code>summarise</code> functions to summarise the difference in
+concentration for each sample number.</p>
+<pre class="r"><code>group &lt;- group_by(zinc,sampnum)
+zinc_diff &lt;- summarise(group, diff = diff(conc))</code></pre>
+<p>Now we can make our histogram using the new <code>zinc_diff</code>
+data frame:</p>
+<pre class="r"><code>ggplot(data = zinc_diff, aes(x = diff))+
+  geom_histogram(aes(y=after_stat(density)),fill = &quot;#3b7c70&quot;, colour = &quot;#3b7c70&quot; , bins = 6) +
+  geom_vline(xintercept = 0, linewidth = 1) +
+  labs(x = &quot;Difference in zinc concentration&quot;, y = &quot;Probability Density&quot;) +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_5_files/figure-html/paired_density-1.png" width="672" /></p>
 </div>
 </div>
-<div id="team-challenge" class="section level3">
-<h3>Team challenge</h3>
+<div id="optional-practice-problems" class="section level3">
+<h3>Optional practice problems</h3>
+<p>For each of the examples</p>
 <ol style="list-style-type: decimal">
-<li><p>In the first exercise in this lesson, you built models for
-testing the effect of herbivory on the density of thistles in 2006.
-Repeat the analysis to test the effect of herbivory on the density of
-thistles in 2007 (the density_2007 variable). Build the null and
-alternative models and identify the mean and variance terms for each
-model.</p></li>
-<li><p>In these models, we assume our dependent variable is normally
-distributed, but sometimes our data are not normally distributed and it
-works better to transform the data before building our models (we will
-discuss this more in later classes!). Using the tree data frame that you
-created from the DataFrameExample data set, first use the mutate
-function to create a new variable that is the log of the original Growth
-variable. Then re-run the analysis using the log of Growth, instead of
-the original Growth variable, as the dependent variable. Again, build
-the null and alternative models and identify the mean and variance terms
-for each model.</p></li>
+<li>Select the appropriate type of t-test</li>
+<li>State your null and alternative hypotheses</li>
+<li>Make an appropriate graph to visualize the data</li>
+<li>Run the t-test</li>
+<li>State your conclusions</li>
 </ol>
+<div id="examples" class="section level4">
+<h4>Examples</h4>
+<ol style="list-style-type: decimal">
+<li><p>A researcher is interested in whether recent declines in the
+abundance of bees have affected seed set of native plants. For replicate
+plants, she chose one flower per plant to be a control and another to be
+hand pollinated. You can look at these data in scroph.csv. The
+researcher then measured fruit weight to determine how well pollinated
+the flowers were. Test whether fruit weight different between the
+control and hand-pollinated flowers.</p></li>
+<li><p>FEV (forced expiratory volume) is an index of pulmonary function
+that measures the volume of air expelled during 1 second of constant
+effort. Our data set (FEV.csv) contains measures of FEV for 654 children
+ages 3-19 who were seen in the Childhood Respiratory Disease Study in
+East Boston, Massachusetts in 1980. These data are part of a
+longitudinal study to follow the change in pulmonary function over time
+in children. The data available for each child include: Age (years), FEV
+(liters), Height (inches), Sex (for this study, classified as male or
+female), and Smoking Status (current smoker or non-current smoker). Test
+whether FEV varies between current smokers and non-current
+smokers.</p></li>
+<li><p>You are working with a group of patients being treated for high
+blood pressure, and you want to test to see if the treatment is
+effective. The BloodPressure.csv file contains the latest diastolic
+blood pressure values for these patients. You know the normal diastolic
+blood pressure is 80. Test whether the blood pressure of these patients
+differs from normal.</p></li>
+</ol>
+</div>
 </div>
 </div>
 

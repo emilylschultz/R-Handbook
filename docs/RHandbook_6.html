@@ -11,9 +11,9 @@
 
 <meta name="author" content="Emily Schultz" />
 
-<meta name="date" content="2023-03-18" />
+<meta name="date" content="2023-02-15" />
 
-<title>ESS 3500 R Handbook, Lesson 6</title>
+<title>ESS 3500 R Handbook, Lesson 8</title>
 
 <script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -267,25 +267,25 @@ $(document).ready(function () {
       <a href="RHandbook_4.html">Lesson 4: Distributions and descriptive statistics</a>
     </li>
     <li>
-      <a href="RHandbook_5.html">Lesson 5: Linear models</a>
+      <a href="RHandbook_5.html">Lesson 5: Two-sample t-test</a>
     </li>
     <li>
-      <a href="RHandbook_6.html">Lesson 6: Data visualization</a>
+      <a href="RHandbook_6.html">Lesson 6: Assumptions and transformations</a>
     </li>
     <li>
-      <a href="RHandbook_7.html">Lesson 7: T-tests</a>
+      <a href="RHandbook_7.html">Lesson 7: Variations on the t-test</a>
     </li>
     <li>
       <a href="RHandbook_8.html">Lesson 8: ANOVA</a>
     </li>
     <li>
-      <a href="RHandbook_9.html">Lesson 9: Two-way ANOVA</a>
+      <a href="RHandbook_9.html">Lesson 9: Correlations</a>
     </li>
     <li>
-      <a href="RHandbook_10.html">Lesson 10: Assumptions and transformations</a>
+      <a href="RHandbook_10.html">Lesson 10: Regressions</a>
     </li>
     <li>
-      <a href="RHandbook_11.html">Lesson 11: Correlations and regressions</a>
+      <a href="RHandbook_11.html">Lesson 11: Multiple predictors</a>
     </li>
     <li>
       <a href="RHandbook_12.html">Lesson 12: Categorical data</a>
@@ -307,508 +307,174 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 6</h1>
+<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 8</h1>
 <h4 class="author">Emily Schultz</h4>
-<h4 class="date">2023-03-18</h4>
+<h4 class="date">2023-02-15</h4>
 
 </div>
 
 <div id="TOC">
 <ul>
-<li><a href="#lesson-6-visualing-statistical-models"
-id="toc-lesson-6-visualing-statistical-models">Lesson 6: VISUALING
-STATISTICAL MODELS</a>
+<li><a href="#lesson-8-anovas-in-r" id="toc-lesson-8-anovas-in-r">Lesson
+8: ANOVAs in R</a>
 <ul>
-<li><a href="#discrete-predictor-variable"
-id="toc-discrete-predictor-variable">6.1 Discrete predictor
-variable</a></li>
-<li><a href="#continuous-predictor-variable"
-id="toc-continuous-predictor-variable">6.2 Continuous predictor
-variable</a></li>
-<li><a href="#team-challenge" id="toc-team-challenge">Team
-challenge</a></li>
+<li><a href="#one-way-anova" id="toc-one-way-anova">8.1 One-way
+ANOVA</a></li>
+<li><a href="#post-hoc-tests" id="toc-post-hoc-tests">8.2 Post-hoc
+tests</a></li>
+<li><a href="#optional-practice-problems"
+id="toc-optional-practice-problems">Optional practice problems</a></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="lesson-6-visualing-statistical-models" class="section level2">
-<h2>Lesson 6: VISUALING STATISTICAL MODELS</h2>
-<p>In Lesson 5, you practiced building and parameterizing linear models
-in R. In this lesson, you will learn different ways of visualizing these
-models. For this lesson, we will work with the same models you built in
-Lesson 5, so go ahead and open your R script from lesson 5. You can add
-the code for this Lesson to the same script file, if you would like.</p>
-<p>We will use the <strong>ggplot2</strong> package in the
-<strong>tidyverse</strong> set of packages to create these graphs, so
-load <strong>tidyverse</strong> now.</p>
-<pre class="r"><code>library(tidyverse)</code></pre>
-<div id="discrete-predictor-variable" class="section level3">
-<h3>6.1 Discrete predictor variable</h3>
-<p>We will once again start with our civu example with a discrete
-(categorical) independent variable and a continuous dependent
-variable.</p>
-<p>Using the script file from Lesson 5, run all of the code you wrote
-for the civu example, including the building of both the null and
-alternative models. Be sure you first have your working directory set to
-the folder containing the civu data set.</p>
-<p>We will learn two different ways of visualizing the data and model.
-The first does not explicitly use the model output, but the second will
-allow you to visualize how the distribution of the data compares to the
-distribution predicted by the model.</p>
-<div id="box-plots" class="section level4">
-<h4>Box plots</h4>
-<p>The first type of graph we will make is a boxplot. Box plots allow us
-to visualize the effect of a categorical independent variable on a
-continuous dependent variable.</p>
-<p>As I mentioned, this type of plot does not explicitly incorporate the
-model output. However it will show information similar to the parameters
-R calculated when you ran the models in R: central tendency and
-variation.</p>
-<p>Typically researchers don’t make separate boxplots to represent the
-null and alternative models. The graph we will make will show separate
-distributions for each category, so we can visually compare them to
-determine if they look similar (null model) or different (alternative
-model).</p>
-<p>Just like when we worked with ggplot in the past, we will start by
-specifying the data and variables we want to include in our graph. Then
-we add layers to the code to specify the type of graph we want. For this
-first graph, we will use the civu data set. Because we are now
-interested in two variables, our independent (herbivory treatment) and
-dependent (plant density) variables, we will first specify both our and
-x and y variable. In the following lines of code, we tell R to make a
-box plot, change the axis label, and use the classic theme that removes
-the background color and gridlines. Because R likely classified our
-herbivory treatment variable as a numeric variable when we loaded the
-data, we will also reclassify that variable as a factor before we make
-our graph.</p>
-<pre class="r"><code>civu$herbivory &lt;- as.factor(civu$herbivory)
-
-ggplot(data = civu, aes(x = herbivory, y = density_2006)) +
+<div id="lesson-8-anovas-in-r" class="section level2">
+<h2>Lesson 8: ANOVAs in R</h2>
+<p>In this lesson, you will move on from t-tests to ANOVAs. The ANOVA
+(Analysis of Variance) test can be used for similar data types as the
+t-test: a categorical independent variable and a continuous dependent
+variable. However, ANOVAs can be used when your independent variable has
+more than two categories. ANOVAs can, in fact, also be used when your
+indpendent variable has only two categories, and you would get the same
+results that you would with a t-test.</p>
+<div id="one-way-anova" class="section level3">
+<h3>8.1 One-way ANOVA</h3>
+<p>The one-way ANOVA is used when we have a single indpendent variable
+that we would like to test. In future lessons, we will cover how to
+handle more than one independent variable. For this test, we will use an
+related to lodgepole pine. Lodgepole pine trees can be found in habitats
+with different predators, which may have influenced the evolution of
+their cone morphology. In this example, we will test for differences in
+the mass of lodgepole pine cones in three different habitats: islands
+with no squirrel, islands with squirrels, and the mainland (which also
+has squirrels).</p>
+<div id="model-building-and-visualization" class="section level4">
+<h4>Model building and visualization</h4>
+<p>We’ll start off by building our null and alternative models for this
+question. The approach is exactly the same as the approach we used for
+the t-test.</p>
+<p>First, load the data set. Be sure your working directory is set to
+the location of the lodgepole data file.</p>
+<pre class="r"><code>cone &lt;- read.csv(&quot;lodgepole.csv&quot;)</code></pre>
+<p>Next, build the two models.</p>
+<pre class="r"><code>cone_null &lt;- lm(conesize ~ 1, cone)
+cone_alt &lt;- lm(conesize ~ type, cone)</code></pre>
+<p>To view the output of the model, just type the name of the model. For
+the null model, it should be pretty simple: just an intercept
+coefficient representing the overall mean cone mass, regarless of the
+habitat type. For the alternative model, we now have three coefficients:
+an intercept, a typeip, and a typemp coefficient. These three values
+tell us the means for each habitat. When R runs a linear model with a
+variable that has multiple categories, it will automatically choose one
+of the categories as the baseline. The mean for this baseline category
+is the intercept coefficient. In this case, R used the “ia” category as
+the baseline. We can tell because the other coefficients are for the
+type “ip” and the type “mp”. The mean mass of cones on the islands
+without squirrels (ia) is therefore 8.9. To calculate the means for the
+other group, you add the value of the coefficient for that group to the
+intercept. To calculate the mean mass of cones on islands with squirrels
+(ip), for example, you would add 8.9 and -1.98.</p>
+<p>Now, let’s create a graph to visualize our data. A boxplot is a good
+option because, like for the t-test example, we have a categorical
+independent variable and a continuous dependent variable.</p>
+<pre class="r"><code>library(ggplot2)
+ggplot(cone, aes(x=type, y=conesize)) +
   geom_boxplot() +
-  labs(x = &quot;Herbivory treatment&quot;, y = &quot;Density in 2006&quot;) +
+  labs(x=&quot;Habitat type&quot;, y=&quot;Mass of cones&quot;) +
   theme_classic()</code></pre>
-<p><img src="RHandbook_6_files/figure-html/alt_box-1.png" width="672" /></p>
-<p>If you are unfamiliar with box plots, they show both a measure of the
-central tendency (usually the median) and the variation in the dependent
-variable for each category. With the default settings in
-<strong>ggplot2</strong> The median for each group is shown by the bar
-in the middle of each box. The boxes show the inter-quartile range
-(i.e., the bottom of the box shows the first quartile and the top of the
-box shows the third quartile). Therefore, 50% of the values in the data
-fall within the box. The whiskers (vertical lines you might see below
-and/or above the box) show the smallest and largest values in the data
-set that are no farther than 1.5 times the inter-quartile range from the
-first and third quartile, respectively.</p>
-<p>This type of plot is commonly used both in exploratory analysis and
-as a final plot that might be included in a manuscript. Although it does
-not explicitly use the output of the model, I will always accept this
-type of plot as a good way of summarizing the distribution of your data
-and how that distribution might vary between categories.</p>
+<p><img src="RHandbook_6_files/figure-html/cone_boxplot-1.png" width="672" /></p>
 </div>
-<div id="density-plots" class="section level4">
-<h4>Density Plots</h4>
-<p>The second type of plot we will make is more complicated and probably
-less commonly used. However, I want you to create them in this exercise
-for three reasons:</p>
-<ol style="list-style-type: decimal">
-<li><p>This type of plot reinforces that when we build models, we are
-using our data to estimate the parameters of a distribution that we
-think represents the distribution of our variable in the underlying
-population. It will also allow you to visualize how the estimated
-distribution compares to the actual distribution of your sample
-data.</p></li>
-<li><p>It provides more information about the entire distribution of
-your data.</p></li>
-<li><p>It will demonstrate how to use ggplot to add multiple layers to
-the same graph.</p></li>
-</ol>
-<p>Remember, though, that box plots are a good way to visualize data
-like these, so if you are not comfortable making these density plots on
-your own, you may stick with box plots for visualizing your own
-data.</p>
-<div id="null-model" class="section level5">
-<h5>Null model</h5>
-<p>Because this type of graph directly ties our data to our modeled
-distributions, we will first explicitly make a graph of the null model
-to reinforce that the null model assumes the distribution of our
-dependent variable (plant density) does not depend on our independent
-variable (herbivory).</p>
-<p>We will take this in steps, first creating a histogram of our sample
-data, which should be familiar from Lesson 4. Then we will add another
-layer to the plot with the distribution estimated from our model.</p>
-<p>Let’s create our histogram. Our null model assumes the distribution
-of plant density does not depend on the herbivory treatment, so for this
-graph, we will just make a single histogram of all of our density data.
-This code is the same code we used to histogram these data in Lesson 4,
-with one change. In Lesson 4, we graphed the frequency of each range of
-plant density values, i.e., the count of observations that fell within
-each range. However, when we add our estimated distribution from the
-model, we will be plotting the probability density of each possible
-plant value. The probability density is not on the same scale as the
-frequency because the frequency depends on the total sample size as well
-as the probability of observing each range of plant density values.
-Therefore, in order to compare the sample distribution and the estimated
-distribution, we will convert the frequency to the probability density.
-You can see this step in the second line of code below, as an argument
-in the <code>geom_histogram</code> function. The argument we add is
-<code>aes(y=..density..)</code>. This argument tells R to calculate the
-probability density and use that as our y variable in place of the
-frequency. Try it out!</p>
-<pre class="r"><code>ggplot(data = civu, aes(x = density_2006))+
-  geom_histogram(aes(y=..density..),bins = 10) +
-  labs(x = &quot;Density in 2006&quot;, y = &quot;Probability Density&quot;) +
-  theme_classic()</code></pre>
-<p><img src="RHandbook_6_files/figure-html/null_hist-1.png" width="672" /></p>
-<p>Now we have a graph showing the distribution of the plant density
-data from our sample. Next, we will add the distribution estimated from
-our model. We have the mean and the standard deviation of the
-distribution in our model output. We will use these to create a data set
-representing the distribution that we can add to our graph.</p>
-<p>We’ll start by saving the mean and standard deviation from our null
-model. If you ran all of the code from Lesson 5, you should already have
-the standard deviation saved as a variable. Check now by typing the
-variable name <code>null_sd_civu</code> into your console. If you get an
-error saying this variable does not exist, go back to your lesson 5 code
-and run the lines of code in the Model Variance section of Lesson 5.1.
-To save the mean as a variable, we need to pull the value out the of
-model coefficients from the null model. We can indicate to R that we
-want the coefficients from the civu_null model using the
-<code>civu_null$coefficients</code> command. Then we tell R which
-coefficient we want, using brackets to index the vector of coefficients.
-In this case, there is only one coefficient, which is the mean, so we
-will put a 1 inside the brackets to pull out the first (and only)
-coefficient.</p>
-<pre class="r"><code># Save distribution mean from null model parameters
-null_mean_civu &lt;- civu_null$coefficients[1]</code></pre>
-<p>Next what we need to do is create a new data frame to represent the
-estimated distribution. This data frame will need to have two columns:
-one with a range of possible plant density values and one with the
-probability (probability density, technically) of observing each of
-those plant density values.</p>
-<p>First, we will create our variable with range of possible plant
-density values. We will have our values range from 1 to 70, which covers
-the full range of values we observed in the data. To create this
-variable, we will use the <code>seq</code> function. We need to provide
-the function with two arguments, representing the first and last value
-in the sequence we want.</p>
-<pre class="r"><code># Create vector with a range of plant density values from 1 to 70
-density_range &lt;- seq(1,70)</code></pre>
-<p>Then we need to calculate the probability of observing each of these
-values, based on the parameters (mean and standard deviation) calculated
-for our estimated distribution in our null model. Remember, in this type
-of model, we assume our data are normally distributed, so we will be
-making these probability calculations based on a normal probability
-distribution with the mean and standard deviation from our model. We can
-do this in R using the <code>dnorm</code> function. If we provide the
-function with the values we want to calculate the probability of, the
-mean, and the standard deviation, it will calculate the probability
-density for each value.</p>
-<pre class="r"><code># Calculate the probability (density) of each plant density based on normal distribution with mean and sd calculated from null model
-prob &lt;- dnorm(density_range, mean = null_mean_civu, sd = null_sd_civu)</code></pre>
-<p>Okay, now we have our range of values and the probability density of
-observing each values based on the distribution estimated from our null
-model. We will put these together into a data frame, which is the format
-required by ggplot. Then we will be able to add the distribution to our
-graph!</p>
-<pre class="r"><code># Put density range and probabilities in a data frame
-civu_null_data &lt;- data.frame(Density = density_range, Probability = prob)
-# View top few rows of data frame
-head(civu_null_data)</code></pre>
-<pre><code>##   Density  Probability
-## 1       1 0.0007194537
-## 2       2 0.0009001005
-## 3       3 0.0011185103
-## 4       4 0.0013805424
-## 5       5 0.0016924673
-## 6       6 0.0020608748</code></pre>
-<p>Time for the final step in making our graph: adding a layer to our
-previous histogram to show the estimated distribution. We will just add
-one more line of code underneath the <code>geom_histogram</code>
-function to add the layer. This time, we will use the
-<code>geom_density</code> function, which will plot a smooth
-distribution instead of dividing the data into discrete bins. The catch
-here is that we are using a new data frame, so inside the
-<code>geom_density</code> function, we need to provide ggplot with the
-new data frame and the new x (plant density values) and y (probability)
-variables we want to graph. The format for this is the same as the
-format we use in the <code>ggplot</code> function in the first line of
-code. The other argument we need to add is the
-<code>stat = "identity"</code> argument, which tells ggplot to use the
-probability values given in the data set instead of doing summary
-calculations with the data.</p>
-<pre class="r"><code>ggplot(data = civu, aes(x = density_2006))+
-  geom_histogram(aes(y=after_stat(density)),bins = 10) +
-  geom_density(data = civu_null_data, aes(x = Density, y = Probability), stat=&quot;identity&quot;) +
-  labs(x = &quot;Density in 2006&quot;, y = &quot;Probability Density&quot;) +
-  theme_classic()</code></pre>
-<p><img src="RHandbook_6_files/figure-html/null_density-1.png" width="672" /></p>
-<p>There we have it! The histogram on our graph shows in the
-distribution of plant density in our sample data, and the smooth curve
-shows our estimated distribution of plant density in the underlying
-population. We can quickly visualize the mean plant density, the amount
-of variation, and how well our sample data match our estimated
-distribution.</p>
+<div id="classical-frequentist-approach" class="section level4">
+<h4>Classical Frequentist Approach</h4>
+<p>As usual, we will start off by analyzing the data using a frequentist
+approach. The syntax for running an ANOVA is similar to the other tests
+we have run, but this time, we will use the <code>aov</code> function.
+The arguments are still the formula for the model (dependent variable on
+the left, independent variable on the right) and the data frame.</p>
+<pre class="r"><code>cone_ANOVA &lt;- aov(conesize ~ type, data = cone)</code></pre>
+<p>To view the output, use the <code>summary</code> function.</p>
+<pre class="r"><code>summary(cone_ANOVA)</code></pre>
+<pre><code>##             Df Sum Sq Mean Sq F value   Pr(&gt;F)    
+## type         2  22.84  11.421   13.38 0.000698 ***
+## Residuals   13  11.10   0.854                     
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>When you view the output, the most important line is the first row of
+the output table, in this case labeled “type”, which was our independent
+variable. If you look at this row, you will see the F statistic and the
+p-value for the test. Based on these values, would your reject or accept
+the null hypothesis? What does this tell you about the effect of habitat
+on cone mass?</p>
 </div>
-<div id="alternative-model" class="section level5">
-<h5>Alternative model</h5>
-<p>Now we will repeat the above process for our alternative model. Our
-approach will be the same, but this time we will be graphing separate
-distributions for the herbivory and no herbivory treatments. This will
-be a little more complicated, but it will also give you a chance to play
-with color and other settings in ggplot to make the visualization more
-clear!</p>
-<p>We will again start by making the histogram of sample data. We will
-graph the data for each treatment in a different color, so we can see
-how herbivory affects the distribution of plant density. To do this, we
-will add a <code>colour = herbivory</code> argument <em>inside</em> the
-<code>aes</code> function in the <code>geom_histogram</code> command.
-This tells ggplot to create a histogram of plant densities for each
-treatment, and use a separate color for each. The other arguments we
-will add <em>outside</em> the <code>aes</code> function are the
-<code>fill = NA</code> argument, which tells ggplot not to add a fill
-color to the histogram bars, and <code>linewidth = 1</code>, which
-increases the widths of the bar outlines. This will just make it easier
-to see everything after we add the other layer.</p>
-<p>We will also manually set the colors we want ggplot to use. The
-default color palette used by R is not colorblind friendly, so I always
-like to choose colorblind friendly options instead. There are a number
-of websites where you can find colorblind friendly palettes. I will post
-some links in the R discussion forum on Canvas. Many have accompanying R
-packages you are welcome to explore, but I often just look up the hex
-codes for the colors I want and use those in my code. We set the colors
-using the <code>scale_colour_manual</code> function, and we can simply
-provide ggplot with the hex codes we want using the “values”
-argument.</p>
-<pre class="r"><code>ggplot(data = civu, aes(x = density_2006))+
-  geom_histogram(aes(y=after_stat(density), colour = herbivory), fill = NA, bins = 10,linewidth = 1) +
-  scale_colour_manual(values=c(&quot;#ce9642&quot;,&quot;#3b7c70&quot;)) +
-  labs(x = &quot;Density in 2006&quot;, y = &quot;Probability Density&quot;) +
-  theme_classic()</code></pre>
-<p><img src="RHandbook_6_files/figure-html/alt_hist-1.png" width="672" /></p>
-<p>On this new graph, we can see the plant density in the presence of
-herbivores in yellow and the plant density in the absence of herbivores
-in green, quickly showing the difference between the two.</p>
-<p>It is now time to add the estimated distributions from our
-alternative model. First we need to set up the data frame with the data
-representing our distributions. This time, we will need to calculate two
-sets of probability densities: one for each herbivory treatment. Check
-that you have saved the standard deviation for the alternative model by
-typing <code>alt_sd_civu</code> into the console. Go back and run the
-Model Variance code from Lesson 5 as necessary.</p>
-<p>Next, calculate the means for each treatment. Remember, in this time
-of model, when we include a predictor variable, we are calculating
-different means for each treatment, so we need to calculate two means
-here. The mean for herbivory = 0 (herbivores present) is simply the
-intercept from the model and the mean for herbivory = 1 (herbivores
-absent) is the intercept plus the herbivory coefficient, which is the
-second values in the coefficients vector from the model. (If this
-doesn’t make sense go back to Lesson 5 to review it, or ask me.)</p>
-<pre class="r"><code># Save distribution means from altnernative model parameters
-mean_civu_0 &lt;- civu_alt$coefficients[1]
-mean_civu_1 &lt;- civu_alt$coefficients[1] + civu_alt$coefficients[2]</code></pre>
-<p>Now we have the values we need to calculate the probability
-densities, so lets create our range of plant density values and
-calculate the associated probabilities, again using the
-<code>dnorm</code> function. We will need to do this twice, once for
-each herbivory treatment, but we will put the values together into a
-single vector using the <code>c</code> function. For example, for our
-plant density values, and then we will combine together two sequences
-from 1 to 70 into a single vector. Then, to calculate the probabilities,
-we will do the calculation on one of the plant density ranges using the
-mean for the herbivory = 0 treatment, and then we will do the
-calculation again using the mean for the herbivory = 1 treatment,
-combining the two sets of densities together into one vector. We will
-also need a third vector to represent our treatment. This vector will
-contain a series of 70 zeros (one for each plant density value) followed
-by a series of 70 ones.</p>
-<pre class="r"><code># Create vector with a range of plant density values from 1 to 70. Repeat for herbivory = 0 and herbivory = 1
-density_range &lt;- seq(1:70)
-density_range_alt &lt;- c(density_range, density_range)
-
-# Calculate the probability (density) of each plant density based on normal distribution with mean and sd calculated from null model
-prob_alt &lt;- c(dnorm(density_range, mean = mean_civu_0, sd = alt_sd_civu),dnorm(density_range, mean = mean_civu_1, sd = alt_sd_civu))
-
-# Create a vector with herbivory treatment (0 or 1)
-herb &lt;- as.factor(c(rep(0,70),rep(1,70)))</code></pre>
-<p>Finally, put together your three variables into a data frame.</p>
-<pre class="r"><code># Put density range, probabilities, and herbivory treatment in a data frame
-civu_alt_data &lt;- data.frame(Density = density_range_alt, Probability = prob_alt, Herbivory = herb)
-# View top few rows of data frame
-head(civu_alt_data)</code></pre>
-<pre><code>##   Density Probability Herbivory
-## 1       1 0.005551099         0
-## 2       2 0.006721929         0
-## 3       3 0.008060214         0
-## 4       4 0.009570551         0
-## 5       5 0.011252914         0
-## 6       6 0.013101794         0</code></pre>
-<p>We now have the data frame we need to create our final graph, where
-we add our estimated distributions to our histograms. We will do this as
-before, but this time, we will add the <code>geom_density</code>
-function before the <code>geom_histogram</code> function to plot the
-denisty underneath the histogram. The code is the same we used for the
-null model, but this time we add additional “fill” and “color” arguments
-inside the <code>aes</code> function to graph the lines and fill for the
-two distributions in different colors. We also add another argument at
-the end of the <code>geom_density</code> function (“alpha = 0.3”) to
-make the fill color transparent. The only other thing we need to do is
-manually set the fill color the way we did for the line color. The
-syntax is the same as for line color, but this time the function is
-<code>scale_fill_manual</code>.</p>
-<pre class="r"><code>ggplot(data = civu, aes(x = density_2006))+
-  geom_density(data = civu_alt_data, aes(x = Density, y = Probability, fill = Herbivory, colour = Herbivory), stat=&quot;identity&quot;, alpha = 0.3) +
-  geom_histogram(aes(y=after_stat(density), colour = herbivory),fill = NA , bins = 10,linewidth = 1) +
-  scale_colour_manual(values=c(&quot;#ce9642&quot;,&quot;#3b7c70&quot;)) +
-  scale_fill_manual(values=c(&quot;#ce9642&quot;,&quot;#3b7c70&quot;)) +
-  labs(x = &quot;Density in 2006&quot;, y = &quot;Probability Density&quot;) +
-  theme_classic()</code></pre>
-<p><img src="RHandbook_6_files/figure-html/alt_density-1.png" width="672" /></p>
-<p>Here we have our final graph, with the bars of the histograms showing
-the sample distributions and the shaded density plots showing the
-estimated population distributions for the two herbivory treatments
-based on the alternative model. If you would like, feel free to play
-around with some of the parameters like the number of bins in the
-histogram, the alpha (transparency) value, and the colors, to see how
-that impacts the aesthetics of the graph!</p>
+<div id="likelihood-based-approach" class="section level4">
+<h4>Likelihood-based approach</h4>
+<p>Next we will use a likelihood-based approach to test the same
+question. Good news! The syntax for this is exactly the same as it was
+for the t-test. That’s because t-tests and ANOVAs are both types of
+linear models.</p>
+<p>We already build our null and alternative models for this problem
+earlier in the lesson, so we can jump right into using the
+<code>AIC</code> function to compare the models.</p>
+<pre class="r"><code>AIC(cone_null, cone_alt)</code></pre>
+<pre><code>##           df      AIC
+## cone_null  2 61.43694
+## cone_alt   4 47.54997</code></pre>
+<p>Based on this output, what would you conclude about the effect of
+habitat on cone size?</p>
 </div>
 </div>
+<div id="post-hoc-tests" class="section level3">
+<h3>8.2 Post-hoc tests</h3>
+<p>But wait! These tests only tells us that cone size is different in at
+least one of our categories! How do we know which categories actually
+differ? This is where post-hoc tests come in. Note that we will only use
+a classical frequentist approach for the post-hoc tests. This is because
+there are subtle differences in the main goals of the analysis between a
+classical frequentist approach and a likelihood approach. In a
+likelihood approach, we are more interested in selecting the best model,
+rather than drawing specific inferences about individual variables. This
+is something to keep in mind when choosing the best method for your
+question. If you are specifically interested in testing the differences
+between multiple categories, the classical frequentist approach is the
+better approach to use.</p>
+<p>We will now run a Tukey’s HSD test, which will do pairwise
+comparisons between each of our three categories. The Tukey’s HSD test
+will automatically adjust the p-values to account for the fact that we
+are making multiple comparisons. The syntax for the test is simple. We
+will use the <code>TukeyHSD</code> function, and the argument is the
+model we created when we ran the ANOVA using the frequentist
+approach.</p>
+<pre class="r"><code>TukeyHSD(cone_ANOVA)</code></pre>
+<pre><code>##   Tukey multiple comparisons of means
+##     95% family-wise confidence level
+## 
+## Fit: aov(formula = conesize ~ type, data = cone)
+## 
+## $type
+##        diff       lwr        upr     p adj
+## ip-ia -1.98 -3.457145 -0.5028551 0.0094626
+## mp-ia -2.78 -4.257145 -1.3028551 0.0006982
+## mp-ip -0.80 -2.342828  0.7428275 0.3845461</code></pre>
+<p>The output you see is the pairwise comparison between each category.
+The first column of the table shows you which two categories are being
+compared (ia = islands with no squirrels, ip = islands with squirrels,
+mp = mainland). The second column tells you the difference in the means
+of the two categories. The third and forth columns show the lower and
+upper bounds of the 95% confidence intervals around the mean. Finally,
+the last column gives you the p-values for the pairwise comparisons.</p>
+<p>Based on the p-values, which pairs of habitat types had significant
+differences in their cone size?</p>
 </div>
-<div id="continuous-predictor-variable" class="section level3">
-<h3>6.2 Continuous predictor variable</h3>
-<p>We will now move on to our tree example with a continuous independent
-variable and a continuous dependent variable. This will be easy compared
-to the previous set of graphs you made! To visualize these models, we
-will use scatter plots of the sample data along with best fit lines to
-represent the distributions predicted by the models. Scatter plots are a
-good way to visualize the relationship between two continuous variable,
-so we can see how strongly they might be correlated and whether the
-relationship is positive or negative.</p>
-<p>If you haven’t already, use the script file from Lesson 5 to run all
-of the code you wrote for the tree example, including the building of
-both the null and alternative models. Be sure you first have your
-working directory set to the folder containing the DataFrameExample data
-set.</p>
-<p>As with the box plots, it is not typical to make separate graphs for
-the null and alternative models. People usually just add the best fit
-line, representing the alternative model and visually assess if the
-slope looks different than zero. For demonstration purposes, in this
-lesson, we will make a graph to explicitly represent the null model, but
-going forward, you are welcome to just make the alternative model
-version unless instructed otherwise.</p>
-<div id="null-model-1" class="section level4">
-<h4>Null model</h4>
-<p>Let’s start with the null model: temperature does not affect the
-growth of trees.</p>
-<p>We’ll make the scatter plot of the sample data first.</p>
-<pre class="r"><code>ggplot(data = tree, aes(x = Temperature, y = Growth))+
-  geom_point() +
-  labs(x = &quot;Temperature&quot;, y = &quot;Growth&quot;) +
-  theme_classic()</code></pre>
-<p><img src="RHandbook_6_files/figure-html/null_scatter-1.png" width="672" /></p>
-<p>Now we will add our best fit line. To add our best fit line, we will
-need the intercept value from our tree_null model. We will save this as
-a variable called <code>tree_mean</code>. Then we will use this value to
-add our line. Because the null model assumes no effect of temperature on
-growth, we will be adding a line with a slope of zero and the intercept
-from our model. We will add it to the scatter plot we created above
-using the <code>geom_hline</code> function, which will add a horizontal
-line. The argument we need to give this function is the value of the
-intercept, which is our <code>tree_mean</code> variable. I also added a
-“linewidth” argument to make the line thicker and a coulour argument to
-make the line blue.</p>
-<pre class="r"><code># Save mean value from null model
-tree_mean &lt;- tree_null$coefficients[1]
-
-# Make graph
-ggplot(data = tree, aes(x = Temperature, y = Growth))+
-  geom_point() +
-  geom_hline(yintercept = tree_mean, linewidth = 1, colour = &quot;blue&quot;) +
-  labs(x = &quot;Temperature&quot;, y = &quot;Growth&quot;) +
-  theme_classic()</code></pre>
-<p><img src="RHandbook_6_files/figure-html/null_bestfit-1.png" width="672" /></p>
-<p>Finally, we will add shading around the line to show our estimate of
-variation (measured as standard deviation) from our null model. Type
-0.0313404 into your console to make sure you have this standard
-deviation saved as a object, and run the Model Variation code from
-Lesson 5.2 again if necessary.</p>
-<p>We will add the shading using the <code>geom_ribbon</code> function.
-We need to provide this function with minimum and maximum y values to
-represent the lower and upper bounds of the ribbon. Our lower and upper
-bounds will be based on the standard deviation. The upper bound will be
-our mean estimate plus the standard deviation and the lower bound will
-be the mean estimate minus the standard deviation. I also added the
-alpha argument at the end of the function to make the fill of the ribbon
-transparent.</p>
-<pre class="r"><code># Make graph
-ggplot(data = tree, aes(x = Temperature, y = Growth))+
-  geom_point() +
-  geom_hline(yintercept = tree_mean, linewidth = 1, colour = &quot;blue&quot;) +
-  geom_ribbon(aes(ymin = tree_mean - null_sd_tree, ymax = tree_mean + null_sd_tree),alpha = 0.2) +
-  labs(x = &quot;Temperature&quot;, y = &quot;Growth&quot;) +
-  theme_classic()</code></pre>
-<p><img src="RHandbook_6_files/figure-html/null_ribbon-1.png" width="672" /></p>
-<p>Now we can see our model output overlaid on the raw data points from
-our sample data to get a visual of how well our model matches our data
-and how much variation in our data is not explained by our model.</p>
-</div>
-<div id="alternative-model-1" class="section level4">
-<h4>Alternative model</h4>
-<p>Now we’ll move on to our alternative model, which includes an effect
-of temperature on the tree growth. This might actually be the easiest
-graph we have made in the lesson so far because ggplot has the capacity
-to run this linear model itself and add the output to the graph without
-us needing to manually add the parameters!</p>
-<p>We will use the <code>geom_point</code> function to plot the sample
-data points, as before, but this time we will use the
-<code>geom_smooth</code> function to add the line respresenting our
-model. Because we are using the same data set and variables that we
-specified in the opening <code>ggplot</code> function, the only argument
-we need to add is the method we want ggplot to use to build and
-parameterize our model. We set the method to “lm”, short for “linear
-model”, which is the same type of model we used in Lesson 5.</p>
-<pre class="r"><code>ggplot(data = tree, aes(x = Temperature, y = Growth))+
-  geom_point() +
-  geom_smooth(method = &quot;lm&quot;) +
-  labs(x = &quot;Temperature&quot;, y = &quot;Growth&quot;) +
-  theme_classic()</code></pre>
-<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
-<p><img src="RHandbook_6_files/figure-html/alt_scatter-1.png" width="672" /></p>
-<p>Like with our previous graph, you will see a best fit line
-representing the mean of the distribution, which now varies with
-temperature, and shading to represent variation, or uncertainty, in the
-mean. The biggest differnce is that this time the shading represents the
-95% confidence interval, rather than the standard deviation. The 95%
-confidence interval basically says that if we repeated our experiment
-over and over again, we would expect the mean value estimated from our
-data to fall within that interval 95% of the time. Like the standard
-deviation, it is method of representing the variation in our data. Both
-measures (as well as variance and standard deviation) are acceptable
-ways of representing the variation. What is important is that when you
-present your results, you make it clear in your figure captions and text
-what measure of variation you used.</p>
-<p>There are many different types of graphs and ways we can modify our
-graphs using ggplot. We will cover some of these in future lessons as we
-get into inferential statistics. But these three types of graphs will
-give you a good starting point for exploring your own data sets!</p>
-<p>You have now gone through the whole process of building and
-visualizing statistical models! In the upcoming lessons, we will focus
-on how we do formal comparisons of models to determine which model(s)
-best represent our data.</p>
-</div>
-</div>
-<div id="team-challenge" class="section level3">
-<h3>Team challenge</h3>
-<ol style="list-style-type: decimal">
-<li><p>In the team challenge for lesson 5, you built models to test the
-effect of herbivory on the density of thistles in 2007 instead of 2006
-(the density_2007 variable). Make at least one type of graph to
-visualize the effect of herbivory on the density of thistles in
-2007.</p></li>
-<li><p>In the second lesson 5 team challenge activity, you built a model
-comparing temperature and tree growth, but using the log of Growth,
-instead of the original Growth variable, as the dependent variable. Make
-a scatter plot with a best fit line to show the relationship between
-temperature and log of Growth.</p></li>
+<div id="optional-practice-problems" class="section level3">
+<h3>Optional practice problems</h3>
+<p>A researcher is interested in comparing the egg size of four
+different species of birds. The data on the egg length of each species
+is in the cuckoo.csv data file.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>State your null and alternative hypotheses</li>
+<li>Make an appropriate graph to visualize the data</li>
+<li>Run an ANOVA and post-hoc tests as appropriate</li>
+<li>State your conclusions</li>
 </ol>
 </div>
 </div>

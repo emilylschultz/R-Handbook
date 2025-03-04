@@ -1,5 +1,5 @@
 ---
-title: "ESS 3500 R Handbook, Lesson 7"
+title: "ESS 3500 R Handbook, Lesson 9"
 author: "Emily Schultz"
 date: "2023-02-15"
 output: 
@@ -12,180 +12,177 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Lesson 7: T-TESTS IN R
-In this lesson, you will practice running your first formal statistical test, a t-test! You will use both a classical frequentist and a likelihood-based approach to run the test.
+## Lesson 9: Multiple Predictors: Two-way ANOVAs
+In the previous lessons, we have worked with models that have only one independent and one dependent variable. However, it is common to have more than one independent variable that we would like the test. This is often particularly true when we do observational studies, and there are a whole suite of variable that might affect the response we measure. In this lesson, we will cover models with multiple predictors. We will focus on examples with only two predictors, but the methods can easily be extended to include more than two predictors as well.
 
-### 7.1 Two-sample t-tests
+### 9.1 Example 1: millipedes
+For our first example, we will work with two categorical predictor variables. We will use a data set from the arthropod world this time, testing whether levels of an amino acid, alanine, vary between different species and different sexes of millipedes.
 
-#### Classical Frequentist Approach
-We will start by analyzing the civu thistle data using the classical frequentist approach. We will continue work with the same question you tackled in your previous lessons: does insect herbivory affect the density of thistle plants?
+#### Visualizing and building the models
 
-You can start by re-running your code from the Model Building lesson, or you can just run the commands in this lesson to set up your data and build your models. Don't forget to set your working directory first!
+We'll start off by loading and visualizing our data. Be sure your working directory is set to the location of the millipedes data file. We will also need to change the "species" variable to a factor.
 
-```{r civu_data}
-civu <- read.csv("civu.csv")
-civu$herbivory <- as.factor(civu$herbivory)
+```{r mill_data}
+mill <- read.csv("millipedes.csv")
+mill$species <- as.factor(mill$species)
 ```
 
-Now that we have the data set up, let's run the t-test itself. The syntax is similar to what we used to set up our alternative model in the `lm` function, but this time we will use a new function: `t.test`. The first argument for this function is the formula for our alternative model, with the dependent variable on the left and the independent variable on the right. The second argument is the data set. Then then final argument "var.equal = TRUE" tells R that we are assuming our two treatments have equal variance.
+Now, let's make a box plot to visualize our data set. This will allow us to start looking at the patterns in the data, including possible interactions. We will put species on the x-axis and group and color our boxes by sex. This code includes a new `scale_fill_manual` function that allows us to manually select the colors we want to use. (See [A note about color in R] for more information about using colors in R.)
 
-```{r civu_ttest}
-civu_ttest <- t.test(density_2006 ~ herbivory, data = civu, var.equal = TRUE)
-```
-
-To view the output, just type:
-
-```{r ttest_out}
-civu_ttest
-```
-
-You should see the following pieces in your output:
-
-1. data: This just tells you what variables went into your model
-2. t: This is the value of your test statistic (t)
-3. df: This is your degrees of freedom. We will discuss this in more detail later, but it is related to your sample size.
-4. p-value: This is the probability of observing your test statistic or a more extreme test statistic, assuming your null model is true.
-5. alternative hypothesis: This is a verbal statement of the alternative hypothesis being tested.
-6. 95 percent confidence interval: If you repeated this experiment over and over, you would expect that 95% of the time, the difference in the sample means of the two treatment would fall between these two values.
-7. sample estimates:  These are the means calculated for your two treatment groups.
-
-Based on this output, would you reject the null hypothesis and tentatively accept the alternative hypothesis?
-
-#### Likelihood-based approach
-Next we will use a likelihood-based approach to test the same question. For this, we will start by building our two linear models, just as we did in the Model Building lesson:
-
-```{r civu_lm}
-civu_null <- lm(density_2006 ~ 1, civu)
-civu_alt <- lm(density_2006 ~ herbivory, civu)
-```
-
-Now, we just need to calculate the Akaike's Information Criterion (AIC) values for the two models. We can do this using the `AIC` function. As the arguments, we just need to list the models we want to compare. We can compare more than two models at once, but for this question, we just have our null model and one alternative model.
-
-```{r aic}
-AIC(civu_null, civu_alt)
-```
-
-You should see the output automatically appear in a table. The first column lists the model. The second column (df) lists the number of parameters in each model (remember, AIC penalizes for adding parameters). The final column lists the AIC values for each model. The lower the AIC value, the better the model. A difference of 2 or more between the AIC values indicates that one model is significantly better than the other.
-
-Based on this output, which is the better model? Is it significantly better?
-
-Does your conclusion from this approach match your conclusion from the classical frequentist approach?
-
-### 7.2 One-Sample t-tests
-We use a one-sample t-test in place of a two-sample t-test when we have a good estimate of the true mean for a variable in our underlying population. This true mean can effectively be used in place of a control group. Rather than having to estimate the true mean from the control group, we already have a value for the true mean that we can then compare to our sample group. For this test, we will only look at the classical frequentist approach.
-
-For simplicity, let's keep working with the civu thistle data set. This time, let's imagine we had good data from a long-term study on the density of thistles in the presence of herbivores. These data provide a good estimate of the true mean thistle density. This true mean density is 28 thistle plants.
-
-For this, we will want to use a data set that only includes observations in the absence of herbivores because that is what we want to compare to the true mean in the presence of herbivores. We'll start by creating that data set:
-
-```{r subset}
-library(tidyverse)
-civu_noherb <- filter(civu,herbivory == "1")
-```
-
-Remember to use the double equals signs to tell R that you are looking for observations that match that criterion.
-
-Now, let's run the t-test using the classical frequentist approach. We will still use the `t.test` function, but this time, because we are just comparing one sample to a true mean, we will not have a predictor variable. Instead of using a formula as the argument, we will provide two arguments: a vector with our data (the density values in the absence of herbivores) and the estimate for the true mean (28).
-
-```{r onettest}
-t.test(x = civu_noherb$density_2006, mu = 28)
-```
-
-The output includes the same components as the output from the two-sample t-test, but not the difference in the alternative hypothesis. This time, the alternative hypothesis compares the sample mean to the true mean, instead of comparing two sample means.
-
-Based on this output, would you reject or accept the null hypothesis? What does that say about the effect herbivory on thistle density?
-
-#### Visualing one-sample t-test data
-We'll wrap up this section by taking a look at one example of how you can visualize the data for a one sample t-test. This graph will be similar to some graphs you have made before; it will by a histogram of your data. However, in this case, instead of having two samples, we have one sample and a value for the true mean in the presence of herbivores. Therefore, we will create a histogram of our sample data with a vertical line (using the `geom_vline` function) showing the true mean. We set the value of the true mean for the vertical line using the "x intercept" argument of the `geom_vline` function.
-
-```{r one_density}
-ggplot(data = civu_noherb, aes(x = density_2006))+
-  geom_histogram(aes(y=after_stat(density)),fill = "#3b7c70", colour = "#3b7c70" , bins = 6) +
-  geom_vline(xintercept = 28, linewidth = 1) +
-  labs(x = "Density in 2006", y = "Probability Density") +
+```{r mill_boxplot}
+library(ggplot2)
+ggplot(mill, aes(x=species, y=Alanine, fill=sex)) +
+  geom_boxplot() +
+  scale_fill_manual(values=c("#ce9642","#3b7c70")) +
+  labs(x="Species", y="Alanine levels", fill = "Sex") +
   theme_classic()
 ```
 
-### 7.3 Paired t-tests
-Paired sampling designs can be powerful designs for reducing the effects of variation between our samples, allowing us to better detect the effects of our predictor variable. In a paired design, our observations are paired, or matched, in some way. For example, each individual might be subjected to both treatments or we might compare two treatments applied to the same plot. Paired t-tests are a test we can use for paired sampling designs to make comparisons between the two treatments for each individual/sample. The mechanics of this test are actually similar to that of a one-sample t-test! We are comparing the difference in values of our paired samples with a "true" mean of zero.
+Based just on the graph, what patterns do you see in the data. Does species have an effect? What about sex? Does there appear to be an interaction between the two variables?
 
-For this example, we will use a new data set with zinc concentrations at the surface and bottom of a lake. The samples were taken at 10 different locations within the lake. At each site, one sample was taken at the surface and one sample was taken at the bottom. Therefore, we can use a paired t-test to compare between the surface and bottom samples at each location.
+Let's proceed with building our models. Now that we are working with two predictor models, we will have multiple alternative models representing four different hypotheses: (1) only sex matters, (2) only species matters, (3) both sex and species matter but don't interact, (4) both sex and species matter and they interact. The models are built in this order after the null model below.
 
-#### Frequentist approach
-Start by loading your data. Be sure your new zinc data set is in your working directory.
-
-```{r zincdata}
-zinc <- read.csv("zinc.csv")
+```{r mill_lm}
+mill_null <- lm(Alanine ~ 1, data = mill)
+mill_sex <- lm(Alanine ~ sex, data = mill)
+mill_species <- lm(Alanine ~ species, data = mill)
+mill_both <- lm(Alanine ~ sex + species, data = mill)
+mill_int <- lm(Alanine ~ sex*species, data = mill)
 ```
 
-Now go ahead and view the entire data set, either using the `View` function or typing the data frame name into your console. One thing I want you to notice about the data set is that if you look at the sample number column, the samples are in the same order, from 1 to 10, for both the bottom and surface samples. When you use the `t.test` function for a paired t-test, it is important for your samples to be in the same order for both of your treatments. Otherwise R will not pair up the values correctly. For the likelihood approach, the order does not matter, as long a you have a column for the sample number.
+To view the output of your models, type the name of each model. Just like when we have worked with this model before, the null model will have just an intercept. However, the alternative models will have multiple coefficients. Let's take a look at a couple of them.
 
+First, view the coefficients of the `mill_both` model. You should see four coefficients. After the intercept, the first coefficient you will see is labeled "sexm". This is the value you would add to the intercept to get the alanine levels in male millipedes. Then you will see two intercepts for species. The first (species2) tells you what to add to the intercept to get alanine leves for species 2 (for a male of species 2, you would add both the sexm and species2 coefficients). The final coefficient is what you would add to the intercept to get the alanine levels for species 3.
 
-Next we will run the t-test. The syntax is the same as what you used for a two sample t-test. You will include the formula with your dependent and independent variables as the first argument and the data frame as the second argument. Then we will add one additional argument ("paired = TRUE"), which will tell R to run a paired t-test instead of a normal two-sample t-test.
+Now, view the coefficients of the `mill_int` model. Now, you will see two additional coefficients representing interactions between the sex and species variables. Based on this model, if you had a male of species 2, in addition to adding the sexm and species2 coefficients, you would also add the sexm:species2 coefficient, which account for how sex interacts with being species 2. For a male of species 3, you would similarly add the coefficient for sexm:species3. 
 
-```{r paired}
-paired <- t.test(conc ~ type, data = zinc, paired = TRUE)
+I personally find it difficult to interpret what the interaction looks like just based on the coefficients. This is where our graphs can come in handy. Looking at our boxplot can help us see the nature of the interaction, if any, between our variables. Based on the graph, do you think the two independent variables interact?
+
+#### Testing the models: Classical Frequentist
+To test the models using a frequentist approach, we start with the same `aov` function that we used for a one-way ANOVA. The only difference is that we will include both of our independent variables in our formula. We will set up the formula in the same way we did for our interaction model above, because we want to test both the main effects and the interaction affect. Run the test and look at the output using the code below. Based on the output, we might have to run additional follow-up tests.
+
+```{r mill_2way}
+mill_2way <- aov(Alanine ~ sex*species,data=mill)
+summary(mill_2way)
 ```
 
-Again, the output should be similar to what you have seen before. Should you reject the null hypothesis that there is no difference in zinc concentration between the surface and bottom of the lake?
+In the output, you should see a table with a row for each of the main effects (sex and species) and a row showing the results for the interaction between the variables (sex:species). Let's start by looking at the interaction effect, because that affect how we interpret the main effects. We can see from the table that the p-value for the interaction is greater than 0.05, so the interaction affect is not significant. This makes things easier for us because we can interpret the main effects based on the graph and the model coefficients, without worrying about how they interact!
 
-#### Likelihood approach
-We will now run the same test using the likelihood approach. To do this, we will be using a function similar to the `lm` function, but which will allow us to account for the paired design. The new function, `lmer`, can be found in the **lme4** package. If you haven't already done so, install the packages using `install.packages("lme4")`. 
+However, just like with a one-way ANOVA, when we have a categorical variable with more than two groups, such a species in this example, the ANOVA only tells us that at least one group is different. It doesn't tell us which specific groups are different. We therefore need to do a post hoc test to look at those pairwise differences. We can use the same `TukeyHSD` function that we used for post hoc tests after a one-way ANOVA. However, because we have more than one independent variable, we can choose to include both variables in the Tukey HSD test or only one variable. In this case, our sex variable has only two groups, so it is not necessary to include it in the post hoc test. We only need to include species, as shown in the code below. (If we needed to include both variable, we would list them both in the `c` function: `which=c("species","sex")`. If you don't list any variables, it will give the results for both variables independently, as well as their interaction.)
 
-Then load the package for this session:
-
-```{r lme4}
-library(lme4)
+```{r mill_tukey}
+TukeyHSD(mill_2way,which=c("species"))
 ```
 
-We are now ready to run the test. As I said, we will use the `lmer` function, which is very similar to the `lm` function. We will include the same arguments as usual: the formula for our model and the data. The only change we need to make is adding an additional piece to our formula. The syntax for the additional piece is `(1|sampnum)`. This additional piece of the formula will tell R to compare the zinc concentrations at the surface and bottom within each sampling location. We will build both a null an alternative model to compare.
+You interpret this output in the same way you did following the one-way ANOVA. Which pairs of species show significant differences from each other?
 
-```{r lm_paired}
-zinc_null <- lmer(conc ~ 1 + (1|sampnum), data = zinc)
-zinc_alt <- lmer(conc ~ type + (1|sampnum), data = zinc)
+#### Testing the models: Likelihood
+As we have for previous tests, we will use the `AIC` function to compare our models, but this time we have five different models to compare, instead of just two. We can compare all five at the same time. 
+
+```{r mill_AIC}
+AIC(mill_null,mill_sex,mill_species,mill_both,mill_int)
 ```
 
-Next, we will use our `AIC` function to compare our null and alternative models to each other:
+Based on the output table, which model was the best? Was it significantly better than the next best model? What do the differences in AIC values tell you about the effects of each predictor and their interaction?
 
-```{r AIC_paired}
-AIC(zinc_null, zinc_alt)
+### 9.2 Example 2: hypertension
+For our second example, we will again work with two categorical predictor variables. We will use a data set from a medical test related to hyptertension. One common cause of hypertension is high sodium levels, which are controlled in part by an enzyme in the kidney called Na-K-ATPase. Researchers tested the activity of Na-K-ATPase in two strains of lab rats: a control strain and a strain selected to spontaneously develop hypertension. They wanted to know if Na-K-ATPase activity varied between these two strains and, if so, what sites in the kidney varied in their enzyme activity. The two independent variables are the rat strain (normal or hypertensive) and the kidney site (DCT, CCD, or OMC).
+
+#### Visualizing and building the models
+
+We'll start off by loading and visualizing our data. Be sure your working directory is set to the location of the kidney data file. 
+
+```{r kidney_data}
+kidney <- read.csv("kidney.csv")
 ```
 
-The output should have the same structure that it had when we used AIC to compare models for the one sample t-test. Based on this output, which is the better model? (Notice that the AIC values are negative this time, so the better model will be more negative.) What does that tell you about whether zinc concentrations vary between the surface and bottom of the lake?
+Now, let's make a box plot to visualize our data set. We will put site on the x-axis and group and color our boxes by lab rat strain. 
 
-#### Visualing paired t-test data
-There are many ways we could visualize paired t-test data, including a simple boxplot, as we would for a regular two-sample t-test. However, using a boxplot like that would show the full variation in each sample, without accounting for the paired design. A way around that is to instead make a histogram of the *difference* between our paired samples. As we did with the one sample t-test, we will again add a vertical line, this time at 0, to represent the difference we would expect to see under our null hypothesis.
-
-First we need to make a data frame with the difference in zinc concentrations between the surface and the bottom of the lake at each location. We will do this using the `group-by` and `summarise` functions to summarise the difference in concentration for each sample number.
-
-```{r difference}
-group <- group_by(zinc,sampnum)
-zinc_diff <- summarise(group, diff = diff(conc))
-```
-
-Now we can make our histogram using the new `zinc_diff` data frame:
-
-```{r paired_density}
-ggplot(data = zinc_diff, aes(x = diff))+
-  geom_histogram(aes(y=after_stat(density)),fill = "#3b7c70", colour = "#3b7c70" , bins = 6) +
-  geom_vline(xintercept = 0, linewidth = 1) +
-  labs(x = "Difference in zinc concentration", y = "Probability Density") +
+```{r kidney_boxplot}
+library(ggplot2)
+ggplot(kidney, aes(x=site, y=enzyme, fill=hyper)) +
+  geom_boxplot() +
+  scale_fill_manual(values=c("#ce9642","#3b7c70")) +
+  labs(x="Kidney Site", y="Enzyme levels", fill = "Strain") +
   theme_classic()
 ```
+
+Based just on the graph, what patterns do you see in the data. Do the strains differ in their enzyme activity? What the kidney sites? Does there appear to be an interaction between the two variables?
+
+Let's proceed with building our models. Again, we will have multiple alternative models representing four different hypotheses: (1) only strain matters, (2) only site matters, (3) both strain and site matter but don't interact, (4) both strain and site matter and they interact. The models are built in this order after the null model below.
+
+```{r kidney_lm}
+kidney_null <- lm(enzyme ~ 1, data = kidney)
+kidney_hyper <- lm(enzyme ~ hyper, data = kidney)
+kidney_site <- lm(enzyme ~ site, data = kidney)
+kidney_both <- lm(enzyme ~ hyper + site, data = kidney)
+kidney_int <- lm(enzyme ~ hyper*site, data = kidney)
+```
+
+View the output of your models by typing the name of each model. Based on the model outputs and the graph, without running the tests, how would you describe the patterns in your results.
+
+#### Testing the models: Classical Frequentist
+As in the previous example, we will start by using the `aov` function to run the overall two-way ANOVA.
+
+```{r kidney_2way}
+kidney_2way <- aov(enzyme ~ hyper*site, data=kidney)
+summary(kidney_2way)
+```
+
+In the output, you should see a similar table as you saw in the millipede example. Let's start by looking at the interaction effect again. We can see from the table that the p-value for the interaction is less than 0.05, so the interaction affect is significant this time. This makes things trickier because now we can't evaluate each main effect independently. Because the two variables interact, the each main effect depends on the value of the other independent variable.
+
+One way to deal with this non-independence is to split up our data into groups and run multiple one-way ANOVAs (or t-tests, depending on how many categories we have. For example, in this case, we are primarily interested in the difference between normal and hypertensive rats. Therefore, we can split our data into three groups, one for each kidney site, and then run three tests to compare normal and hypertensive rats at each site. 
+
+(Note: We do not want to split our data like this every time we run a two-way ANOVA. We only use this approach when there is a significant interaction.)
+
+A downside of this approach is that we are now running multiple tests on the same data set. We can't use a Tukey HSD test in this particular scenario, but what is another strategy we discussed in the last class that could work here?
+
+Now we will run t-tests to compare the normal and hypertensive rats at each individual kidney site. We will take advantage of two new functions: the `subset` function and the `with` function. The `subset` function will allow us to take a subset of the data containing only the kidney site we want. The `with` function will tell R to apply the t.test to the subset of the data that we took. We include the code for the t-test as the second argument of the `with` function.
+
+```{r kidney_ttest}
+with(subset(kidney,site=="CCD"),t.test(enzyme~hyper))
+```
+
+Now try adapting this code to run the t-test for the other two sites (DCT and OMCD). Based on the output of the three tests, which kidney sites show differences in enzyme activity between the two strains of mice? Don't forget to adjust your threshold p-value based on the number of tests you ran.
+
+#### Testing the models: Likelihood
+Now we will use the likelihood approach and `AIC` function to compare our models, just like we did with the millipede models. 
+
+```{r kidney_AIC}
+AIC(kidney_null,kidney_hyper,kidney_site,kidney_both,kidney_int)
+```
+
+Based on the output table, which model was the best? Was it significantly better than the next best model? What do the differences in AIC values tell you about the effects of each predictor and their interaction?
 
 ### Optional practice problems
-For each of the examples
+Download the algae.csv file from Canvas. This data set contains data on the growth of algae under 4 different light levels (low, med low, med high, and high) and three different wave intensity (low, med, high). Researchers want to know if the light level and wave intensity affect algae growth. For the algae growth variable, we will be working with the natural log of growth (log_growth).
 
-1. Select the appropriate type of t-test
-2. State your null and alternative hypotheses
-3. Make an appropriate graph to visualize the data
-4. Run the t-test
-5. State your conclusions
+1. Write the null and alternative hypotheses for the main effects and the interaction effect.
 
-#### Examples
-1. A researcher is interested in whether recent declines in the abundance of bees have affected seed set of native plants. For replicate plants, she chose one flower per plant to be a control and another to be hand pollinated. You can look at these data in scroph.csv. The researcher then measured fruit weight to determine how well pollinated the flowers were. Test whether fruit weight different between the control and hand-pollinated flowers.
+2. Make a box plot to visualize the effect of both independent variables (light and wave) on algae growth.
 
-2. FEV (forced expiratory volume) is an index of pulmonary function that measures the volume of air expelled during 1 second of constant effort.  Our data set (FEV.csv) contains measures of FEV for 654 children ages 3-19 who were seen in the Childhood Respiratory Disease Study in East Boston, Massachusetts in 1980.  These data are part of a longitudinal study to follow the change in pulmonary function over time in children. The data available for each child include: Age (years), FEV (liters), Height (inches), Sex (for this study, classified as male or female), and Smoking Status (current smoker or non-current smoker). Test whether FEV varies between current smokers and non-current smokers.
+3. Run a two-way ANOVA using the classical frequentist approach. Run any follow-up tests as necessary.
 
-3. You are working with a group of patients being treated for high blood pressure, and you want to test to see if the treatment is effective. The BloodPressure.csv file contains the latest diastolic blood pressure values for these patients. You know the normal diastolic blood pressure is 80. Test whether the blood pressure of these patients differs from normal.
+4. Build and compare your models using the likelihood approach. Don't forget to build models for both predictors individually, the predictors together, and the predictor together plus their interaction.
+
+5. State your conclusions from your analysis, including all necessary statistics.
+
+### A note about color in R
+When we made our graphs for the two-way ANOVA, we included the `scale_fill_manual` function to specify the colors we wanted to use in the graph. You are not required to include this function. If you leave it out, ggplot will automatically choose colors based on its default color package. However, the ggplot's default color palette is not colorblind-friendly, so it is usually better to choose a different color palette. Below are some links to websites that can help you choose colors. When you list the colors you want to use, you can list the hex codes (as we do in our code in this lesson) or the name of the color (e.g., "blue"). If you use the `scale_fill_manual` function, or a similar function, to specify colors, be sure to include one color for every group in your variable. In our examples, the variables displayed by the colors only had two groups (e.g., in the millipede example, there are only two sexes). If you have a variable with more than two groups, you need to list more than two colors.
+
+List of useful R color websites:
+
+1. [ggplot 2 Quick reference: colors](https://sape.inf.usi.ch/quick-reference/ggplot2/colour). This website includes a chart will color names in R, along with additional information about using color in ggplot.
+
+2. [ColorBrewer](https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3). The ColorBrewer website provides a set of color palettes that you can use in R. You can choose sequential, diverging, or qualitative palettes, and there is an option for colorblind-friendly palettes. The website will provide the hex codes for the colors in the palette.
+
+3. [MetBrewer](https://github.com/BlakeRMills/MetBrewer?tab=readme-ov-file). MetBrewer, which also has an associated R package, provides a set of color palettes based on works of art at the Metropolitan Museum of Art. Not all of the palettes are colorblind-friendly, but you can find a list of colorblind-friendly palettes at the bottom of the webpage.
+
+4. [Introduction to the viridis color maps](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html). Viridis is an R package that has colorblind-friendly palettes. This website provides information on the use of the package. You can also see what some different R color palettes would look like to people with different forms of colorblindness.
+
+5. [Best Color Palettes for Scientific Figures and Data Visualizations](https://www.simplifiedsciencepublishing.com/resources/best-color-palettes-for-scientific-figures-and-data-visualizations) This website has some general guidelines for the use of color in scientific publishing, along with some specific colorblind-friendly palettes, including the hex codes.
+
+6. [PNW colors](https://github.com/jakelawlor/PNWColors). This R package has a set of colorblind friendly palettes based on photographs of the Pacific Northwest.
+
+
 

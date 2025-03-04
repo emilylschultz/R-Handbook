@@ -1,7 +1,7 @@
 ---
-title: "ESS 3500 R Handbook, Lesson11"
+title: "ESS 3500 R Handbook, Lesson 12"
 author: "Emily Schultz"
-date: "2023-02-15"
+date: "2023-04-23"
 output: 
   html_document:
     toc: true
@@ -9,155 +9,198 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Lesson 11: Correlations and regressions in R
-In this lesson, you will tackle two types of tests that can be used when you have two continuous variables: correlations and regressions. Correlations are typically used when we think there might be a relationship between the two variables, but not a causal relationship (i.e., you don't have clear independent and dependent variables). A regression is used when we hypothesize that there is a causal relationship between our variables or if we want to be able to use one variable to predict the value of the other, even if there isn't a causal relationship. 
+### 11.2 Two continuous predictors (multiple regression)
+For our next example, we will work with two continuous predictor variable, sometimes called a multiple regression. We will use the carbon storage data set that we worked with once before, but this time will will look at some additional variables and consider how the levels of active bacteria and active fungi in the soil affect total carbon storage.
 
-For this lesson, we will work with a summarized version of the plant cover data set that we worked with once before (comparing cover of native and invasive plants), but this time we will look at some climate variables as possible predictor of native plant cover.
+#### Visualizing and building the models
+First, load the data.
 
-### 11.1 Correlations
-For our correlation analysis, we are going to look at correlations between our three climate variables: total precipitation (Totprecip), mean temperature (Mean_tempC), and maximum temperature (Max_tempC). There are often relationships between different climate variables, but those relationships are not usual causal (e.g., higher precipitation doesn't cause higher temperatures), so a correlation analysis is the right way to go for analyzing these relationships.
-
-#### Visualizing our data
-First, load the data set. Be sure your working directory is set correctly.
-
-```{r plant_data}
-plant <- read.csv("PlantSumm.csv")
+```{r carbon_data}
+carbon <- read.csv("carbon.csv")
 ```
 
-To visualize relationships between two continuous variables, a scatterplot is a good approach. With a correlation, we don't always add a best fit line (the best fit line is the output of a regression analysis). Here we have three climate variables, so we want to look at the pairwise relationships between each pair of variables. We could do that with three completely separate plots, but there's a faster way! With the `pairs` function, we can generate a grid of plots that shows the relationship between all pairs of variables we want to include in our analysis. We just provide a formula with the variables we want to include and the data set from which they come.
+There are many variables in the data set, but we will just focus on a few. "Tc" will be our response variable and "Active_Bacteria" and "Active_Lifespan" will be our two predictor variables.
 
-```{r corr_plot}
-pairs(~ Totprecip + Mean_tempC + Max_tempC, data = plant) 
-```
+Now let's graph our data. It is challenging to visualize two continuous predictor variable at the same time (I think 3D graphs are hard to read). One option is just to make separate scatter plots for each predictor, but that does not allow you to see interactions between the two variables. What I often do is convert one of the predictors to a categorical variable (just for the graph, not for the test), and graph both of the predictors at the same time. We'll try that.
 
-In the output, you can see the variables on the diagonal and the scatterplot for each pair of variables. (Note that the plots below the diagonal are just repeats of the plots above the diagonal, but with the axes switched). Which variables appear to have a strong correlation?
+First, we will use the `mutate` function to create a new variable that converts active fungi to a category. We will just use two categories: high and low. High active fungi will be anything above the median active fungi from our data set, and low weight will be anything less than or equal to the median. To to this, we will use the `ifelse` function. This function allows us to set a value for something **if** it matches certain criteria (in this case, if the active fungi is greater than the median) and set a different values if it does not match the criteria.
 
-#### Running the correlation test
-Now we will run a formal test to see if the correlations are significant. You can download additional packages that will automatically run the test for all pairs of variables in our data set, but we will just use the base R function (`cor.test`), so we'll run a separate test for each pair of variables. Because we are running three tests on the same data set, it's a good idea to do a Bonferroni correction. What will our new threshold p-value be?
-
-To run the pairwise tests, we'll use the `with` function in combination with the `cor.test` function, to pull out the two variables we want from the plant data set and run the correlation for those two variables.
-
-```{r corr_test}
-with(plant,cor.test(Mean_tempC,Max_tempC))
-with(plant,cor.test(Mean_tempC,Totprecip))
-with(plant,cor.test(Max_tempC,Totprecip))
-```
-
-Based on the output of these tests, which are statistically significant (don't forget to use the new threshold p-value from your Bonferroni correction).
-
-### 11.2 Linear regression
-Now we will test the effect of climate variables on the plant cover. In this case, it would make sense for there to be a causal relationship between the climate variables and plant cover, so we will use a linear regression.
-
-Good news! You don't have to learn any new code for this!
-
-#### Building and visualizing the models
-To keep things simpler, we will just test the effects of the two temperature variables on the total plant cover. For now, we'll build three models: the null model, an alternative model for mean temperature, and an alternative model for maximum temperature.
-
-```{r plant_lm}
-plant_null <- lm(tot_cover ~ 1, plant)
-plant_mean <- lm(tot_cover ~ Mean_tempC, plant)
-plant_max <- lm(tot_cover ~ Max_tempC, plant)
-```
-
-To view the output of your models, type the name of each model. Just like when we have worked with this model before, the null model will have just an intercept, and the alternative model will have a intercept and a slope term for the effect of either mean or maximum temperature on plant cover.
-
-Now, let's create graphs to visualize our data. Because we have two continuous variables, a scatterplot is a good option. We will also include a best fit line based on our alternative model. We'll make two graphs, one for each of our independent variables. If you haven't already, load the `tidyverse` package first.
-
-```{r plant_scatter}
-library(ggplot2)
-ggplot(plant, aes(x=Mean_tempC, y=tot_cover)) +
-  geom_point() +
-  geom_smooth(method="lm")+
-  labs(x="Mean temperature (C)", y="Total plant cover") +
-  theme_classic()
-
-ggplot(plant, aes(x=Max_tempC, y=tot_cover)) +
-  geom_point() +
-  geom_smooth(method="lm")+
-  labs(x="Max temperature (C)", y="Total plant cover") +
-  theme_classic()
-```
-
-#### Classical Frequentist Approach
-Let's again start by analyzing the models using a frequentist approach. We don't actually need to run any additional tests for this. We can just look at some additional output from the models we already ran.
-
-To view the additional output, use the `summary` function.
-
-```{r lm_out}
-summary(plant_mean)
-summary(plant_max)
-```
-
-When you view the output, you will see a number of things. First, you will be able to see the the formula you used to build the models. Then you will see some information on the distribution of the residuals (the leftover variation not explained by your model). Next, you will see the coefficients from your model, along with standard error of the estimates. The coefficients section will also show you t-values and p-values for each coefficient. These are one-sample t-tests comparing the value of the coefficient to zero.
-
-The information we really want for our linear regression test is down at the very bottom. In the final section, you will see some R-squared values. These are a measure of how much variation in your dependent variable is explained by your independent variable (we will talk about this more in class). Below that, you will see the output of the linear regression test. First is the F-statistic (the same statistic that was calculated for the ANOVA). Then you will see the p-value. Based on these values, would your reject or accept the null hypothesis? What does this tell you about the effect of temperature on plant growth?
-
-#### Likelihood-based approach
-Next we will use a likelihood-based approach to test the same question. Once again, the approach is the same as what you used for the t-test and ANOVA, using the `AIC` function to compare the two models.
-
-```{r cone_aic}
-AIC(plant_null, plant_mean, plant_max)
-```
-
-Based on this output, what would you conclude about the effect of mean and maximum temperature on plant growth?
-
-### 11.3 Multiple regression
-In the previous section, we ran two regressions: one for each of our two models. However, we have discussed the problems with running multiple tests on the same data set. To address this, we can instead run a multiple regression, which is essentially the regression version of the two-way ANOVA. You can include multiple predictors in the same model, but this time, the predictor models are both continuous rather than categorical. We already built our null model and our models with only one predictor, now lets build our two models with both predictors (one without and one with interactions).
-
-```{r mult_models}
-plant_both <- lm(tot_cover ~ Mean_tempC + Max_tempC, plant)
-plant_int <- lm(tot_cover ~ Mean_tempC * Max_tempC, plant)
-```
-
-#### Classical frequentist approach
-
-For the classical frequentist approach, all we have to do is take a look at the output of our full model (both variables with an interaction), so we can interpret the effects of our predictors.
-
-```{r mult_freq}
-summary(plant_int)
-```
-
-First, look at the statistics for the overall regression (the last line of the output). Based on this, does at least one of the predictors have a significant effect?
-
-Now look at the p-values from the t-test that compare each slope term to zero (in the Coefficients section). Based on these p-values, which effects (mean temperature, maximum temperature, interaction between mean and maximum temperature) are statistically significant?
-
-#### Maximum likelihood approach
-
-You know the drill here. As usual, which just have to compare the AIC values between all of our models.
-
-```{r mult_AIC}
-AIC(plant_null, plant_mean, plant_max, plant_both, plant_int)
-```
-
-Based on the AIC values, which model(s) is(are) the best? What does this tell you about which predictor are important for explaining plant cover?
-
-#### Comparison between simple and multiple regression
-Look back at the conclusions you drew about the effects of your predictor variables from your single and multiple regressions. Do your conclusions match? Why do you think this is (hint: think about the results of your correlation analysis, where you looked at correlations between the predictor variables)?
-
-We'll discuss this as a class, but think on your own/and or discuss in small groups first.
-
-#### Graphing multiple regressions
-It is challenging to visualize two continuous predictor variable at the same time (I think 3D graphs are hard to read). One option is just to make separate scatter plots for each predictor, like we did above for our single regressions, but that does not allow you to see interactions between the two variables. What I often do is convert one of the predictors to a categorical variable (just for the graph, not for the test), and graph both of the predictors at the same time. We'll try that.
-
-First, we will use the `mutate` function to create a new variable that converts maximum temperature to a category. We will just use two categories: high and low. High maximum temperature will be anything above the median maximum temperature from our data set, and low maximum temperature will be anything less than or equal to the median. To to this, we will use the `ifelse` function. This function allows us to set a value for something **if** it matches certain criteria (in this case, if the maximum temperature is greater than the median) and set a different values if it does not match the criteria.
-
-```{r temp_cat}
+```{r fungi_cat}
 library(tidyverse)
 
-med <- median(plant$Max_tempC)
-plant <- mutate(plant,MaxT_cat = ifelse(Max_tempC > med, "High", "Low"))
+med <- median(carbon$Active_Fungi)
+carbon <- mutate(carbon,Fungi_cat = ifelse(Active_Fungi > med, "High", "Low"))
 ```
 
-If you view the data set, you will now see a new variable called "MaxT_cat" that we will use to graph our data. Let's make that graph now. We will use "Mean_tempC" as our x variable, and we will use two different colors to represent our two maximum temperature categories.
+If you view the data set, you will now see a new variable called "Weight_cat" that we will use to graph our data. Let's make that graph now. We will use "Lifespan" as our x variable, and we will use two different colors to represent our two weight categories.
 
-```{r temp_scat}
-ggplot(data=plant, aes(x=Mean_tempC,y=tot_cover,color=MaxT_cat)) +
+```{r carbon_scat}
+ggplot(data=carbon, aes(x=Active_Bacteria,y=Tc,color=Fungi_cat)) +
   geom_point() +
   geom_smooth(method="lm") +
   scale_color_manual(values=c("#ce9642","#3b7c70")) +
-  labs(x="Mean temperature", y="Total plant cover",color="Maximum temperature") +
+  labs(x="Active bacteria", y="Total carbon storage",color="Active fungi") +
   theme_classic()
 ```
+
+What are your initial interpretations based on the graph?
+
+Now, let's build our models. Just like our first example, we will have multiple alternative models that we test.
+
+```{r carbon_lm}
+carbon_null <- lm(Tc ~ 1, data = carbon)
+carbon_bac <- lm(Tc ~ Active_Bacteria, data = carbon)
+carbon_fungi <- lm(Tc ~ Active_Fungi, data = carbon)
+carbon_both <- lm(Tc ~ Active_Bacteria + Active_Fungi, data = carbon)
+carbon_int <- lm(Tc ~ Active_Bacteria*Active_Fungi, data = carbon)
+```
+
+Look at the summaries for some of your models. Do the coefficients for the different variable make sense based on what you saw in your graph?
+  
+  We will again check our assumption of normality before testing the models.
+
+```{r carbon_resid}
+resid_null_carbon <- resid(carbon_null)
+resid_bac_carbon <- resid(carbon_bac)
+resid_fungi_carbon <- resid(carbon_fungi)
+resid_both_carbon <- resid(carbon_both)
+resid_int_carbon <- resid(carbon_int)
+```
+
+```{r carbon_qq}
+qqnorm(resid_null_carbon)
+qqline(resid_null_carbon)
+
+qqnorm(resid_bac_carbon)
+qqline(resid_bac_carbon)
+
+qqnorm(resid_fungi_carbon)
+qqline(resid_fungi_carbon)
+
+qqnorm(resid_both_carbon)
+qqline(resid_both_carbon)
+
+qqnorm(resid_int_carbon)
+qqline(resid_int_carbon)
+```
+
+Yikes, this time, it looks like we have some skew in our data based on the curved shape of the points in our qqplots. Before we run the tests, we'll try a log transform to see if that makes our residuals less skewed. We can actually do this transform right in the formula of our linear model, instead of adding a new variable. We will just add the `log` function to our dependent variable (Tc).
+
+```{r logcarbon_lm}
+carbon_null <- lm(log(Tc) ~ 1, data = carbon)
+carbon_bac <- lm(log(Tc) ~ Active_Bacteria, data = carbon)
+carbon_fungi <- lm(log(Tc) ~ Active_Fungi, data = carbon)
+carbon_both <- lm(log(Tc) ~ Active_Bacteria + Active_Fungi, data = carbon)
+carbon_int <- lm(log(Tc) ~ Active_Bacteria*Active_Fungi, data = carbon)
+```
+
+Look at the summaries for some of your models. Do the coefficients for the different variable make sense based on what you saw in your graph?
+
+Now, we will check the residuals again, using the models with the log transformed data.
+
+```{r logcarbon_resid}
+resid_null_carbon <- resid(carbon_null)
+resid_bac_carbon <- resid(carbon_bac)
+resid_fungi_carbon <- resid(carbon_fungi)
+resid_both_carbon <- resid(carbon_both)
+resid_int_carbon <- resid(carbon_int)
+```
+
+```{r logcarbon_qq}
+qqnorm(resid_null_carbon)
+qqline(resid_null_carbon)
+
+qqnorm(resid_bac_carbon)
+qqline(resid_bac_carbon)
+
+qqnorm(resid_fungi_carbon)
+qqline(resid_fungi_carbon)
+
+qqnorm(resid_both_carbon)
+qqline(resid_both_carbon)
+
+qqnorm(resid_int_carbon)
+qqline(resid_int_carbon)
+```
+
+These look better now, so we'll move on with testing our models.
+
+#### Testing the models
+To test the models, we will use the same approach that we used with the first example.
+
+```{r carbon_AIC}
+AIC(carbon_null,carbon_bac,carbon_fungi,carbon_both,carbon_int)
+```
+
+Based on the AIC models, which model is the best? Is it significantly better than the others? Given this, along with the coefficients from the best model and the patterns you see in your graph, what can you conclude about the effects of the two predictor variables (bacteria and fungi levels)?
+  
+  ### 11.3 Continuous and categorial predictors
+  For our final example, we will look at a blend of the previous two types of predictors and consider a case where we have one continuous and one categorical predictor. We will use an example of butterfly endurance and how it is affected by both temperature and the genotype of the butterfly.
+
+#### Visualizing and building the models
+
+```{r butterfly_data}
+butterfly <- read.csv("butterfly.csv")
+```
+
+```{r butterfly_scat}
+ggplot(data=butterfly, aes(x=Temp,y=Endurance,color=Genotype)) +
+  geom_point() +
+  geom_smooth(method="lm") +
+  scale_color_manual(values=c("#ce9642","#3b7c70","#3b3a3e")) +
+  labs(x="Temperature") +
+  theme_classic()
+```
+
+What is your initial interpretation for how temperature and genotype affect the endurance of butterflies, based on the graph? Does unequal variances seem to be a problem?
+  
+  We will now move on to building our models: one null model and our four different alternative models.
+
+```{r butterfly_lm}
+butter_null <- lm(Endurance ~ 1, data=butterfly)
+butter_temp <- lm(Endurance ~ Temp, data=butterfly)
+butter_geno <- lm(Endurance ~ Genotype, data=butterfly)
+butter_both <- lm(Endurance ~ Temp + Genotype, data=butterfly)
+butter_int <- lm(Endurance ~ Temp*Genotype, data=butterfly)
+```
+
+Before testing these models, we'll check our residuals for normality.
+
+```{r butterfly_resid}
+resid_null_butter <- resid(butter_null)
+resid_temp_butter <- resid(butter_temp)
+resid_geno_butter <- resid(butter_geno)
+resid_both_butter <- resid(butter_both)
+resid_int_butter <- resid(butter_int)
+```
+
+```{r butterfly_qq}
+qqnorm(resid_null_butter)
+qqline(resid_null_butter)
+
+qqnorm(resid_temp_butter)
+qqline(resid_temp_butter)
+
+qqnorm(resid_geno_butter)
+qqline(resid_geno_butter)
+
+qqnorm(resid_both_butter)
+qqline(resid_both_butter)
+
+qqnorm(resid_int_butter)
+qqline(resid_int_butter)
+```
+
+Once again, the residuals don't look quite normal, but there doesn't seem to be a lot of skew, so we'll move on with testing our models.
+
+#### Testing the models
+Using the likelihood approach, we can again just use the `AIC` function to compare our five models:
+  
+  ```{r butterfly_AIC}
+AIC(butter_null,butter_temp,butter_geno,butter_both,butter_int)
+```
+
+Based on these AIC values, what can you conclude about the effects of temperature, genotype, and their interaction on butterfly endurance?
