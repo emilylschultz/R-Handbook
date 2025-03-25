@@ -20,14 +20,14 @@ navbar:
       - text: "Lesson 6: Assumptions and transformations"
         href: RHandbook_6.html
       - text: "Lesson 7: ANOVA"
-        href: RHandbook_8.html
+        href: RHandbook_7.html
       - text: "Lesson 8: Correlations"
-        href: RHandbook_9.html
+        href: RHandbook_8.html
       - text: "Lesson 9: Regressions"
-        href: RHandbook_10.html
+        href: RHandbook_9.html
       - text: "Lesson 10: Multiple predictors"
-        href: RHandbook_11.html
+        href: RHandbook_10.html
       - text: "Lesson 11: Categorical data"
-        href: RHandbook_12.html
+        href: RHandbook_11.html
     - text: "R Templates"
       href: RHandbook_templates.html
