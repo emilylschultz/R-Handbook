@@ -17,36 +17,6 @@ In this lesson, you will tackle two types of tests that can be used when you hav
 
 For this lesson, we will work with a summarized version of the plant cover data set that we worked with once before (comparing cover of native and invasive plants), but this time we will look at some climate variables as possible predictor of native plant cover.
 
-### 11.1 Correlations
-For our correlation analysis, we are going to look at correlations between our three climate variables: total precipitation (Totprecip), mean temperature (Mean_tempC), and maximum temperature (Max_tempC). There are often relationships between different climate variables, but those relationships are not usual causal (e.g., higher precipitation doesn't cause higher temperatures), so a correlation analysis is the right way to go for analyzing these relationships.
-
-#### Visualizing our data
-First, load the data set. Be sure your working directory is set correctly.
-
-```{r plant_data}
-plant <- read.csv("PlantSumm.csv")
-```
-
-To visualize relationships between two continuous variables, a scatterplot is a good approach. With a correlation, we don't always add a best fit line (the best fit line is the output of a regression analysis). Here we have three climate variables, so we want to look at the pairwise relationships between each pair of variables. We could do that with three completely separate plots, but there's a faster way! With the `pairs` function, we can generate a grid of plots that shows the relationship between all pairs of variables we want to include in our analysis. We just provide a formula with the variables we want to include and the data set from which they come.
-
-```{r corr_plot}
-pairs(~ Totprecip + Mean_tempC + Max_tempC, data = plant) 
-```
-
-In the output, you can see the variables on the diagonal and the scatterplot for each pair of variables. (Note that the plots below the diagonal are just repeats of the plots above the diagonal, but with the axes switched). Which variables appear to have a strong correlation?
-
-#### Running the correlation test
-Now we will run a formal test to see if the correlations are significant. You can download additional packages that will automatically run the test for all pairs of variables in our data set, but we will just use the base R function (`cor.test`), so we'll run a separate test for each pair of variables. Because we are running three tests on the same data set, it's a good idea to do a Bonferroni correction. What will our new threshold p-value be?
-
-To run the pairwise tests, we'll use the `with` function in combination with the `cor.test` function, to pull out the two variables we want from the plant data set and run the correlation for those two variables.
-
-```{r corr_test}
-with(plant,cor.test(Mean_tempC,Max_tempC))
-with(plant,cor.test(Mean_tempC,Totprecip))
-with(plant,cor.test(Max_tempC,Totprecip))
-```
-
-Based on the output of these tests, which are statistically significant (don't forget to use the new threshold p-value from your Bonferroni correction).
 
 ### 11.2 Linear regression
 Now we will test the effect of climate variables on the plant cover. In this case, it would make sense for there to be a causal relationship between the climate variables and plant cover, so we will use a linear regression.
