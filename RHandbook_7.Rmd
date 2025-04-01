@@ -62,6 +62,22 @@ The output shows a table of p-values for each pairwise comparison between our gr
 
 Now look at the remaining two pairwise comparisons. Based on the p-values, which other pairs of categories had significantly different extinction times?
 
+In this example, it's not necessary because after the log-tranform, our data meet the assumptions of an ANOVA and these follow-up post-hoc tests, but if our data did violate these assumptions, we can adjust the tests we use for the post hoc tests.
+
+If we do not have equal variances, we can still use the `pairwise.t.test` function. We just add an additional argument (pool.sd=FALSE) to the function. If we were going to use this approach for the lizard data, it would look like this:
+
+```{r unequal}
+pairwise.t.test(lizard$TTE,lizard$Plan,p.adjust.method="holm",pool.sd=FALSE)
+```
+
+To do the pairwise comparisons if we don't have normally-distributed residuals, we need a new function: `pairwise.wilcox.test`. This will run pairwise tests similar to t-test, but that allow for the non-normal distribution. The arguments of this function are the same as the arguments for the `pairwise.t.test` fucntion, so to use this function on the lizard data, it would look like this:
+
+```{r nonnormal}
+pairwise.wilcox.test(lizard$TTE,lizard$Plan,p.adjust.method="holm")
+```
+
+We interpret the output of these test in the same way we would for the normal pairwise comparisons.
+
 ### 7.2 Maximum likelihood approach
 To use the maximum likelihood approach for an ANOVA, we use exactly the same procedure that we used for a t-test.
 

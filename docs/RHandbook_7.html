@@ -417,6 +417,44 @@ the extinction time between the two treatments.</p>
 <p>Now look at the remaining two pairwise comparisons. Based on the
 p-values, which other pairs of categories had significantly different
 extinction times?</p>
+<p>In this example, it’s not necessary because after the log-tranform,
+our data meet the assumptions of an ANOVA and these follow-up post-hoc
+tests, but if our data did violate these assumptions, we can adjust the
+tests we use for the post hoc tests.</p>
+<p>If we do not have equal variances, we can still use the
+<code>pairwise.t.test</code> function. We just add an additional
+argument (pool.sd=FALSE) to the function. If we were going to use this
+approach for the lizard data, it would look like this:</p>
+<pre class="r"><code>pairwise.t.test(lizard$TTE,lizard$Plan,p.adjust.method=&quot;holm&quot;,pool.sd=FALSE)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using t tests with non-pooled SD 
+## 
+## data:  lizard$TTE and lizard$Plan 
+## 
+##        network none  
+## none   4.6e-05 -     
+## single 0.0490  0.0086
+## 
+## P value adjustment method: holm</code></pre>
+<p>To do the pairwise comparisons if we don’t have normally-distributed
+residuals, we need a new function: <code>pairwise.wilcox.test</code>.
+This will run pairwise tests similar to t-test, but that allow for the
+non-normal distribution. The arguments of this function are the same as
+the arguments for the <code>pairwise.t.test</code> fucntion, so to use
+this function on the lizard data, it would look like this:</p>
+<pre class="r"><code>pairwise.wilcox.test(lizard$TTE,lizard$Plan,p.adjust.method=&quot;holm&quot;)</code></pre>
+<pre><code>## 
+##  Pairwise comparisons using Wilcoxon rank sum test with continuity correction 
+## 
+## data:  lizard$TTE and lizard$Plan 
+## 
+##        network none   
+## none   0.00011 -      
+## single 0.07094 0.02147
+## 
+## P value adjustment method: holm</code></pre>
+<p>We interpret the output of these test in the same way we would for
+the normal pairwise comparisons.</p>
 </div>
 </div>
 <div id="maximum-likelihood-approach" class="section level3">
