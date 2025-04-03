@@ -378,6 +378,21 @@ when we report our results.</p>
 <p>Looking at the p-value, we can see that it is below 0.05, so we
 reject the null hypothesis and tentatively accept that at least one of
 our categories has a different time to extinction than the rest.</p>
+<p>If your assumptions of normally-distributed residuals and/or unequal
+variances are not met and can’t be fixed with a transform, there are
+alternative tests that you can run.</p>
+<p>The Kruskal-Wallis test is a rank test similar to the Mann-Whitney U
+test that we used as an alternative for the t-test. It can be used when
+your residuals are not normally distributed. If we were going to use it
+for the lizard data (we don’t have to because our assumption were met,
+but this is for the sake of demonstration), it would look like this:</p>
+<pre class="r"><code>kruskal.test(TTE ~ Plan, data=lizard)</code></pre>
+<p>If our variances are not equal, we can instead use the Welch’s ANOVA,
+which would look like this:</p>
+<pre class="welchsa"><code>oneway.test(TTE ~ Plan, data=lizard, var.equal = FALSE)</code></pre>
+<p>Again, you don’t need to run these tests in addition to the normal
+ANOVA. You would run one of these as an alternative to the ANOVA if the
+assumption is not met.</p>
 <div id="post-hoc-tests" class="section level4">
 <h4>Post-hoc tests</h4>
 <p>If we want to know specifically which pairs of treatments differ from

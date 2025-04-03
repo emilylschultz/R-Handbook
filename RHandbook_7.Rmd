@@ -49,6 +49,22 @@ As with the t-test, when we view the output, we can see the degrees of freedom (
 
 Looking at the p-value, we can see that it is below 0.05, so we reject the null hypothesis and tentatively accept that at least one of our categories has a different time to extinction than the rest.
 
+If your assumptions of normally-distributed residuals and/or unequal variances are not met and can't be fixed with a transform, there are alternative tests that you can run.
+
+The Kruskal-Wallis test is a rank test similar to the Mann-Whitney U test that we used as an alternative for the t-test. It can be used when your residuals are not normally distributed. If we were going to use it for the lizard data (we don't have to because our assumption were met, but this is for the sake of demonstration), it would look like this:
+
+```{r kwallis, eval=F}
+kruskal.test(TTE ~ Plan, data=lizard)
+```
+
+If our variances are not equal, we can instead use the Welch's ANOVA, which would look like this:
+
+```{welchsA, eval=F}
+oneway.test(TTE ~ Plan, data=lizard, var.equal = FALSE)
+```
+
+Again, you don't need to run these tests in addition to the normal ANOVA. You would run one of these as an alternative to the ANOVA if the assumption is not met.
+
 #### Post-hoc tests
 If we want to know specifically which pairs of treatments differ from each other, we can use post-hoc tests to do pairwise comparisons between our categories. This is like running t-tests between each pair of categories, except the test corrects for the problem of multiple comparisons. We will use a function (`pairwise.t.test`) that gives us the flexibility to choose the type of correction we want to do, and will also work for data with unequal variances. We will use the Holm correction, which is a good choice in general because it is not too conservative but also doesn't add other assumptions about our data.
 
