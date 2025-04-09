@@ -12,10 +12,10 @@ output:
 knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
 ```
 
-### 8.1 Correlations
+## Lesson 8: Correlations
 For our correlation analysis, we are going to look at correlations between three climate variables from a data set on the effects of climate on plant cover. The tree variables we will test are: total precipitation (Totprecip), mean temperature (Mean_tempC), and maximum temperature (Max_tempC). There are often relationships between different climate variables, but those relationships are not usually causal (e.g., higher precipitation doesn't cause higher temperatures), so a correlation analysis is the right way to go for analyzing these relationships.
 
-#### Visualizing our data
+### 8.1 Visualizing our data
 First, load the data set. Be sure your working directory is set correctly.
 
 ```{r plant_data}
@@ -30,7 +30,7 @@ pairs(~ Totprecip + Mean_tempC + Max_tempC, data = plant)
 
 In the output, you can see the variables on the diagonal and the scatterplot for each pair of variables. (Note that the plots below the diagonal are just repeats of the plots above the diagonal, but with the axes switched). Which variables appear to have a strong correlation?
 
-#### Running the correlation test
+### 8.2 Running the correlation test
 Now we will run a formal test to see if the correlations are significant. You can download additional packages that will automatically run the test for all pairs of variables in our data set, but we will just use the base R function (`cor.test`), so we'll run a separate test for each pair of variables. 
 
 To run the pairwise tests, we'll use the `with` function in combination with the `cor.test` function, to pull out the two variables we want from the plant data set and run the correlation for those two variables.

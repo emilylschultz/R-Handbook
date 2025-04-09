@@ -273,22 +273,19 @@ $(document).ready(function () {
       <a href="RHandbook_6.html">Lesson 6: Assumptions and transformations</a>
     </li>
     <li>
-      <a href="RHandbook_7.html">Lesson 7: Variations on the t-test</a>
+      <a href="RHandbook_7.html">Lesson 7: ANOVA</a>
     </li>
     <li>
-      <a href="RHandbook_8.html">Lesson 8: ANOVA</a>
+      <a href="RHandbook_8.html">Lesson 8: Correlations</a>
     </li>
     <li>
-      <a href="RHandbook_9.html">Lesson 9: Correlations</a>
+      <a href="RHandbook_9.html">Lesson 9: Regressions</a>
     </li>
     <li>
-      <a href="RHandbook_10.html">Lesson 10: Regressions</a>
+      <a href="RHandbook_10.html">Lesson 10: Multiple predictors</a>
     </li>
     <li>
-      <a href="RHandbook_11.html">Lesson 11: Multiple predictors</a>
-    </li>
-    <li>
-      <a href="RHandbook_12.html">Lesson 12: Categorical data</a>
+      <a href="RHandbook_11.html">Lesson 11: Categorical data</a>
     </li>
   </ul>
 </li>
@@ -315,134 +312,34 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#lesson-11-correlations-and-regressions-in-r"
-id="toc-lesson-11-correlations-and-regressions-in-r">Lesson 11:
-Correlations and regressions in R</a>
+<li><a href="#lesson-9-linear-regression"
+id="toc-lesson-9-linear-regression">Lesson 9: Linear Regression</a>
 <ul>
-<li><a href="#correlations" id="toc-correlations">11.1
-Correlations</a></li>
-<li><a href="#linear-regression" id="toc-linear-regression">11.2 Linear
-regression</a></li>
-<li><a href="#multiple-regression" id="toc-multiple-regression">11.3
+<li><a href="#simple-linear-regression"
+id="toc-simple-linear-regression">9.1 Simple linear regression</a></li>
+<li><a href="#multiple-regression" id="toc-multiple-regression">9.2
 Multiple regression</a></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="lesson-11-correlations-and-regressions-in-r"
-class="section level2">
-<h2>Lesson 11: Correlations and regressions in R</h2>
-<p>In this lesson, you will tackle two types of tests that can be used
-when you have two continuous variables: correlations and regressions.
-Correlations are typically used when we think there might be a
-relationship between the two variables, but not a causal relationship
-(i.e., you don’t have clear independent and dependent variables). A
-regression is used when we hypothesize that there is a causal
-relationship between our variables or if we want to be able to use one
-variable to predict the value of the other, even if there isn’t a causal
-relationship.</p>
-<p>For this lesson, we will work with a summarized version of the plant
-cover data set that we worked with once before (comparing cover of
-native and invasive plants), but this time we will look at some climate
-variables as possible predictor of native plant cover.</p>
-<div id="correlations" class="section level3">
-<h3>11.1 Correlations</h3>
-<p>For our correlation analysis, we are going to look at correlations
-between our three climate variables: total precipitation (Totprecip),
-mean temperature (Mean_tempC), and maximum temperature (Max_tempC).
-There are often relationships between different climate variables, but
-those relationships are not usual causal (e.g., higher precipitation
-doesn’t cause higher temperatures), so a correlation analysis is the
-right way to go for analyzing these relationships.</p>
-<div id="visualizing-our-data" class="section level4">
-<h4>Visualizing our data</h4>
+<div id="lesson-9-linear-regression" class="section level2">
+<h2>Lesson 9: Linear Regression</h2>
+<p>In this lesson, you will tackle a test that can be used when you have
+two continuous variables: linear regression. We will work with a plant
+cover data set that looks at climate variables as possible predictors of
+native plant cover.</p>
+<div id="simple-linear-regression" class="section level3">
+<h3>9.1 Simple linear regression</h3>
+<p>In this first section, we will individually test the effect of mean
+temperature and maximum temperature on the cover of native plant
+species. To begin, we will build and visualize the models.</p>
 <p>First, load the data set. Be sure your working directory is set
 correctly.</p>
 <pre class="r"><code>plant &lt;- read.csv(&quot;PlantSumm.csv&quot;)</code></pre>
-<p>To visualize relationships between two continuous variables, a
-scatterplot is a good approach. With a correlation, we don’t always add
-a best fit line (the best fit line is the output of a regression
-analysis). Here we have three climate variables, so we want to look at
-the pairwise relationships between each pair of variables. We could do
-that with three completely separate plots, but there’s a faster way!
-With the <code>pairs</code> function, we can generate a grid of plots
-that shows the relationship between all pairs of variables we want to
-include in our analysis. We just provide a formula with the variables we
-want to include and the data set from which they come.</p>
-<pre class="r"><code>pairs(~ Totprecip + Mean_tempC + Max_tempC, data = plant) </code></pre>
-<p><img src="RHandbook_9_files/figure-html/corr_plot-1.png" width="672" /></p>
-<p>In the output, you can see the variables on the diagonal and the
-scatterplot for each pair of variables. (Note that the plots below the
-diagonal are just repeats of the plots above the diagonal, but with the
-axes switched). Which variables appear to have a strong correlation?</p>
-</div>
-<div id="running-the-correlation-test" class="section level4">
-<h4>Running the correlation test</h4>
-<p>Now we will run a formal test to see if the correlations are
-significant. You can download additional packages that will
-automatically run the test for all pairs of variables in our data set,
-but we will just use the base R function (<code>cor.test</code>), so
-we’ll run a separate test for each pair of variables. Because we are
-running three tests on the same data set, it’s a good idea to do a
-Bonferroni correction. What will our new threshold p-value be?</p>
-<p>To run the pairwise tests, we’ll use the <code>with</code> function
-in combination with the <code>cor.test</code> function, to pull out the
-two variables we want from the plant data set and run the correlation
-for those two variables.</p>
-<pre class="r"><code>with(plant,cor.test(Mean_tempC,Max_tempC))</code></pre>
-<pre><code>## 
-##  Pearson&#39;s product-moment correlation
-## 
-## data:  Mean_tempC and Max_tempC
-## t = 8.4936, df = 17, p-value = 1.6e-07
-## alternative hypothesis: true correlation is not equal to 0
-## 95 percent confidence interval:
-##  0.7531352 0.9611007
-## sample estimates:
-##       cor 
-## 0.8996063</code></pre>
-<pre class="r"><code>with(plant,cor.test(Mean_tempC,Totprecip))</code></pre>
-<pre><code>## 
-##  Pearson&#39;s product-moment correlation
-## 
-## data:  Mean_tempC and Totprecip
-## t = -1.6944, df = 17, p-value = 0.1084
-## alternative hypothesis: true correlation is not equal to 0
-## 95 percent confidence interval:
-##  -0.71147981  0.08956702
-## sample estimates:
-##        cor 
-## -0.3801058</code></pre>
-<pre class="r"><code>with(plant,cor.test(Max_tempC,Totprecip))</code></pre>
-<pre><code>## 
-##  Pearson&#39;s product-moment correlation
-## 
-## data:  Max_tempC and Totprecip
-## t = -2.5001, df = 17, p-value = 0.02294
-## alternative hypothesis: true correlation is not equal to 0
-## 95 percent confidence interval:
-##  -0.78728864 -0.08407849
-## sample estimates:
-##        cor 
-## -0.5184872</code></pre>
-<p>Based on the output of these tests, which are statistically
-significant (don’t forget to use the new threshold p-value from your
-Bonferroni correction).</p>
-</div>
-</div>
-<div id="linear-regression" class="section level3">
-<h3>11.2 Linear regression</h3>
-<p>Now we will test the effect of climate variables on the plant cover.
-In this case, it would make sense for there to be a causal relationship
-between the climate variables and plant cover, so we will use a linear
-regression.</p>
-<p>Good news! You don’t have to learn any new code for this!</p>
-<div id="building-and-visualizing-the-models" class="section level4">
-<h4>Building and visualizing the models</h4>
-<p>To keep things simpler, we will just test the effects of the two
-temperature variables on the total plant cover. For now, we’ll build
-three models: the null model, an alternative model for mean temperature,
-and an alternative model for maximum temperature.</p>
+<p>For now, we’ll build three models: the null model, an alternative
+model for mean temperature, and an alternative model for maximum
+temperature.</p>
 <pre class="r"><code>plant_null &lt;- lm(tot_cover ~ 1, plant)
 plant_mean &lt;- lm(tot_cover ~ Mean_tempC, plant)
 plant_max &lt;- lm(tot_cover ~ Max_tempC, plant)</code></pre>
@@ -469,7 +366,6 @@ ggplot(plant, aes(x=Mean_tempC, y=tot_cover)) +
   labs(x=&quot;Max temperature (C)&quot;, y=&quot;Total plant cover&quot;) +
   theme_classic()</code></pre>
 <p><img src="RHandbook_9_files/figure-html/plant_scatter-2.png" width="672" /></p>
-</div>
 <div id="classical-frequentist-approach" class="section level4">
 <h4>Classical Frequentist Approach</h4>
 <p>Let’s again start by analyzing the models using a frequentist
@@ -552,7 +448,7 @@ mean and maximum temperature on plant growth?</p>
 </div>
 </div>
 <div id="multiple-regression" class="section level3">
-<h3>11.3 Multiple regression</h3>
+<h3>9.2 Multiple regression</h3>
 <p>In the previous section, we ran two regressions: one for each of our
 two models. However, we have discussed the problems with running
 multiple tests on the same data set. To address this, we can instead run

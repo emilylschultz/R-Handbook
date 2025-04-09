@@ -312,13 +312,20 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#correlations" id="toc-correlations">8.1
-Correlations</a></li>
+<li><a href="#lesson-8-correlations"
+id="toc-lesson-8-correlations">Lesson 8: Correlations</a>
+<ul>
+<li><a href="#visualizing-our-data" id="toc-visualizing-our-data">8.1
+Visualizing our data</a></li>
+<li><a href="#running-the-correlation-test"
+id="toc-running-the-correlation-test">8.2 Running the correlation
+test</a></li>
+</ul></li>
 </ul>
 </div>
 
-<div id="correlations" class="section level3">
-<h3>8.1 Correlations</h3>
+<div id="lesson-8-correlations" class="section level2">
+<h2>Lesson 8: Correlations</h2>
 <p>For our correlation analysis, we are going to look at correlations
 between three climate variables from a data set on the effects of
 climate on plant cover. The tree variables we will test are: total
@@ -328,8 +335,8 @@ climate variables, but those relationships are not usually causal (e.g.,
 higher precipitation doesn’t cause higher temperatures), so a
 correlation analysis is the right way to go for analyzing these
 relationships.</p>
-<div id="visualizing-our-data" class="section level4">
-<h4>Visualizing our data</h4>
+<div id="visualizing-our-data" class="section level3">
+<h3>8.1 Visualizing our data</h3>
 <p>First, load the data set. Be sure your working directory is set
 correctly.</p>
 <pre class="r"><code>plant &lt;- read.csv(&quot;PlantSumm.csv&quot;)</code></pre>
@@ -350,8 +357,8 @@ scatterplot for each pair of variables. (Note that the plots below the
 diagonal are just repeats of the plots above the diagonal, but with the
 axes switched). Which variables appear to have a strong correlation?</p>
 </div>
-<div id="running-the-correlation-test" class="section level4">
-<h4>Running the correlation test</h4>
+<div id="running-the-correlation-test" class="section level3">
+<h3>8.2 Running the correlation test</h3>
 <p>Now we will run a formal test to see if the correlations are
 significant. You can download additional packages that will
 automatically run the test for all pairs of variables in our data set,
