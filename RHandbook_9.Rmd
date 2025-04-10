@@ -35,7 +35,7 @@ plant_max <- lm(tot_cover ~ Max_tempC, plant)
 
 To view the output of your models, type the name of each model. Just like when we have worked with this model before, the null model will have just an intercept, and the alternative model will have a intercept and a slope term for the effect of either mean or maximum temperature on plant cover.
 
-Now, let's create graphs to visualize our data. Because we have two continuous variables, a scatterplot is a good option. We will also include a best fit line based on our alternative model. We'll make two graphs, one for each of our independent variables. If you haven't already, load the `tidyverse` package first.
+Now, let's create graphs to visualize our data. Because we have two continuous variables, a scatterplot is a good option. We will also include a best fit line based on our alternative model. We'll make two graphs, one for each of our independent variables. If you haven't already, load the `ggplot2` package first.
 
 ```{r plant_scatter}
 library(ggplot2)
