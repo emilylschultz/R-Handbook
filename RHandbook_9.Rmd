@@ -1,5 +1,5 @@
 ---
-title: "ESS 3500 R Handbook, Lesson11"
+title: "ESS 3500 R Handbook, Lesson 9"
 author: "Emily Schultz"
 date: "2023-02-15"
 output: 
@@ -67,7 +67,7 @@ When you view the output, you will see a number of things. First, you will be ab
 The information we really want for our linear regression test is down at the very bottom. In the final section, you will see some R-squared values. These are a measure of how much variation in your dependent variable is explained by your independent variable (we will talk about this more in class). Below that, you will see the output of the linear regression test. First is the F-statistic (the same statistic that was calculated for the ANOVA). Then you will see the p-value. Based on these values, would your reject or accept the null hypothesis? What does this tell you about the effect of temperature on plant growth?
 
 #### Likelihood-based approach
-Next we will use a likelihood-based approach to test the same question. Once again, the approach is the same as what you used for the t-test and ANOVA, using the `AIC` function to compare the two models.
+Next we will use a likelihood-based approach to test the same question. Once again, the approach is the same as what you used for the t-test and ANOVA, using the `AIC` function to compare the models. Since we have three models, we can include all three in the AIC function and then compare the AIC from both the plant_mean and plant_max models to the null model.
 
 ```{r cone_aic}
 AIC(plant_null, plant_mean, plant_max)
@@ -75,60 +75,4 @@ AIC(plant_null, plant_mean, plant_max)
 
 Based on this output, what would you conclude about the effect of mean and maximum temperature on plant growth?
 
-### 9.2 Multiple regression
-In the previous section, we ran two regressions: one for each of our two models. However, we have discussed the problems with running multiple tests on the same data set. To address this, we can instead run a multiple regression, which is essentially the regression version of the two-way ANOVA. You can include multiple predictors in the same model, but this time, the predictor models are both continuous rather than categorical. We already built our null model and our models with only one predictor, now lets build our two models with both predictors (one without and one with interactions).
 
-```{r mult_models}
-plant_both <- lm(tot_cover ~ Mean_tempC + Max_tempC, plant)
-plant_int <- lm(tot_cover ~ Mean_tempC * Max_tempC, plant)
-```
-
-#### Classical frequentist approach
-
-For the classical frequentist approach, all we have to do is take a look at the output of our full model (both variables with an interaction), so we can interpret the effects of our predictors.
-
-```{r mult_freq}
-summary(plant_int)
-```
-
-First, look at the statistics for the overall regression (the last line of the output). Based on this, does at least one of the predictors have a significant effect?
-
-Now look at the p-values from the t-test that compare each slope term to zero (in the Coefficients section). Based on these p-values, which effects (mean temperature, maximum temperature, interaction between mean and maximum temperature) are statistically significant?
-
-#### Maximum likelihood approach
-
-You know the drill here. As usual, which just have to compare the AIC values between all of our models.
-
-```{r mult_AIC}
-AIC(plant_null, plant_mean, plant_max, plant_both, plant_int)
-```
-
-Based on the AIC values, which model(s) is(are) the best? What does this tell you about which predictor are important for explaining plant cover?
-
-#### Comparison between simple and multiple regression
-Look back at the conclusions you drew about the effects of your predictor variables from your single and multiple regressions. Do your conclusions match? Why do you think this is (hint: think about the results of your correlation analysis, where you looked at correlations between the predictor variables)?
-
-We'll discuss this as a class, but think on your own/and or discuss in small groups first.
-
-#### Graphing multiple regressions
-It is challenging to visualize two continuous predictor variable at the same time (I think 3D graphs are hard to read). One option is just to make separate scatter plots for each predictor, like we did above for our single regressions, but that does not allow you to see interactions between the two variables. What I often do is convert one of the predictors to a categorical variable (just for the graph, not for the test), and graph both of the predictors at the same time. We'll try that.
-
-First, we will use the `mutate` function to create a new variable that converts maximum temperature to a category. We will just use two categories: high and low. High maximum temperature will be anything above the median maximum temperature from our data set, and low maximum temperature will be anything less than or equal to the median. To to this, we will use the `ifelse` function. This function allows us to set a value for something **if** it matches certain criteria (in this case, if the maximum temperature is greater than the median) and set a different values if it does not match the criteria.
-
-```{r temp_cat}
-library(tidyverse)
-
-med <- median(plant$Max_tempC)
-plant <- mutate(plant,MaxT_cat = ifelse(Max_tempC > med, "High", "Low"))
-```
-
-If you view the data set, you will now see a new variable called "MaxT_cat" that we will use to graph our data. Let's make that graph now. We will use "Mean_tempC" as our x variable, and we will use two different colors to represent our two maximum temperature categories.
-
-```{r temp_scat}
-ggplot(data=plant, aes(x=Mean_tempC,y=tot_cover,color=MaxT_cat)) +
-  geom_point() +
-  geom_smooth(method="lm") +
-  scale_color_manual(values=c("#ce9642","#3b7c70")) +
-  labs(x="Mean temperature", y="Total plant cover",color="Maximum temperature") +
-  theme_classic()
-```

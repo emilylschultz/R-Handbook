@@ -13,7 +13,7 @@
 
 <meta name="date" content="2023-02-15" />
 
-<title>ESS 3500 R Handbook, Lesson11</title>
+<title>ESS 3500 R Handbook, Lesson 9</title>
 
 <script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -304,7 +304,7 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson11</h1>
+<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 9</h1>
 <h4 class="author">Emily Schultz</h4>
 <h4 class="date">2023-02-15</h4>
 
@@ -317,8 +317,6 @@ id="toc-lesson-9-linear-regression">Lesson 9: Linear Regression</a>
 <ul>
 <li><a href="#simple-linear-regression"
 id="toc-simple-linear-regression">9.1 Simple linear regression</a></li>
-<li><a href="#multiple-regression" id="toc-multiple-regression">9.2
-Multiple regression</a></li>
 </ul></li>
 </ul>
 </div>
@@ -436,8 +434,10 @@ tell you about the effect of temperature on plant growth?</p>
 <h4>Likelihood-based approach</h4>
 <p>Next we will use a likelihood-based approach to test the same
 question. Once again, the approach is the same as what you used for the
-t-test and ANOVA, using the <code>AIC</code> function to compare the two
-models.</p>
+t-test and ANOVA, using the <code>AIC</code> function to compare the
+models. Since we have three models, we can include all three in the AIC
+function and then compare the AIC from both the plant_mean and plant_max
+models to the null model.</p>
 <pre class="r"><code>AIC(plant_null, plant_mean, plant_max)</code></pre>
 <pre><code>##            df      AIC
 ## plant_null  2 110.3634
@@ -445,118 +445,6 @@ models.</p>
 ## plant_max   3 108.9372</code></pre>
 <p>Based on this output, what would you conclude about the effect of
 mean and maximum temperature on plant growth?</p>
-</div>
-</div>
-<div id="multiple-regression" class="section level3">
-<h3>9.2 Multiple regression</h3>
-<p>In the previous section, we ran two regressions: one for each of our
-two models. However, we have discussed the problems with running
-multiple tests on the same data set. To address this, we can instead run
-a multiple regression, which is essentially the regression version of
-the two-way ANOVA. You can include multiple predictors in the same
-model, but this time, the predictor models are both continuous rather
-than categorical. We already built our null model and our models with
-only one predictor, now lets build our two models with both predictors
-(one without and one with interactions).</p>
-<pre class="r"><code>plant_both &lt;- lm(tot_cover ~ Mean_tempC + Max_tempC, plant)
-plant_int &lt;- lm(tot_cover ~ Mean_tempC * Max_tempC, plant)</code></pre>
-<div id="classical-frequentist-approach-1" class="section level4">
-<h4>Classical frequentist approach</h4>
-<p>For the classical frequentist approach, all we have to do is take a
-look at the output of our full model (both variables with an
-interaction), so we can interpret the effects of our predictors.</p>
-<pre class="r"><code>summary(plant_int)</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = tot_cover ~ Mean_tempC * Max_tempC, data = plant)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -16.493  -7.352   1.749   6.354  11.995 
-## 
-## Coefficients:
-##                      Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)            44.582      4.095  10.887 1.76e-06 ***
-## Mean_tempC             17.897      6.701   2.671   0.0256 *  
-## Max_tempC             -19.882      6.574  -3.024   0.0144 *  
-## Mean_tempC:Max_tempC   -2.931      2.929  -1.001   0.3431    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 11.36 on 9 degrees of freedom
-##   (6 observations deleted due to missingness)
-## Multiple R-squared:  0.5735, Adjusted R-squared:  0.4313 
-## F-statistic: 4.034 on 3 and 9 DF,  p-value: 0.04507</code></pre>
-<p>First, look at the statistics for the overall regression (the last
-line of the output). Based on this, does at least one of the predictors
-have a significant effect?</p>
-<p>Now look at the p-values from the t-test that compare each slope term
-to zero (in the Coefficients section). Based on these p-values, which
-effects (mean temperature, maximum temperature, interaction between mean
-and maximum temperature) are statistically significant?</p>
-</div>
-<div id="maximum-likelihood-approach" class="section level4">
-<h4>Maximum likelihood approach</h4>
-<p>You know the drill here. As usual, which just have to compare the AIC
-values between all of our models.</p>
-<pre class="r"><code>AIC(plant_null, plant_mean, plant_max, plant_both, plant_int)</code></pre>
-<pre><code>##            df      AIC
-## plant_null  2 110.3634
-## plant_mean  3 111.9256
-## plant_max   3 108.9372
-## plant_both  4 104.6580
-## plant_int   5 105.2864</code></pre>
-<p>Based on the AIC values, which model(s) is(are) the best? What does
-this tell you about which predictor are important for explaining plant
-cover?</p>
-</div>
-<div id="comparison-between-simple-and-multiple-regression"
-class="section level4">
-<h4>Comparison between simple and multiple regression</h4>
-<p>Look back at the conclusions you drew about the effects of your
-predictor variables from your single and multiple regressions. Do your
-conclusions match? Why do you think this is (hint: think about the
-results of your correlation analysis, where you looked at correlations
-between the predictor variables)?</p>
-<p>We’ll discuss this as a class, but think on your own/and or discuss
-in small groups first.</p>
-</div>
-<div id="graphing-multiple-regressions" class="section level4">
-<h4>Graphing multiple regressions</h4>
-<p>It is challenging to visualize two continuous predictor variable at
-the same time (I think 3D graphs are hard to read). One option is just
-to make separate scatter plots for each predictor, like we did above for
-our single regressions, but that does not allow you to see interactions
-between the two variables. What I often do is convert one of the
-predictors to a categorical variable (just for the graph, not for the
-test), and graph both of the predictors at the same time. We’ll try
-that.</p>
-<p>First, we will use the <code>mutate</code> function to create a new
-variable that converts maximum temperature to a category. We will just
-use two categories: high and low. High maximum temperature will be
-anything above the median maximum temperature from our data set, and low
-maximum temperature will be anything less than or equal to the median.
-To to this, we will use the <code>ifelse</code> function. This function
-allows us to set a value for something <strong>if</strong> it matches
-certain criteria (in this case, if the maximum temperature is greater
-than the median) and set a different values if it does not match the
-criteria.</p>
-<pre class="r"><code>library(tidyverse)
-
-med &lt;- median(plant$Max_tempC)
-plant &lt;- mutate(plant,MaxT_cat = ifelse(Max_tempC &gt; med, &quot;High&quot;, &quot;Low&quot;))</code></pre>
-<p>If you view the data set, you will now see a new variable called
-“MaxT_cat” that we will use to graph our data. Let’s make that graph
-now. We will use “Mean_tempC” as our x variable, and we will use two
-different colors to represent our two maximum temperature
-categories.</p>
-<pre class="r"><code>ggplot(data=plant, aes(x=Mean_tempC,y=tot_cover,color=MaxT_cat)) +
-  geom_point() +
-  geom_smooth(method=&quot;lm&quot;) +
-  scale_color_manual(values=c(&quot;#ce9642&quot;,&quot;#3b7c70&quot;)) +
-  labs(x=&quot;Mean temperature&quot;, y=&quot;Total plant cover&quot;,color=&quot;Maximum temperature&quot;) +
-  theme_classic()</code></pre>
-<p><img src="RHandbook_9_files/figure-html/temp_scat-1.png" width="672" /></p>
 </div>
 </div>
 </div>
