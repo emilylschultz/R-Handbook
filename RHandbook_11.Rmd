@@ -12,353 +12,96 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Lesson 11: Multiple Predictors
-In the previous lessons, we have worked with models that have only one independent and one dependent variable. However, it is common to have more than one independent variable that we would like the test. This is often particularly true when we do observational studies, and there are a whole suite of variable that might affect the response we measure. In this lesson, we will cover models with multiple predictors. We will focus on examples with only two predictors, but the methods can easily be extended to include more than two predictors as well.
+## Lesson 11: Categorical Data
+In all of our previous tests, we have worked with different versions of general linear models, in which our dependent variable have been continuous variable. In this lesson we will break away from the general linear model and work with categorial and count data.
 
-### 11.1 Two-way ANOVAs
+For this lesson, we will be working with data collected by Dr. Alan Garfinkel, who was researching methods for predicting the risk of heart attacks in older patients. Younger patients are often tested for heart attack risk by first exercising and then having their heart stress measured with an ECG. However, older patients are often unable to tolerate the exercise required for the test. Dr. Garfinkel was testing whether a medication called dobutamine, which mildly stresses the heart, can be used as an alternative. He gave patients a heart stress test after they took dobutamine, and then he followed the patients for a year to see if they had a heart attack within that time frame. This allowed him to test whether a positive result on the dobutamine stress test was a good predictor of heart attack risk.
 
-#### Example 1: millipedes
-For our first example, we will work with two categorical predictor variables. We will use a data set from the arthropod world this time, testing whether levels of an amino acid, alanine, vary between different species and different sexes of millipedes.
+### 11.1 Goodness of fit
+For our first test, we will run what is called a goodness of fit test. We can use this type of test to determine if the observed frequency of samples in different categories follow some expected frequency (the expected frequencies are the null hypothesis). In this example, we will work with the cardiac data and test whether male and female patients were equally represented in the study. In other words, was there a 50:50 ratio of male and female patients.
 
-##### Visualizing and building the models
+First, load the data set. Be sure your working directory is set to the location of the cardiac data file.
 
-We'll start off by loading and visualizing our data. Be sure your working directory is set to the location of the millipedes data file. We will also need to change the "species" variable to a factor.
-
-```{r mill_data}
-mill <- read.csv("millipedes.csv")
-mill$species <- as.factor(mill$species)
+```{r cardiac_data}
+cardiac <- read.csv("cardiac.csv")
 ```
 
-Now, let's make a box plot to visualize our data set. This will allow us to start looking at the patterns in the data, including possible interactions. We will put species on the x-axis and group and color our boxes by sex. This code includes a new `scale_fill_manual` function that allows us to manually select the colors we want to use. (See [A note about color in R] for more information about using colors in R.)
+Now, make a simple bar graph showing the frequency of male and female patients in the sample.
 
-```{r mill_boxplot}
+```{r gender_bar}
 library(ggplot2)
-ggplot(mill, aes(x=species, y=Alanine, fill=sex)) +
-  geom_boxplot() +
+ggplot(cardiac, aes(x=gender)) +
+  geom_bar() +
+  labs(x="Gender", y="Frequency") +
+  theme_classic()
+```
+
+Before we can run our Chi-square test to determine if males and females were equally represented, we have to summarize our data. The Chi-square test function in R requires a simple table with the count of samples in each category (the number of male and female patients, in this example). We can create this table easily in R using the `table` function. The argument for this function is the variable we want to summarize, in this case, the "gender" variable from our cardiac data frame. Sometimes it can also be helpful to see the proportions instead of the counts. We can convert our table into proportions using the `prop.table` function.
+
+```{r gender_prop}
+gender_table <- table(cardiac$gender)
+gender_prop <- prop.table(gender_table)
+```
+
+Now that we have our table with the counts of the two genders, we are ready to run our test. We will use the `chisq.test` function. The first arguments is the table with the counts, that we just created. The second argument is a vector with the expected proportion for each category. Because we are testing whether the genders are equally-represented, our expected frequencies (i.e., our null hypothesis) are 0.5 and 0.5.
+
+```{r gender_chi}
+gender_test <- chisq.test(gender_table, p=c(0.5,0.5))
+gender_test
+```
+
+Based on the output, were male and female patients equally represented in the study?
+
+If they are not equally represented, it is also important to determine which category is over-represented and which is under-represented. It is pretty easy in this case because we only have two categories, and we were testing if they had equal proportions. In other cases, the math might not be quite as simple, but we can get R to help us out. We can look at some additional output from the test to see the observed and expected values for each category as follows.
+
+```{r gender_exp}
+gender_test$observed
+gender_test$expected
+```
+
+Which gender was over-represented, and which gender was under-represented?
+
+### 11.2 Contingency table
+For the next test, we will work with a different type of question. Instead of just comparing the frequency in different categories of one variable, we will work with two sets of categories and test whether the frequencies of one categorical variable are affected by the other categorical variable. In this case, we will use the same cardiac data set to test whether patients who tested positive for heart stress on an ECG after receiving dobutamine were more likely to have a myocardial infarction (heart attack) within the next year than patients who tested negative for heart stress.
+
+We'll again begin by making a bar graph. This time, because we are looking at the frequencies in two different categories, we will make a stacked bar graph. We will use the ECG results as our x variable, and each bar the ECG result categories with have two colors, showing the proportion of patients in each of those categories that did or did not have a heart attack.
+
+```{r myo_bar}
+ggplot(cardiac, aes(x=posECG,fill=newMI)) +
+  geom_bar() +
+  labs(x="ECG results", y="Frequency") +
   scale_fill_manual(values=c("#ce9642","#3b7c70")) +
-  labs(x="Species", y="Alanine levels", fill = "Sex") +
   theme_classic()
 ```
 
-Based just on the graph, what patterns do you see in the data. Does species have an effect? What about sex? Does there appear to be an interaction between the two variables?
+Just like with the goodness of fit test, to run a Chi-square test on a contingency table, we have to convert our data to a table showing the frequency of individuals in each of the categories. In this case, our table will have two columns (positive and negative ECG tests) and two rows(heart attack or no heart attack). We will once again make two table: one showing the counts and the other showing the proportions in each category.
 
-Let's proceed with building our models. Now that we are working with two predictor models, we will have multiple alternative models representing four different hypotheses: (1) only sex matters, (2) only species matters, (3) both sex and species matter but don't interact, (4) both sex and species matter and they interact. The models are built in this order after the null model below.
-
-```{r mill_lm}
-mill_null <- lm(Alanine ~ 1, data = mill)
-mill_sex <- lm(Alanine ~ sex, data = mill)
-mill_species <- lm(Alanine ~ species, data = mill)
-mill_both <- lm(Alanine ~ sex + species, data = mill)
-mill_int <- lm(Alanine ~ sex*species, data = mill)
+```{r myo_prop}
+myo_table <- table(cardiac$newMI,cardiac$posECG)
+myo_prop <- prop.table(myo_table)
 ```
 
-To view the output of your models, type the name of each model. Just like when we have worked with this model before, the null model will have just an intercept. However, the alternative models will have multiple coefficients. Let's take a look at a couple of them.
+Now that we have our table with the counts, we can run our Chi-square test to see if patients who tested positive for heart stress were more likely to have a heart attack within the next year than patients who tested negative for heart stress. This time, we do not have to provide the expected frequencies because we are testing whether the frequency of heart attacks differs between the two test results, NOT if the frequency matches some specific expected frequency.
 
-First, view the coefficients of the `mill_both` model. You should see four coefficients. After the intercept, the first coefficient you will see is labeled "sexm". This is the value you would add to the intercept to get the alanine levels in male millipedes. Then you will see two intercepts for species. The first (species2) tells you what to add to the intercept to get alanine leves for species 2 (for a male of species 2, you would add both the sexm and species2 coefficients). The final coefficient is what you would add to the intercept to get the alanine levels for species 3.
-
-Now, view the coefficients of the `mill_int` model. Now, you will see two additional coefficients representing interactions between the sex and species variables. Based on this model, if you had a male of species 2, in addition to adding the sexm and species2 coefficients, you would also add the sexm:species2 coefficient, which account for how sex interacts with being species 2. For a male of species 3, you would similarly add the coefficient for sexm:species3. 
-
-I personally find it difficult to interpret what the interaction looks like just based on the coefficients. This is where our graphs can come in handy. Looking at our boxplot can help us see the nature of the interaction, if any, between our variables. Based on the graph, do you think the two independent variables interact?
-
-##### Testing the models: Classical Frequentist
-To test the models using a frequentist approach, we start with the same `aov` function that we used for a one-way ANOVA. The only difference is that we will include both of our independent variables in our formula. We will set up the formula in the same way we did for our interaction model above, because we want to test both the main effects and the interaction affect. Run the test and look at the output using the code below. Based on the output, we might have to run additional follow-up tests.
-
-```{r mill_2way}
-mill_2way <- aov(Alanine ~ sex*species,data=mill)
-summary(mill_2way)
+```{r myo_chi}
+myo_test <- chisq.test(myo_table)
+myo_test
 ```
 
-In the output, you should see a table with a row for each of the main effects (sex and species) and a row showing the results for the interaction between the variables (sex:species). Let's start by looking at the interaction effect, because that affect how we interpret the main effects. We can see from the table that the p-value for the interaction is greater than 0.05, so the interaction affect is not significant. This makes things easier for us because we can interpret the main effects based on the graph and the model coefficients, without worrying about how they interact!
+Notice when you run this test, you get a warning saying that the "Chi-square approximation may be incorrect". This is because you have a low sample size in one of your groups, so your count data might not be roughly normal. We can deal with this easily by adding an argument to our test. This argument will tell R to use simulations to estimate the p-value, which can be a better approach when you have low expected values for some groups.
 
-However, just like with a one-way ANOVA, when we have a categorical variable with more than two groups, such a species in this example, the ANOVA only tells us that at least one group is different. It doesn't tell us which specific groups are different. We therefore need to do a post hoc test to look at those pairwise differences. We can use the same `TukeyHSD` function that we used for post hoc tests after a one-way ANOVA. However, because we have more than one independent variable, we can choose to include both variables in the Tukey HSD test or only one variable. In this case, our sex variable has only two groups, so it is not necessary to include it in the post hoc test. We only need to include species, as shown in the code below. (If we needed to include both variable, we would list them both in the `c` function: `which=c("species","sex")`. If you don't list any variables, it will give the results for both variables independently, as well as their interaction.)
-
-```{r mill_tukey}
-TukeyHSD(mill_2way,which=c("species"))
+```{r simulate}
+myo_test <- chisq.test(myo_table, simulate.p.value = TRUE)
+myo_test
 ```
 
-You interpret this output in the same way you did following the one-way ANOVA. Which pairs of species show significant differences from each other?
+Based on the test result, what do you conclude about whether the dobutamine stress test was a good predictor of heart attack risk?
 
-##### Testing the models: Likelihood
-As we have for previous tests, we will use the `AIC` function to compare our models, but this time we have five different models to compare, instead of just two. We can compare all five at the same time. 
+To help interpret the data (e.g., see which observed values might be higher or lower than expected), we can again look at the observed and expected frequencies in each category. 
 
-```{r mill_AIC}
-AIC(mill_null,mill_sex,mill_species,mill_both,mill_int)
+```{r myo_exp}
+myo_test$observed
+myo_test$expected
 ```
 
-Based on the output table, which model was the best? Was it significantly better than the next best model? What do the differences in AIC values tell you about the effects of each predictor and their interaction?
-
-#### Example 2: hypertension
-For our second example, we will again work with two categorical predictor variables. We will use a data set from a medical test related to hyptertension. One common cause of hypertension is high sodium levels, which are controlled in part by an enzyme in the kidney called Na-K-ATPase. Researchers tested the activity of Na-K-ATPase in two strains of lab rats: a control strain and a strain selected to spontaneously develop hypertension. They wanted to know if Na-K-ATPase activity varied between these two strains and, if so, what sites in the kidney varied in their enzyme activity. The two independent variables are the rat strain (normal or hypertensive) and the kidney site (DCT, CCD, or OMC).
-
-##### Visualizing and building the models
-
-We'll start off by loading and visualizing our data. Be sure your working directory is set to the location of the kidney data file. 
-
-```{r kidney_data}
-kidney <- read.csv("kidney.csv")
-```
-
-Now, let's make a box plot to visualize our data set. We will put site on the x-axis and group and color our boxes by lab rat strain. 
-
-```{r kidney_boxplot}
-library(ggplot2)
-ggplot(kidney, aes(x=site, y=enzyme, fill=hyper)) +
-  geom_boxplot() +
-  scale_fill_manual(values=c("#ce9642","#3b7c70")) +
-  labs(x="Kidney Site", y="Enzyme levels", fill = "Strain") +
-  theme_classic()
-```
-
-Based just on the graph, what patterns do you see in the data. Do the strains differ in their enzyme activity? What the kidney sites? Does there appear to be an interaction between the two variables?
-
-Let's proceed with building our models. Again, we will have multiple alternative models representing four different hypotheses: (1) only strain matters, (2) only site matters, (3) both strain and site matter but don't interact, (4) both strain and site matter and they interact. The models are built in this order after the null model below.
-
-```{r kidney_lm}
-kidney_null <- lm(enzyme ~ 1, data = kidney)
-kidney_hyper <- lm(enzyme ~ hyper, data = kidney)
-kidney_site <- lm(enzyme ~ site, data = kidney)
-kidney_both <- lm(enzyme ~ hyper + site, data = kidney)
-kidney_int <- lm(enzyme ~ hyper*site, data = kidney)
-```
-
-View the output of your models by typing the name of each model. Based on the model outputs and the graph, without running the tests, how would you describe the patterns in your results.
-
-##### Testing the models: Classical Frequentist
-As in the previous example, we will start by using the `aov` function to run the overall two-way ANOVA.
-
-```{r kidney_2way}
-kidney_2way <- aov(enzyme ~ hyper*site, data=kidney)
-summary(kidney_2way)
-```
-
-In the output, you should see a similar table as you saw in the millipede example. Let's start by looking at the interaction effect again. We can see from the table that the p-value for the interaction is less than 0.05, so the interaction affect is significant this time. This makes things trickier because now we can't evaluate each main effect independently. Because the two variables interact, the each main effect depends on the value of the other independent variable.
-
-One way to deal with this non-independence is to split up our data into groups and run multiple one-way ANOVAs (or t-tests, depending on how many categories we have. For example, in this case, we are primarily interested in the difference between normal and hypertensive rats. Therefore, we can split our data into three groups, one for each kidney site, and then run three tests to compare normal and hypertensive rats at each site. 
-
-(Note: We do not want to split our data like this every time we run a two-way ANOVA. We only use this approach when there is a significant interaction.)
-
-A downside of this approach is that we are now running multiple tests on the same data set. We can't use a Tukey HSD test in this particular scenario, but what is another strategy we discussed in the last class that could work here?
-
-Now we will run t-tests to compare the normal and hypertensive rats at each individual kidney site. We will take advantage of two new functions: the `subset` function and the `with` function. The `subset` function will allow us to take a subset of the data containing only the kidney site we want. The `with` function will tell R to apply the t.test to the subset of the data that we took. We include the code for the t-test as the second argument of the `with` function.
-
-```{r kidney_ttest}
-with(subset(kidney,site=="CCD"),t.test(enzyme~hyper))
-```
-
-Now try adapting this code to run the t-test for the other two sites (DCT and OMCD). Based on the output of the three tests, which kidney sites show differences in enzyme activity between the two strains of mice? Don't forget to adjust your threshold p-value based on the number of tests you ran.
-
-##### Testing the models: Likelihood
-Now we will use the likelihood approach and `AIC` function to compare our models, just like we did with the millipede models. 
-
-```{r kidney_AIC}
-AIC(kidney_null,kidney_hyper,kidney_site,kidney_both,kidney_int)
-```
-
-Based on the output table, which model was the best? Was it significantly better than the next best model? What do the differences in AIC values tell you about the effects of each predictor and their interaction?
-
-
-### 11.2 Two continuous predictors (multiple regression)
-For our next example, we will work with two continuous predictor variable, sometimes called a multiple regression. We will use the carbon storage data set that we worked with once before, but this time will will look at some additional variables and consider how the levels of active bacteria and active fungi in the soil affect total carbon storage.
-
-#### Visualizing and building the models
-First, load the data.
-
-```{r carbon_data}
-carbon <- read.csv("carbon.csv")
-```
-
-There are many variables in the data set, but we will just focus on a few. "Tc" will be our response variable and "Active_Bacteria" and "Active_Lifespan" will be our two predictor variables.
-
-Now let's graph our data. It is challenging to visualize two continuous predictor variable at the same time (I think 3D graphs are hard to read). One option is just to make separate scatter plots for each predictor, but that does not allow you to see interactions between the two variables. What I often do is convert one of the predictors to a categorical variable (just for the graph, not for the test), and graph both of the predictors at the same time. We'll try that.
-
-First, we will use the `mutate` function to create a new variable that converts active fungi to a category. We will just use two categories: high and low. High active fungi will be anything above the median active fungi from our data set, and low weight will be anything less than or equal to the median. To to this, we will use the `ifelse` function. This function allows us to set a value for something **if** it matches certain criteria (in this case, if the active fungi is greater than the median) and set a different values if it does not match the criteria.
-
-```{r fungi_cat}
-library(tidyverse)
-
-med <- median(carbon$Active_Fungi)
-carbon <- mutate(carbon,Fungi_cat = ifelse(Active_Fungi > med, "High", "Low"))
-```
-
-If you view the data set, you will now see a new variable called "Weight_cat" that we will use to graph our data. Let's make that graph now. We will use "Lifespan" as our x variable, and we will use two different colors to represent our two weight categories.
-
-```{r carbon_scat}
-ggplot(data=carbon, aes(x=Active_Bacteria,y=Tc,color=Fungi_cat)) +
-  geom_point() +
-  geom_smooth(method="lm") +
-  scale_color_manual(values=c("#ce9642","#3b7c70")) +
-  labs(x="Active bacteria", y="Total carbon storage",color="Active fungi") +
-  theme_classic()
-```
-
-What are your initial interpretations based on the graph?
-
-Now, let's build our models. Just like our first example, we will have multiple alternative models that we test.
-
-```{r carbon_lm}
-carbon_null <- lm(Tc ~ 1, data = carbon)
-carbon_bac <- lm(Tc ~ Active_Bacteria, data = carbon)
-carbon_fungi <- lm(Tc ~ Active_Fungi, data = carbon)
-carbon_both <- lm(Tc ~ Active_Bacteria + Active_Fungi, data = carbon)
-carbon_int <- lm(Tc ~ Active_Bacteria*Active_Fungi, data = carbon)
-```
-
-Look at the summaries for some of your models. Do the coefficients for the different variable make sense based on what you saw in your graph?
-  
-  We will again check our assumption of normality before testing the models.
-
-```{r carbon_resid}
-resid_null_carbon <- resid(carbon_null)
-resid_bac_carbon <- resid(carbon_bac)
-resid_fungi_carbon <- resid(carbon_fungi)
-resid_both_carbon <- resid(carbon_both)
-resid_int_carbon <- resid(carbon_int)
-```
-
-```{r carbon_qq}
-qqnorm(resid_null_carbon)
-qqline(resid_null_carbon)
-
-qqnorm(resid_bac_carbon)
-qqline(resid_bac_carbon)
-
-qqnorm(resid_fungi_carbon)
-qqline(resid_fungi_carbon)
-
-qqnorm(resid_both_carbon)
-qqline(resid_both_carbon)
-
-qqnorm(resid_int_carbon)
-qqline(resid_int_carbon)
-```
-
-Yikes, this time, it looks like we have some skew in our data based on the curved shape of the points in our qqplots. Before we run the tests, we'll try a log transform to see if that makes our residuals less skewed. We can actually do this transform right in the formula of our linear model, instead of adding a new variable. We will just add the `log` function to our dependent variable (Tc).
-
-```{r logcarbon_lm}
-carbon_null <- lm(log(Tc) ~ 1, data = carbon)
-carbon_bac <- lm(log(Tc) ~ Active_Bacteria, data = carbon)
-carbon_fungi <- lm(log(Tc) ~ Active_Fungi, data = carbon)
-carbon_both <- lm(log(Tc) ~ Active_Bacteria + Active_Fungi, data = carbon)
-carbon_int <- lm(log(Tc) ~ Active_Bacteria*Active_Fungi, data = carbon)
-```
-
-Look at the summaries for some of your models. Do the coefficients for the different variable make sense based on what you saw in your graph?
-
-Now, we will check the residuals again, using the models with the log transformed data.
-
-```{r logcarbon_resid}
-resid_null_carbon <- resid(carbon_null)
-resid_bac_carbon <- resid(carbon_bac)
-resid_fungi_carbon <- resid(carbon_fungi)
-resid_both_carbon <- resid(carbon_both)
-resid_int_carbon <- resid(carbon_int)
-```
-
-```{r logcarbon_qq}
-qqnorm(resid_null_carbon)
-qqline(resid_null_carbon)
-
-qqnorm(resid_bac_carbon)
-qqline(resid_bac_carbon)
-
-qqnorm(resid_fungi_carbon)
-qqline(resid_fungi_carbon)
-
-qqnorm(resid_both_carbon)
-qqline(resid_both_carbon)
-
-qqnorm(resid_int_carbon)
-qqline(resid_int_carbon)
-```
-
-These look better now, so we'll move on with testing our models.
-
-#### Testing the models
-To test the models, we will use the same approach that we used with the first example.
-
-```{r carbon_AIC}
-AIC(carbon_null,carbon_bac,carbon_fungi,carbon_both,carbon_int)
-```
-
-Based on the AIC models, which model is the best? Is it significantly better than the others? Given this, along with the coefficients from the best model and the patterns you see in your graph, what can you conclude about the effects of the two predictor variables (bacteria and fungi levels)?
-  
-  ### 11.3 Continuous and categorial predictors
-  For our final example, we will look at a blend of the previous two types of predictors and consider a case where we have one continuous and one categorical predictor. We will use an example of butterfly endurance and how it is affected by both temperature and the genotype of the butterfly.
-
-#### Visualizing and building the models
-
-```{r butterfly_data}
-butterfly <- read.csv("butterfly.csv")
-```
-
-```{r butterfly_scat}
-ggplot(data=butterfly, aes(x=Temp,y=Endurance,color=Genotype)) +
-  geom_point() +
-  geom_smooth(method="lm") +
-  scale_color_manual(values=c("#ce9642","#3b7c70","#3b3a3e")) +
-  labs(x="Temperature") +
-  theme_classic()
-```
-
-What is your initial interpretation for how temperature and genotype affect the endurance of butterflies, based on the graph? Does unequal variances seem to be a problem?
-  
-  We will now move on to building our models: one null model and our four different alternative models.
-
-```{r butterfly_lm}
-butter_null <- lm(Endurance ~ 1, data=butterfly)
-butter_temp <- lm(Endurance ~ Temp, data=butterfly)
-butter_geno <- lm(Endurance ~ Genotype, data=butterfly)
-butter_both <- lm(Endurance ~ Temp + Genotype, data=butterfly)
-butter_int <- lm(Endurance ~ Temp*Genotype, data=butterfly)
-```
-
-Before testing these models, we'll check our residuals for normality.
-
-```{r butterfly_resid}
-resid_null_butter <- resid(butter_null)
-resid_temp_butter <- resid(butter_temp)
-resid_geno_butter <- resid(butter_geno)
-resid_both_butter <- resid(butter_both)
-resid_int_butter <- resid(butter_int)
-```
-
-```{r butterfly_qq}
-qqnorm(resid_null_butter)
-qqline(resid_null_butter)
-
-qqnorm(resid_temp_butter)
-qqline(resid_temp_butter)
-
-qqnorm(resid_geno_butter)
-qqline(resid_geno_butter)
-
-qqnorm(resid_both_butter)
-qqline(resid_both_butter)
-
-qqnorm(resid_int_butter)
-qqline(resid_int_butter)
-```
-
-Once again, the residuals don't look quite normal, but there doesn't seem to be a lot of skew, so we'll move on with testing our models.
-
-#### Testing the models
-Using the likelihood approach, we can again just use the `AIC` function to compare our five models:
-  
-  ```{r butterfly_AIC}
-AIC(butter_null,butter_temp,butter_geno,butter_both,butter_int)
-```
-
-Based on these AIC values, what can you conclude about the effects of temperature, genotype, and their interaction on butterfly endurance?
-
-### Optional practice problems
-Download the algae.csv file from Canvas. This data set contains data on the growth of algae under 4 different light levels (low, med low, med high, and high) and three different wave intensity (low, med, high). Researchers want to know if the light level and wave intensity affect algae growth. For the algae growth variable, we will be working with the natural log of growth (log_growth).
-
-1. Write the null and alternative hypotheses for the main effects and the interaction effect.
-
-2. Make a box plot to visualize the effect of both independent variables (light and wave) on algae growth.
-
-3. Run a two-way ANOVA using the classical frequentist approach. Run any follow-up tests as necessary.
-
-4. Build and compare your models using the likelihood approach. Don't forget to build models for both predictors individually, the predictors together, and the predictor together plus their interaction.
-
-5. State your conclusions from your analysis, including all necessary statistics.
+In this case, as expected from our p-value, the observed and expected frequencies match very closely.
