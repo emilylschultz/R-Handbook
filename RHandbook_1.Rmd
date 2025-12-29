@@ -2,13 +2,14 @@
 title: "ESS 3500 R Handbook, Lesson 1"
 author: "Emily Schultz"
 date: "2023-01-15"
-output: learnr::tutorial
-runtime: shiny_prerendered
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-library(learnr)
 ```
 
 ## LESSON 1: SETUP
@@ -86,11 +87,3 @@ Then hit enter. You should see a bunch of text pop up in the console as the pack
 
 If you need to install other packages, you can just use the same `install.packages()` command and simply put the name of the package you need inside the parentheses.
 
-```{r letter-a, echo=FALSE}
-question("What three packages did you install in this exercise?",
-  answer("dplyr", correct = TRUE),
-  answer("ggplot2", correct = TRUE),
-  answer("lme4", correct = TRUE),
-  answer("learnr")
-)
-```
