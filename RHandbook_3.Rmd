@@ -6,11 +6,11 @@ output:
   html_document:
     toc: true
     toc_depth: 3
-runtime: shiny_prerendered
+    includes:
+      in_header: header.html
 ---
 
 ```{r setup, include=FALSE}
-library(learnr)
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
@@ -64,19 +64,6 @@ You can also view just the names of the variable (i.e., the column names) in you
 
 ```{r names}
 names(DATA)
-```
-
-##### Exercise: viewing your data
-The code below will create a data frame called "water" and then display the full data set. Change the second line of code to view only the top six rows of data for the same data frame instead of the full data frame.
-
-```{r view-exercise, exercise=TRUE, exercise.eval=TRUE}
-water <- data.frame(Site=c(1:10),Temperature=rnorm(10,20,3))
-View(water)
-```
-
-```{r view-exercise-solution}
-water <- data.frame(Site=c(1:10),Temperature=rnorm(10,20,3))
-head(water)
 ```
 
 #### The structure of your data frame
@@ -173,6 +160,13 @@ DATA_SUMMARY
 
 When we use the `summarise()` function, notice that our first argument is not our original data frame. It is the new data frame we created with the `group_by` function. The following arguments are the summary variables we want to create. We first provide a name for our new variable, followed by an equal sign, and then provide the function and variable we want to summarize. In this case we are creating three summary variable using different summary functions.
 
+### Exercises
+<!---LEARNR EX 1-6-->
+   
+<iframe style="margin:0 auto; min-width: 100%;" id="myIframeL3" class="interactive" src="https://emilylschultz.shinyapps.io/RHandbookL3/" scrolling="no" frameborder="no"></iframe>
+   
+<!---------------->
+
 ### Data Frames Team Challenge
 Work with your team to complete the following tasks. Use the same DataFrameExample data set from above. (If the rest of your group isn't ready yet, feel free to start on the Data Frames Practice Problems assignment while you wait.)
 
@@ -181,11 +175,6 @@ Work with your team to complete the following tasks. Use the same DataFrameExamp
 3. Group the original data frame by year and summarize the data frame to calculate the mean growth and mean temperature for each year.
 4. Starting with your new summarized data frame, filter the data from to only include data from 2009. What was the average growth in 2009?
 
-```{r vector, echo=FALSE}
-question("What is the correct code for creating a vector called COUNTS that contains the following values: 4, 7, 10, 8, 4",
-  answer("COUNTS(4,7,10,8,4)"),
-  answer("COUNTS <- (4,7,10,8,4)"),
-  answer("COUNTS <- c(4,7,10,8,4)", correct = TRUE),
-  answer("COUNTS <- c[4,7,10,8,4]")
-)
-```
+<script>
+  iFrameResize({}, ".interactive");
+</script>
