@@ -12,6 +12,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+library(webexercises)
 ```
 
 ## Lesson 2: R BASICS
@@ -204,10 +205,11 @@ Notice that when I provided the argument for x (the set of numbers), I didn't in
 But how do you know what a function does, what arguments you need in a function and what the correct order of the arguments is? We will cover that in the next section.
 
 ### 2.5 Getting help in R
-If you forget how to use a function, need to learn a new function, or aren't sure where to begin to carry out a procedure in R, never fear! There are a lot of ways to get help. You are always welcome to use any resources to help with your coding. This handbook will stay on the Canvas page, and you can return to it at any time to refresh your memory on the things it covers. Another excellent way to get help is to make use of the internet. There is a huge community of R users out there, so there are tons of resources online. If you do a search for a problem you are having or a procedure you need to carry out, I can almost guarantee you will find answers online. Are you on Twitter? Believe it or not, that is another great resource. Post your question with #rstats, and you might find a helpful R expert will answer it for you! I have heard the #rstats community is both helpful and friendly!
+If you forget how to use a function, need to learn a new function, or aren't sure where to begin to carry out a procedure in R, never fear! There are a lot of ways to get help. You are always welcome to use any resources to help with your coding. This handbook will stay on the Canvas page, and you can return to it at any time to refresh your memory on the things it covers. Another excellent way to get help is to make use of the internet. There is a huge community of R users out there, so there are tons of resources online. If you do a search for a problem you are having or a procedure you need to carry out, I can almost guarantee you will find answers online. A simple search will bring up plenty of resourses, including videos and tutorials, for all of the functions we will use in this class.
 
 R also has its own help pages for every function, both functions in base R and functions in packages you download. Sometimes they are a bit technical, but they can be helpful for reminding you what functions do and what arguments you need to include in the function. There are a couple of ways to access the help pages. In RStudio, there is a Help tab in the bottom right-hand corner. You can search for a function or a topic in this help tab. You can also type code directly into the console to access a help page. If you know the name of the function you want, type `?` followed by the function name. For example if you want information about the standard deviation function, you would type `?sd`. The help page will open in the bottom right-hand corner on RStudio. If you can't remember the name of the function, you can search for a keyword instead, using `$$` followed by the keyword, and you will get a list of functions that are related to your keyword. If you knew you wanted to calculate the standard deviation, but didn't remember the function was `sd`, for example, you could type `??standarddeviation`. Note that you can't include a space in your keyword.
 
+### Exercises
 <!---LEARNR EX 1-->
    
 <iframe style="margin:0 auto; min-width: 100%;" id="myIframe1" class="interactive" src="https://emilylschultz.shinyapps.io/RHandbookL2/" scrolling="no" frameborder="no"></iframe>
