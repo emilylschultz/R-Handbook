@@ -1,5 +1,5 @@
 ---
-title: "ESS 3500 R Handbook, Lesson 11"
+title: "ESS 3500 R Handbook, Lesson 10"
 author: "Emily Schultz"
 date: "2023-04-23"
 output: 
@@ -12,12 +12,12 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Lesson 11: Categorical Data
+## Lesson 10: Categorical Data
 In all of our previous tests, we have worked with different versions of general linear models, in which our dependent variable have been continuous variable. In this lesson we will break away from the general linear model and work with categorial and count data.
 
 For this lesson, we will be working with data collected by Dr. Alan Garfinkel, who was researching methods for predicting the risk of heart attacks in older patients. Younger patients are often tested for heart attack risk by first exercising and then having their heart stress measured with an ECG. However, older patients are often unable to tolerate the exercise required for the test. Dr. Garfinkel was testing whether a medication called dobutamine, which mildly stresses the heart, can be used as an alternative. He gave patients a heart stress test after they took dobutamine, and then he followed the patients for a year to see if they had a heart attack within that time frame. This allowed him to test whether a positive result on the dobutamine stress test was a good predictor of heart attack risk.
 
-### 11.1 Goodness of fit
+### 10.1 Goodness of fit
 For our first test, we will run what is called a goodness of fit test. We can use this type of test to determine if the observed frequency of samples in different categories follow some expected frequency (the expected frequencies are the null hypothesis). In this example, we will work with the cardiac data and test whether male and female patients were equally represented in the study. In other words, was there a 50:50 ratio of male and female patients.
 
 First, load the data set. Be sure your working directory is set to the location of the cardiac data file.
@@ -61,7 +61,7 @@ gender_test$expected
 
 Which gender was over-represented, and which gender was under-represented?
 
-### 11.2 Contingency table
+### 10.2 Contingency table
 For the next test, we will work with a different type of question. Instead of just comparing the frequency in different categories of one variable, we will work with two sets of categories and test whether the frequencies of one categorical variable are affected by the other categorical variable. In this case, we will use the same cardiac data set to test whether patients who tested positive for heart stress on an ECG after receiving dobutamine were more likely to have a myocardial infarction (heart attack) within the next year than patients who tested negative for heart stress.
 
 We'll again begin by making a bar graph. This time, because we are looking at the frequencies in two different categories, we will make a stacked bar graph. We will use the ECG results as our x variable, and each bar the ECG result categories with have two colors, showing the proportion of patients in each of those categories that did or did not have a heart attack.
