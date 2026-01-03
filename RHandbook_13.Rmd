@@ -1,5 +1,5 @@
 ---
-title: "ESS 3500 R Handbook, Lesson 7"
+title: "ESS 3500 R Handbook, Lesson 13"
 author: "Emily Schultz"
 date: "2023-02-15"
 output: 
@@ -12,7 +12,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Lesson 7: ANOVAs
+## Lesson 13: ANOVAs
 In the previous lessons, we have been working with t-tests, which are used when you have a categorical independent variable with only 2 values and a continuous dependent variable. In this lesson, we will build on what you have learned and cover ANOVAs. ANOVAs are similar to t-tests, but they can be used when the categorical independent variable has **2 or more** values. In other words, they are are generalization of the t-test. They can be used in for the same type of data as a t-test, but in some additional circumstances as well.
 
 For this lesson, we will work with a new data set on the Coachella Valley fringe-toed lizard. This lizard is very endangered, so we are interested in how to best manage the species to improve the chances of persistence. We have data based on a simulation that estimates the time to extinction (TTE) for three different management plans: no reserve (“none”), a single reserve (“single”), and multiple reserves in a network (“network”).
@@ -37,7 +37,7 @@ library(ggplot2)
 
 Now, we are ready to get started. We will learn both the classical frequentist and likelihood approach.
 
-### 7.1 Frequentist approach
+### 13.1 Frequentist approach
 To run an ANOVA with the frequentist approach, the structure is similar to a t-test, but we will use a different function: `aov`. However, the arguments (input) of the function are the same as what we use for a t-test: our independent and dependent variable (don't forget to use the log of TTE) and the data set. To view the output of the test, instead of just typing the name of the test object, we will use the `summary` function, with the test object as the input of the function.
 
 ```{r aov}
@@ -94,7 +94,7 @@ pairwise.wilcox.test(lizard$TTE,lizard$Plan,p.adjust.method="holm")
 
 We interpret the output of these test in the same way we would for the normal pairwise comparisons.
 
-### 7.2 Maximum likelihood approach
+### 13.2 Maximum likelihood approach
 To use the maximum likelihood approach for an ANOVA, we use exactly the same procedure that we used for a t-test.
 
 We start by building our null and alternative models, using the `lm` function:
