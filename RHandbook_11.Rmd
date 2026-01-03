@@ -1,5 +1,5 @@
 ---
-title: "ESS 3500 R Handbook, Lesson 5"
+title: "ESS 3500 R Handbook, Lesson 11"
 author: "Emily Schultz"
 date: "2023-02-15"
 output: 
@@ -12,7 +12,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Lesson 5: Two-sample t-tests
+## Lesson 11: Two-sample t-tests
 In this lesson, you will practice running your first formal statistical test, a t-test! You will use both a classical frequentist and a likelihood-based approach to run the test.
 
 For this test, we will use the *civu.csv* data file. The civu data set contains data from an experiment designed to test the affects of native insect herbivory on a invasive bull thistles. We will use this data set to answer the following question: does insect herbivory affect the density of thistle plants?
@@ -33,7 +33,7 @@ civu$herbivory <- as.factor(civu$herbivory)
 
 Now we're ready to get started on our analysis!
 
-### 5.1 Visualizing the data
+### 11.1 Visualizing the data
 First, we are going to visualize the data. We will use two approaches: a standard boxplot and a density plot that shows the full distributions of our data.
 
 We will use the **ggplot2** package to make the graphs, so load that first:
@@ -77,7 +77,7 @@ The final line that is different is the addition of the "scale_fill_manual" func
 
 Playing around with colors in R can be fun! If you want to explore different color palettes, I included some information and resources in section 5.4 at the bottom of this lesson.
 
-### 5.2 Classical frequentist approach
+### 11.2 Classical frequentist approach
 Now that we have visualized the data, let's run the t-test itself. We will set up the model using the t-test function: `t.test`. The first argument for this function is the formula for our model, where we tell R our independent and dependent variables. The dependent variable goes on the left and the independent variable goes on the right. The second argument is the name of the data set. Then then final argument "var.equal = TRUE" tells R that we are assuming our two treatments have equal variance.
 
 ```{r civu_ttest}
@@ -102,7 +102,7 @@ You should see the following pieces in your output:
 
 Based on this output, would you reject the null hypothesis and tentatively accept the alternative hypothesis?
 
-### 5.3 Likelihood-based approach
+### 11.3 Likelihood-based approach
 Next we will use a likelihood-based approach to test the same question. For this, we will start by building our two linear models, just as we did in the Model Building lesson:
 
 ```{r civu_lm}
@@ -122,7 +122,7 @@ Based on this output, which is the better model? Is it significantly better?
 
 Does your conclusion from this approach match your conclusion from the classical frequentist approach?
 
-### 5.4 A note about color in R
+### 11.4 A note about color in R
 When we made our density plot, we included the `scale_fill_manual` function to specify the colors we wanted to use in the graph. You are not required to include this function. If you leave it out, ggplot will automatically choose colors based on its default color package. However, the ggplot's default color palette is not colorblind-friendly, so it is usually better to choose a different color palette. Below are some links to websites that can help you choose colors. When you list the colors you want to use, you can list the hex codes (as we do in our code in this lesson) or the name of the color (e.g., "blue"). If you use the `scale_fill_manual` function, or a similar function, to specify colors, be sure to include one color for every group in your variable. In our example, the variable displayed by the colors only had two groups (herbivory and no herbivory). If you have a variable with more than two groups, you need to list more than two colors.
 
 List of useful R color websites:
