@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Emily Schultz" />
+
+<meta name="date" content="2023-02-15" />
+
+<title>ESS 3500 R Handbook, Lesson 14</title>
+
+<script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">ESS 3500 R Handbook</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Lessons
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="RHandbook_1.html">Lesson 1: Software installation</a>
+    </li>
+    <li>
+      <a href="RHandbook_2.html">Lesson 2: R Basics</a>
+    </li>
+    <li>
+      <a href="RHandbook_3.html">Lesson 3: Data frames</a>
+    </li>
+    <li>
+      <a href="RHandbook_4.html">Lesson 4: Distributions and descriptive statistics</a>
+    </li>
+    <li>
+      <a href="RHandbook_5.html">Lesson 5: Two-sample t-test</a>
+    </li>
+    <li>
+      <a href="RHandbook_6.html">Lesson 6: Assumptions and transformations</a>
+    </li>
+    <li>
+      <a href="RHandbook_7.html">Lesson 7: ANOVA</a>
+    </li>
+    <li>
+      <a href="RHandbook_8.html">Lesson 8: Correlations</a>
+    </li>
+    <li>
+      <a href="RHandbook_9.html">Lesson 9: Regressions</a>
+    </li>
+    <li>
+      <a href="RHandbook_10.html">Lesson 10: Multiple predictors</a>
+    </li>
+    <li>
+      <a href="RHandbook_11.html">Lesson 11: Categorical data</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="RHandbook_templates.html">R Templates</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 14</h1>
+<h4 class="author">Emily Schultz</h4>
+<h4 class="date">2023-02-15</h4>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#lesson-14-linear-regression"
+id="toc-lesson-14-linear-regression">Lesson 14: Linear Regression</a>
+<ul>
+<li><a href="#simple-linear-regression"
+id="toc-simple-linear-regression">14.1 Simple linear regression</a></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="lesson-14-linear-regression" class="section level2">
+<h2>Lesson 14: Linear Regression</h2>
+<p>In this lesson, you will tackle a test that can be used when you have
+two continuous variables: linear regression. We will work with a plant
+cover data set that looks at climate variables as possible predictors of
+native plant cover.</p>
+<div id="simple-linear-regression" class="section level3">
+<h3>14.1 Simple linear regression</h3>
+<p>In this first section, we will individually test the effect of mean
+temperature and maximum temperature on the cover of native plant
+species. To begin, we will build and visualize the models.</p>
+<p>First, load the data set. Be sure your working directory is set
+correctly.</p>
+<pre class="r"><code>plant &lt;- read.csv(&quot;PlantSumm.csv&quot;)</code></pre>
+<p>For now, we’ll build three models: the null model, an alternative
+model for mean temperature, and an alternative model for maximum
+temperature.</p>
+<pre class="r"><code>plant_null &lt;- lm(tot_cover ~ 1, plant)
+plant_mean &lt;- lm(tot_cover ~ Mean_tempC, plant)
+plant_max &lt;- lm(tot_cover ~ Max_tempC, plant)</code></pre>
+<p>To view the output of your models, type the name of each model. Just
+like when we have worked with this model before, the null model will
+have just an intercept, and the alternative model will have a intercept
+and a slope term for the effect of either mean or maximum temperature on
+plant cover.</p>
+<p>Now, let’s create graphs to visualize our data. Because we have two
+continuous variables, a scatterplot is a good option. We will also
+include a best fit line based on our alternative model. We’ll make two
+graphs, one for each of our independent variables. If you haven’t
+already, load the <code>ggplot2</code> package first.</p>
+<pre class="r"><code>library(ggplot2)
+ggplot(plant, aes(x=Mean_tempC, y=tot_cover)) +
+  geom_point() +
+  geom_smooth(method=&quot;lm&quot;)+
+  labs(x=&quot;Mean temperature (C)&quot;, y=&quot;Total plant cover&quot;) +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_14_files/figure-html/plant_scatter-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(plant, aes(x=Max_tempC, y=tot_cover)) +
+  geom_point() +
+  geom_smooth(method=&quot;lm&quot;)+
+  labs(x=&quot;Max temperature (C)&quot;, y=&quot;Total plant cover&quot;) +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_14_files/figure-html/plant_scatter-2.png" width="672" /></p>
+<div id="classical-frequentist-approach" class="section level4">
+<h4>Classical Frequentist Approach</h4>
+<p>Let’s again start by analyzing the models using a frequentist
+approach. We don’t actually need to run any additional tests for this.
+We can just look at some additional output from the models we already
+ran.</p>
+<p>To view the additional output, use the <code>summary</code>
+function.</p>
+<pre class="r"><code>summary(plant_mean)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = tot_cover ~ Mean_tempC, data = plant)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -21.707 -13.027   4.722  10.964  21.556 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   40.812      4.359   9.362 1.42e-06 ***
+## Mean_tempC    -2.451      3.993  -0.614    0.552    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 15.47 on 11 degrees of freedom
+##   (6 observations deleted due to missingness)
+## Multiple R-squared:  0.03311,    Adjusted R-squared:  -0.05479 
+## F-statistic: 0.3767 on 1 and 11 DF,  p-value: 0.5518</code></pre>
+<pre class="r"><code>summary(plant_max)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = tot_cover ~ Max_tempC, data = plant)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -26.058  -7.017   3.003   7.405  19.695 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   41.846      3.913  10.695 3.76e-07 ***
+## Max_tempC     -6.526      3.583  -1.821   0.0958 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 13.79 on 11 degrees of freedom
+##   (6 observations deleted due to missingness)
+## Multiple R-squared:  0.2317, Adjusted R-squared:  0.1618 
+## F-statistic: 3.317 on 1 and 11 DF,  p-value: 0.09585</code></pre>
+<p>When you view the output, you will see a number of things. First, you
+will be able to see the the formula you used to build the models. Then
+you will see some information on the distribution of the residuals (the
+leftover variation not explained by your model). Next, you will see the
+coefficients from your model, along with standard error of the
+estimates. The coefficients section will also show you t-values and
+p-values for each coefficient. These are one-sample t-tests comparing
+the value of the coefficient to zero.</p>
+<p>The information we really want for our linear regression test is down
+at the very bottom. In the final section, you will see some R-squared
+values. These are a measure of how much variation in your dependent
+variable is explained by your independent variable (we will talk about
+this more in class). Below that, you will see the output of the linear
+regression test. First is the F-statistic (the same statistic that was
+calculated for the ANOVA). Then you will see the p-value. Based on these
+values, would your reject or accept the null hypothesis? What does this
+tell you about the effect of temperature on plant growth?</p>
+</div>
+<div id="likelihood-based-approach" class="section level4">
+<h4>Likelihood-based approach</h4>
+<p>Next we will use a likelihood-based approach to test the same
+question. Once again, the approach is the same as what you used for the
+t-test and ANOVA, using the <code>AIC</code> function to compare the
+models. Since we have three models, we can include all three in the AIC
+function and then compare the AIC from both the plant_mean and plant_max
+models to the null model.</p>
+<pre class="r"><code>AIC(plant_null, plant_mean, plant_max)</code></pre>
+<pre><code>##            df      AIC
+## plant_null  2 110.3634
+## plant_mean  3 111.9256
+## plant_max   3 108.9372</code></pre>
+<p>Based on this output, what would you conclude about the effect of
+mean and maximum temperature on plant growth?</p>
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

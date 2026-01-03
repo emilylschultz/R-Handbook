@@ -1,5 +1,5 @@
 ---
-title: "ESS 3500 R Handbook, Lesson 9"
+title: "ESS 3500 R Handbook, Lesson 14"
 author: "Emily Schultz"
 date: "2023-02-15"
 output: 
@@ -12,11 +12,11 @@ output:
 knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
 ```
 
-## Lesson 9: Linear Regression
+## Lesson 14: Linear Regression
 In this lesson, you will tackle a test that can be used when you have two continuous variables: linear regression. We will work with a plant cover data set that looks at climate variables as possible predictors of native plant cover.
 
 
-### 9.1 Simple linear regression
+### 14.1 Simple linear regression
 In this first section, we will individually test the effect of mean temperature and maximum temperature on the cover of native plant species. To begin, we will build and visualize the models.
 
 First, load the data set. Be sure your working directory is set correctly.
