@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Emily Schultz" />
+
+<meta name="date" content="2023-02-15" />
+
+<title>ESS 3500 R Handbook, Lesson 10</title>
+
+<script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+
+
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
+</style>
+
+
+<style type="text/css">
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #adb5bd;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script type="text/javascript">
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
+
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "\e258";
+  font-family: 'Glyphicons Halflings';
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">ESS 3500 R Handbook</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Home</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Lessons
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="RHandbook_1.html">Lesson 1: Software installation</a>
+    </li>
+    <li>
+      <a href="RHandbook_2.html">Lesson 2: R Basics</a>
+    </li>
+    <li>
+      <a href="RHandbook_3.html">Lesson 3: Data frames</a>
+    </li>
+    <li>
+      <a href="RHandbook_4.html">Lesson 4: Distributions and descriptive statistics</a>
+    </li>
+    <li>
+      <a href="RHandbook_5.html">Lesson 5: Two-sample t-test</a>
+    </li>
+    <li>
+      <a href="RHandbook_6.html">Lesson 6: Assumptions and transformations</a>
+    </li>
+    <li>
+      <a href="RHandbook_7.html">Lesson 7: ANOVA</a>
+    </li>
+    <li>
+      <a href="RHandbook_8.html">Lesson 8: Correlations</a>
+    </li>
+    <li>
+      <a href="RHandbook_9.html">Lesson 9: Regressions</a>
+    </li>
+    <li>
+      <a href="RHandbook_10.html">Lesson 10: Multiple predictors</a>
+    </li>
+    <li>
+      <a href="RHandbook_11.html">Lesson 11: Categorical data</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="RHandbook_templates.html">R Templates</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div id="header">
+
+
+
+<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 10</h1>
+<h4 class="author">Emily Schultz</h4>
+<h4 class="date">2023-02-15</h4>
+
+</div>
+
+<div id="TOC">
+<ul>
+<li><a href="#lesson-10-multiple-predictors"
+id="toc-lesson-10-multiple-predictors">Lesson 10: Multiple
+Predictors</a>
+<ul>
+<li><a href="#two-categorical-variables-two-way-anova"
+id="toc-two-categorical-variables-two-way-anova">10.1 Two categorical
+variables (Two-way ANOVA)</a></li>
+<li><a href="#continuous-and-categorial-predictors-ancova"
+id="toc-continuous-and-categorial-predictors-ancova">10.2 Continuous and
+categorial predictors (ANCOVA)</a></li>
+<li><a href="#two-continuous-predictors-multiple-regression"
+id="toc-two-continuous-predictors-multiple-regression">10.3 Two
+continuous predictors (multiple regression)</a></li>
+</ul></li>
+</ul>
+</div>
+
+<div id="lesson-10-multiple-predictors" class="section level2">
+<h2>Lesson 10: Multiple Predictors</h2>
+<p>In the previous lessons, we have worked with models that have only
+one independent and one dependent variable. However, it is common to
+have more than one independent variable that we would like the test.
+This is often particularly true when we do observational studies, and
+there are a whole suite of variables that might affect the response we
+measure. In this lesson, we will cover models with multiple predictors.
+We will focus on examples with only two predictors, but the methods can
+easily be extended to include more than two predictors as well.</p>
+<p>For these examples, we will only look at the likelihood approach,
+which can be more powerful for testing multiple alternative hypothesis.
+However, similar tests can be done with a classic frequentist approach,
+using two-way ANOVAs, ANCOVAs, and stepwise (multiple) regression, for
+the three examples, respectively.</p>
+<p>We will use both the <strong>ggplot2</strong> and
+<strong>dplyr</strong> packages in this lesson, so load those before you
+get started.</p>
+<pre class="r"><code>library(ggplot2)
+library(dplyr)</code></pre>
+<div id="two-categorical-variables-two-way-anova"
+class="section level3">
+<h3>10.1 Two categorical variables (Two-way ANOVA)</h3>
+<p>For our first example, we will work with two categorical predictor
+variables. We will use a data set from a medical test related to
+hyptertension. One common cause of hypertension is high sodium levels,
+which are controlled in part by an enzyme in the kidney called
+Na-K-ATPase. Researchers tested the activity of Na-K-ATPase in two
+strains of lab rats: a control strain and a strain selected to
+spontaneously develop hypertension. They wanted to know if Na-K-ATPase
+activity varied between these two strains and, if so, what sites in the
+kidney varied in their enzyme activity. The two independent variables
+are the rat strain (normal or hypertensive) and the kidney site (DCT,
+CCD, or OMC).</p>
+<div id="visualizing-and-building-the-models" class="section level4">
+<h4>Visualizing and building the models</h4>
+<p>We’ll start off by loading and visualizing our data. Be sure your
+working directory is set to the location of the kidney data file.</p>
+<pre class="r"><code>kidney &lt;- read.csv(&quot;kidney.csv&quot;)</code></pre>
+<p>Now, let’s make a box plot to visualize our data set. We will put
+site on the x-axis and group and color our boxes by lab rat strain
+(hypertensive or not).</p>
+<pre class="r"><code>ggplot(kidney, aes(x=site, y=enzyme, fill=hyper)) +
+  geom_boxplot() +
+  scale_fill_manual(values=c(&quot;#ce9642&quot;,&quot;#3b7c70&quot;)) +
+  labs(x=&quot;Kidney Site&quot;, y=&quot;Enzyme levels&quot;, fill = &quot;Strain&quot;) +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_15_files/figure-html/kidney_boxplot-1.png" width="672" /></p>
+<p>Based just on the graph, what patterns do you see in the data. Do the
+strains differ in their enzyme activity? What the kidney sites? Does
+there appear to be an interaction between the two variables?</p>
+<p>When you are working with categorical data, you can also use the
+<code>summarise</code> function to get the mean values for each of your
+groups, if you would like. You will want to group your data by both of
+your independent variables before summarizing:</p>
+<pre class="r"><code>grouped &lt;- group_by(kidney,site,hyper)
+kidney_summary &lt;- summarise(grouped,Mean_enzyme=mean(enzyme))</code></pre>
+<pre><code>## `summarise()` has grouped output by &#39;site&#39;. You can override using the
+## `.groups` argument.</code></pre>
+<pre class="r"><code>kidney_summary</code></pre>
+<pre><code>## # A tibble: 6 × 3
+## # Groups:   site [3]
+##   site  hyper Mean_enzyme
+##   &lt;chr&gt; &lt;chr&gt;       &lt;dbl&gt;
+## 1 CCD   hyp          18.2
+## 2 CCD   norm         25  
+## 3 DCT   hyp          44  
+## 4 DCT   norm         64.8
+## 5 OMC   hyp          11.2
+## 6 OMC   norm         10</code></pre>
+<p>Now let’s proceed with building our models. Again, we will have
+multiple alternative models representing four different hypotheses: (1)
+only strain matters, (2) only site matters, (3) both strain and site
+matter but don’t interact, (4) both strain and site matter and they
+interact. The models are built in this order after the null model
+below.</p>
+<pre class="r"><code>kidney_null &lt;- lm(enzyme ~ 1, data = kidney)
+kidney_hyper &lt;- lm(enzyme ~ hyper, data = kidney)
+kidney_site &lt;- lm(enzyme ~ site, data = kidney)
+kidney_both &lt;- lm(enzyme ~ hyper + site, data = kidney)
+kidney_int &lt;- lm(enzyme ~ hyper*site, data = kidney)</code></pre>
+<p>You can view the output of your models by typing the name of each
+model or using the summary function. I personally find it difficult to
+interpret what the interaction looks like just based on the
+coefficients. This is where our graphs can come in handy. Looking at our
+boxplot can help us see the nature of the interaction, if any, between
+our variables.</p>
+<p>Before we move on to testing our models, lets also check our
+assumption of normality. We will save the residuals from each model and
+look at the associated qqplots (you could make histograms instead if you
+find those easier to interpret).</p>
+<pre class="r"><code>resid_null &lt;- resid(kidney_null)
+resid_hyper &lt;- resid(kidney_hyper)
+resid_site &lt;- resid(kidney_site)
+resid_both &lt;- resid(kidney_both)
+resid_int &lt;- resid(kidney_int)</code></pre>
+<pre class="r"><code>qqnorm(resid_null)
+qqline(resid_null)</code></pre>
+<p><img src="RHandbook_15_files/figure-html/kidney_qq-1.png" width="672" /></p>
+<pre class="r"><code>qqnorm(resid_hyper)
+qqline(resid_hyper)</code></pre>
+<p><img src="RHandbook_15_files/figure-html/kidney_qq-2.png" width="672" /></p>
+<pre class="r"><code>qqnorm(resid_site)
+qqline(resid_site)</code></pre>
+<p><img src="RHandbook_15_files/figure-html/kidney_qq-3.png" width="672" /></p>
+<pre class="r"><code>qqnorm(resid_both)
+qqline(resid_both)</code></pre>
+<p><img src="RHandbook_15_files/figure-html/kidney_qq-4.png" width="672" /></p>
+<pre class="r"><code>qqnorm(resid_int)
+qqline(resid_int)</code></pre>
+<p><img src="RHandbook_15_files/figure-html/kidney_qq-5.png" width="672" /></p>
+<p>When you check the residuals for multiple competing models like this,
+you might find they look good for all of the models, they look bad for
+all of the models, or they look good for some models but bad for others.
+If they look good for all models, it’s of course fine to proceed. If
+they look bad for all models, that’s when you should try transforming
+your data. If you get a mix of good and bad, that likely means that some
+of the models (the ones with the bad residuals) are not as good for
+explaining the patterns in your data. You can proceed with the test and
+factor in the residuals as another consideration for which model best
+represents your data.</p>
+<p>Here, the distributions of the residuals probably aren’t normal for
+most of the models, but there is also no sign of a lot of skew. The ones
+that are not normal are probably fairly flat distributions. Therefore,
+we can probably be comfortable moving ahead with the tests.</p>
+<p>You can look at the box plot you alreay made to check variances. They
+don’t look great, but (I can tell you because I tried it), both square
+root and log transforms will make it worse, and our sample sizes are
+equal, so I recommend proceeding with the test.</p>
+</div>
+<div id="testing-the-models-likelihood" class="section level4">
+<h4>Testing the models: Likelihood</h4>
+<p>Now we will use the likelihood approach and <code>AIC</code> function
+to compare our models, just like we did with the millipede models.</p>
+<pre class="r"><code>AIC(kidney_null,kidney_hyper,kidney_site,kidney_both,kidney_int)</code></pre>
+<pre><code>##              df      AIC
+## kidney_null   2 217.8267
+## kidney_hyper  3 218.7425
+## kidney_site   4 183.5836
+## kidney_both   5 179.7022
+## kidney_int    7 175.1477</code></pre>
+<p>Based on the output table, which model was the best? Was it
+significantly better than the next best model? What do the differences
+in AIC values tell you about the effects of each predictor and their
+interaction?</p>
+</div>
+</div>
+<div id="continuous-and-categorial-predictors-ancova"
+class="section level3">
+<h3>10.2 Continuous and categorial predictors (ANCOVA)</h3>
+<p>For our final example, we will look at a blend of the previous two
+types of predictors and consider a case where we have one continuous and
+one categorical predictor. We will use an example of butterfly endurance
+and how it is affected by both temperature and the genotype of the
+butterfly.</p>
+<div id="visualizing-and-building-the-models-1" class="section level4">
+<h4>Visualizing and building the models</h4>
+<pre class="r"><code>butterfly &lt;- read.csv(&quot;butterfly.csv&quot;)</code></pre>
+<pre class="r"><code>ggplot(data=butterfly, aes(x=Temp,y=Endurance,color=Genotype)) +
+  geom_point() +
+  geom_smooth(method=&quot;lm&quot;) +
+  scale_color_manual(values=c(&quot;#ce9642&quot;,&quot;#3b7c70&quot;,&quot;#3b3a3e&quot;)) +
+  labs(x=&quot;Temperature&quot;) +
+  theme_classic()</code></pre>
+<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<p><img src="RHandbook_15_files/figure-html/butterfly_scat-1.png" width="672" /></p>
+<p>What is your initial interpretation for how temperature and genotype
+affect the endurance of butterflies, based on the graph? Does unequal
+variances seem to be a problem?</p>
+<p>We will now move on to building our models: one null model and our
+four different alternative models.</p>
+<pre class="r"><code>butter_null &lt;- lm(Endurance ~ 1, data=butterfly)
+butter_temp &lt;- lm(Endurance ~ Temp, data=butterfly)
+butter_geno &lt;- lm(Endurance ~ Genotype, data=butterfly)
+butter_both &lt;- lm(Endurance ~ Temp + Genotype, data=butterfly)
+butter_int &lt;- lm(Endurance ~ Temp*Genotype, data=butterfly)</code></pre>
+<p>For the sake of time, we won’t check the residuals here (I can tell
+you that they aren’t quite normal but are also not particularly skewed),
+but normally that is something you should do, following the same
+procedure you used for the kidney example. From the scatterplot we made,
+you can see the the variances are roughly equal. Therefore, let’s go
+ahead and proceed with the test.</p>
+</div>
+<div id="testing-the-models" class="section level4">
+<h4>Testing the models</h4>
+<p>Using the likelihood approach, we can again just use the
+<code>AIC</code> function to compare our five models:</p>
+<pre class="r"><code>AIC(butter_null,butter_temp,butter_geno,butter_both,butter_int)</code></pre>
+<pre><code>##             df       AIC
+## butter_null  2 103.12351
+## butter_temp  3  73.47012
+## butter_geno  4 105.64924
+## butter_both  5  55.27518
+## butter_int   7  58.88042</code></pre>
+<p>Based on these AIC values, what can you conclude about the effects of
+temperature, genotype, and their interaction on butterfly endurance?</p>
+</div>
+</div>
+<div id="two-continuous-predictors-multiple-regression"
+class="section level3">
+<h3>10.3 Two continuous predictors (multiple regression)</h3>
+<p>For our next example, we will work with two continuous predictor
+variables, sometimes called a multiple regression. We will use the
+climate and plant cover data we used for our simple regression
+lesson.</p>
+<p>In the simple, we ran two regressions: one for each of our two
+models. However, we have discussed the problems with running multiple
+tests on the same data set. Furthermore, if we run separate tests for
+our different predictors, we can’t look for interactions between the
+variables. To address this, we can instead run a multiple regression, in
+which we will account for both mean temperature and maximum temperature
+at the same time.</p>
+<p>First, load the data set. Be sure your working directory is set
+correctly.</p>
+<pre class="r"><code>plant &lt;- read.csv(&quot;PlantSumm.csv&quot;)</code></pre>
+<div id="visualizing-and-building-the-models-2" class="section level4">
+<h4>Visualizing and building the models</h4>
+<p>It is challenging to visualize two continuous predictor variable at
+the same time (I think 3D graphs are hard to read). One option is just
+to make separate scatter plots for each predictor, like we did above for
+our single regressions, but that does not allow you to see interactions
+between the two variables. What I often do is convert one of the
+predictors to a categorical variable (just for the graph, not for the
+test), and graph both of the predictors at the same time. We’ll try
+that.</p>
+<p>First, we will use the <code>mutate</code> function to create a new
+variable that converts maximum temperature to a category. We will just
+use two categories: high and low. High maximum temperature will be
+anything above the median maximum temperature from our data set, and low
+maximum temperature will be anything less than or equal to the median.
+To to this, we will use the <code>ifelse</code> function. This function
+allows us to set a value for something <strong>if</strong> it matches
+certain criteria (in this case, if the maximum temperature is greater
+than the median) and set a different values if it does not match the
+criteria.</p>
+<pre class="r"><code>med &lt;- median(plant$Max_tempC)
+plant &lt;- mutate(plant,MaxT_cat = ifelse(Max_tempC &gt; med, &quot;High&quot;, &quot;Low&quot;))</code></pre>
+<p>If you view the data set, you will now see a new variable called
+“MaxT_cat” that we will use to graph our data. Let’s make that graph
+now. We will use “Mean_tempC” as our x variable, and we will use two
+different colors to represent our two maximum temperature
+categories.</p>
+<pre class="r"><code>ggplot(data=plant, aes(x=Mean_tempC,y=tot_cover,color=MaxT_cat)) +
+  geom_point() +
+  geom_smooth(method=&quot;lm&quot;) +
+  scale_color_manual(values=c(&quot;#ce9642&quot;,&quot;#3b7c70&quot;)) +
+  labs(x=&quot;Mean temperature&quot;, y=&quot;Total plant cover&quot;,color=&quot;Maximum temperature&quot;) +
+  theme_classic()</code></pre>
+<pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
+<pre><code>## Warning: Removed 6 rows containing non-finite values (`stat_smooth()`).</code></pre>
+<pre><code>## Warning: Removed 6 rows containing missing values (`geom_point()`).</code></pre>
+<p><img src="RHandbook_15_files/figure-html/temp_scat-1.png" width="672" /></p>
+<p>What is your initial interpretation of the effects of mean and
+maximum temperature, based on the graph?</p>
+<p>Now let’s build our null and alternative models:</p>
+<pre class="r"><code>plant_null &lt;- lm(tot_cover ~ 1, plant)
+plant_mean &lt;- lm(tot_cover ~ Mean_tempC, plant)
+plant_max &lt;- lm(tot_cover ~ Max_tempC, plant)
+plant_both &lt;- lm(tot_cover ~ Mean_tempC + Max_tempC, plant)
+plant_int &lt;- lm(tot_cover ~ Mean_tempC * Max_tempC, plant)</code></pre>
+<p>Once again, your all-knowing advisor (me) tells you that your data
+satifactorily meet the assumptions of normality and equal variance, so
+go ahead and move on to the test.</p>
+</div>
+<div id="maximum-likelihood-approach" class="section level4">
+<h4>Maximum likelihood approach</h4>
+<p>You know the drill here. As usual, which just have to compare the AIC
+values between all of our models.</p>
+<pre class="r"><code>AIC(plant_null, plant_mean, plant_max, plant_both, plant_int)</code></pre>
+<pre><code>##            df      AIC
+## plant_null  2 110.3634
+## plant_mean  3 111.9256
+## plant_max   3 108.9372
+## plant_both  4 104.6580
+## plant_int   5 105.2864</code></pre>
+<p>Based on the AIC values, which model(s) is(are) the best? What does
+this tell you about which predictor are important for explaining plant
+cover?</p>
+</div>
+<div id="comparison-between-simple-and-multiple-regression"
+class="section level4">
+<h4>Comparison between simple and multiple regression</h4>
+<p>Look back at the conclusions you drew about the effects of your
+predictor variables from your simple and multiple regressions (you can
+always go back to Lesson 9 in the R Handbook to see the results from the
+simple regression if your own code isn’t easy to access). Do your
+conclusions match? Why do you think this might be?</p>
+<p>We’ll discuss this as a class, but think on your own/and or discuss
+in small groups first.</p>
+<p>As a hint, it might help to consider the relationship between the two
+independent variables (mean temperature and maximum temperature). You
+can see the relationship between the two in the scatterplot I create
+below.</p>
+<pre class="r"><code>ggplot(data=plant, aes(x=Mean_tempC, y=Max_tempC))+
+  geom_point()+
+  labs(x=&quot;Mean temperature (C)&quot;, y=&quot;Max temperature (C)&quot;)+
+  theme_classic()</code></pre>
+<p><img src="RHandbook_15_files/figure-html/correlation-1.png" width="672" /></p>
+</div>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
