@@ -11,7 +11,7 @@
 
 <meta name="author" content="Emily Schultz" />
 
-<meta name="date" content="2023-02-15" />
+<meta name="date" content="2023-01-29" />
 
 <title>ESS 3500 R Handbook, Lesson 5</title>
 
@@ -34,6 +34,7 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.5.16/iframeResizer.min.js" type="text/javascript"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -273,22 +274,19 @@ $(document).ready(function () {
       <a href="RHandbook_6.html">Lesson 6: Assumptions and transformations</a>
     </li>
     <li>
-      <a href="RHandbook_7.html">Lesson 7: Variations on the t-test</a>
+      <a href="RHandbook_7.html">Lesson 7: ANOVA</a>
     </li>
     <li>
-      <a href="RHandbook_8.html">Lesson 8: ANOVA</a>
+      <a href="RHandbook_8.html">Lesson 8: Correlations</a>
     </li>
     <li>
-      <a href="RHandbook_9.html">Lesson 9: Correlations</a>
+      <a href="RHandbook_9.html">Lesson 9: Regressions</a>
     </li>
     <li>
-      <a href="RHandbook_10.html">Lesson 10: Regressions</a>
+      <a href="RHandbook_10.html">Lesson 10: Multiple predictors</a>
     </li>
     <li>
-      <a href="RHandbook_11.html">Lesson 11: Multiple predictors</a>
-    </li>
-    <li>
-      <a href="RHandbook_12.html">Lesson 12: Categorical data</a>
+      <a href="RHandbook_11.html">Lesson 11: Categorical data</a>
     </li>
   </ul>
 </li>
@@ -309,264 +307,361 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 5</h1>
 <h4 class="author">Emily Schultz</h4>
-<h4 class="date">2023-02-15</h4>
+<h4 class="date">2023-01-29</h4>
 
 </div>
 
 <div id="TOC">
 <ul>
-<li><a href="#lesson-5-two-sample-t-tests"
-id="toc-lesson-5-two-sample-t-tests">Lesson 5: Two-sample t-tests</a>
+<li><a href="#lesson-5-data-frames" id="toc-lesson-5-data-frames">Lesson
+5: DATA FRAMES</a>
 <ul>
-<li><a href="#visualizing-the-data" id="toc-visualizing-the-data">5.1
-Visualizing the data</a></li>
-<li><a href="#classical-frequentist-approach"
-id="toc-classical-frequentist-approach">5.2 Classical frequentist
-approach</a></li>
-<li><a href="#likelihood-based-approach"
-id="toc-likelihood-based-approach">5.3 Likelihood-based
-approach</a></li>
-<li><a href="#a-note-about-color-in-r"
-id="toc-a-note-about-color-in-r">5.4 A note about color in R</a></li>
+<li><a href="#setting-your-working-directory"
+id="toc-setting-your-working-directory">5.1 Setting your working
+directory</a></li>
+<li><a href="#loading-data" id="toc-loading-data">5.2 Loading
+data</a></li>
+<li><a href="#getting-information-about-your-data-frame"
+id="toc-getting-information-about-your-data-frame">5.3 Getting
+information about your data frame</a></li>
+<li><a href="#manipulating-data-frames-with-the-dplyr-package"
+id="toc-manipulating-data-frames-with-the-dplyr-package">5.4
+Manipulating data frames with the <strong>dplyr</strong>
+package</a></li>
+<li><a href="#exercises" id="toc-exercises">Exercises</a></li>
+<li><a href="#data-frames-team-challenge"
+id="toc-data-frames-team-challenge">Data Frames Team Challenge</a></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="lesson-5-two-sample-t-tests" class="section level2">
-<h2>Lesson 5: Two-sample t-tests</h2>
-<p>In this lesson, you will practice running your first formal
-statistical test, a t-test! You will use both a classical frequentist
-and a likelihood-based approach to run the test.</p>
-<p>For this test, we will use the <em>civu.csv</em> data file. The civu
-data set contains data from an experiment designed to test the affects
-of native insect herbivory on a invasive bull thistles. We will use this
-data set to answer the following question: does insect herbivory affect
-the density of thistle plants?</p>
-<p>Start off by reading in the civu data set that we have worked with
-before. Be sure to first set your working directory to the folder with
-the civu dataset. Then use the <code>head</code> function to view the
-top rows of the data set, as a reminder of what data we have in the data
-frame.</p>
-<pre class="r"><code>civu &lt;- read.csv(&quot;civu.csv&quot;)
-head(civu)</code></pre>
-<pre><code>##   herbivory plant_id density_2006 density_2007 survival_t.1
-## 1         0       15           20            3            0
-## 2         0        7           26            5            0
-## 3         0       16           17            1            0
-## 4         0       22           26            5            0
-## 5         0       23           26            5            0
-## 6         0       12           20            3            0</code></pre>
-<pre class="r"><code>civu$herbivory &lt;- as.factor(civu$herbivory)</code></pre>
-<p>In this data set, the “herbivory” variable is our independent
-variable and the “density_2006” variable will be our dependent variable.
-Because the herbivory variable is categorical, we need to convert it to
-a factor variable, as we have done before:</p>
-<pre class="r"><code>civu$herbivory &lt;- as.factor(civu$herbivory)</code></pre>
-<p>Now we’re ready to get started on our analysis!</p>
-<div id="visualizing-the-data" class="section level3">
-<h3>5.1 Visualizing the data</h3>
-<p>First, we are going to visualize the data. We will use two
-approaches: a standard boxplot and a density plot that shows the full
-distributions of our data.</p>
-<p>We will use the <strong>ggplot2</strong> package to make the graphs,
-so load that first:</p>
-<pre class="r"><code>library(ggplot2)</code></pre>
-<div id="boxplot" class="section level4">
-<h4>Boxplot</h4>
-<p>We’ll begin with a boxplot. The syntax is similar to what you used to
-make histograms, with a few modifications. Here is the full code, will
-explanations of the modification below:</p>
-<pre class="r"><code>ggplot(data = civu, aes(x = herbivory, y = density_2006)) +
-  geom_boxplot() +
-  labs(x = &quot;Herbivory treatment&quot;, y = &quot;Density in 2006&quot;) +
-  theme_classic()</code></pre>
-<p><img src="RHandbook_5_files/figure-html/boxplot-1.png" width="672" /></p>
-<p>As will the histograms, we start with the <em>ggplot</em> function,
-where we tell R what data and variable we want to use in our graph. The
-data argument is where we input the name of our data frame, as before,
-and the variables in the aes function With a boxplot, we are graphing
-two variables (our independent and dependent variables) because we want
-to visualize the effect of one variable on another. Therefore, we need
-to include both an x and y variable in the aes function.</p>
-<p>In the next row down, we tell R what type of graph we want to make.
-Here, we want to make a box plot, so we use the <em>geom_boxplot</em>
-function.</p>
-<p>The other two lines are similar to the lines we used when we made
-histograms: they change the axis labels and some of the aesthetics of
-the graph.</p>
+<div id="lesson-5-data-frames" class="section level2">
+<h2>Lesson 5: DATA FRAMES</h2>
+<p>In this lesson, we will cover more details about how to work with
+data frames in R, including how to import data files into R, retrieve
+information about files, and manipulate data frames in R.</p>
+<div id="setting-your-working-directory" class="section level3">
+<h3>5.1 Setting your working directory</h3>
+<p>Today we will be working on importing data into R, so it is first
+important for us to know how to tell R where to look (i.e., in what
+folder on our computer) for the files we want to import.</p>
+<p>In the first lesson, when we looked at the layout of RStudio, I noted
+that one of the tabs in the bottom right-hand corner is the “Files” tab.
+This tab will show you all the files that are in your working directory,
+which is the folder R will search to find and save files. R usually has
+a default folder that it will set as your working directory unless you
+tell it otherwise.</p>
+<p>To help keep things organized, it is useful to store all of your
+R-related files for a single project in the same folder, and you will
+likely want to keep separate folders for separate projects. Then when
+you open R, you can set your working directory to that folder for the
+project you want to work on.</p>
+<p>There are a few ways to set your working directory. The easiest way
+for beginners is to use the drop-down menus in RStudio. Select “Session”
+from the menu bar at the top. Then hover over “Set Working Directory”
+and select “Choose Directory” from the new menu that appears. Then you
+will be able to use your file explorer to select the folder you want.
+When you do this, you will see a line a code appear in your console. The
+line of code is telling R to change the directory. If you know you will
+want to use that working directory again, then I would recommend copying
+and pasting the line of code into the top of your R script file. In the
+future, when you are working with that R script file, you can simply run
+that line of code to set the working directory.</p>
 </div>
-<div id="density-plot" class="section level4">
-<h4>Density plot</h4>
-<p>Now we will make a density plot that compares the full distributions
-of thistle density for the two herbivory treatments. Again, the syntax
-will be similar, but I will walk through the differences below:</p>
-<pre class="r"><code>ggplot(data=civu, aes(x=density_2006,fill=herbivory))+
-  geom_density(aes(y=after_stat(density)),alpha=0.5)+
-  scale_fill_manual(values=c(&quot;#ce9642&quot;,&quot;#3b7c70&quot;))+
-  labs(x=&quot;Thistles Density&quot;,y=&quot;Frequency&quot;)+
-  theme_classic()</code></pre>
-<p><img src="RHandbook_5_files/figure-html/density-1.png" width="672" /></p>
-<p>In the first line, where we input the variables we want to graph, we
-do things a little differenly here. In this type of graph, instead of
-having our independent variable on the x-axis and our dependent variable
-on the y-axis, we are plotting the frequency of our thistle density
-variable, like we did for the histograms, but we will show two separate
-frequency distributions for our two herbivory treatments, and we will
-show those distribution in two different colors. Therefore, in our aes
-function, we use the density_2006 variable and our x variable, and then
-we include the fill argument to tell R that we want two different fill
-colors for our graph, based on the herbivory category. This will tell R
-both that we want two separate distributions and that we want them to be
-shown with two different fill colors.</p>
-<p>In this next line down, we use the geom_density function that we have
-used before to tell R to make a probability density plot. The first
-argument (y=after_stat(density))) tells R to calculate the probability
-density of each thistle density, based on the frequency of the values in
-our data set. The second argument (alpha=0.5), adjusts the transparency
-of the colors in the graph. The alpha values can range from 0 to 1, with
-0 being fully transparent and 1 being fully opaque.</p>
-<p>The final line that is different is the addition of the
-“scale_fill_manual” function. This line is not required, but it allows
-you to choose the colors in your graph. If you do not include this line,
-R will use ggplot’s default color palette (be aware: the default color
-palette is not colorblind-friendly). The values I input in to the
-function are the hex codes for the colors I wanted to use. You can use
-either hex codes or the names of the colors. I like to use hex codes
-because they are more universal. Note that if you manually select your
-colors, you need to choose one color for each category. Here, we only
-have two categories: herbivory and no herbivory.</p>
-<p>Playing around with colors in R can be fun! If you want to explore
-different color palettes, I included some information and resources in
-section 5.4 at the bottom of this lesson.</p>
+<div id="loading-data" class="section level3">
+<h3>5.2 Loading data</h3>
+<p>In the previous lesson, we created a simple data frame directly in R.
+In general, particularly with large data sets it is far easier to enter
+your data into a program like Excel and then import the data into R. For
+the remainder of the lesson, we will work with a simple example data set
+I provided you with called “DataFrameExample.csv”. I recommend saving
+data files you want to work with in R as csv files. You can import Excel
+files into R, but it is often slower, especially if the files are large.
+The other benefit of csv files is that they are a non-proprietary file
+type, so they don’t require a specific program like Excel. This will
+make it easier to share your files with other researchers.</p>
+<p>Save the “DataFrameExample.csv” file in the folder you want to use as
+your working directory for this lesson. If you haven’t already, follow
+the directions in the previous section to set your working directory.
+Now you are ready to import the data. We will use the
+<code>read.csv()</code> function to import the data, and we will save
+the data as an object called <code>DATA</code>. R will automatically
+save it as a data frame object. Here is the code to use:</p>
+<pre class="r"><code>DATA &lt;- read.csv(&quot;DataFrameExample.csv&quot;)
+DATA</code></pre>
+<pre><code>##    Tree Year Number.cones Growth Temperature
+## 1     A 2009            0   0.21        8.58
+## 2     A 2010           14   0.26        8.67
+## 3     A 2011            0   0.20        8.32
+## 4     A 2012           35   0.15        9.68
+## 5     A 2013           14   0.21        9.09
+## 6     B 2009           64   0.21        7.28
+## 7     B 2010           22   0.23        7.36
+## 8     B 2011           64   0.23        7.05
+## 9     B 2012           22   0.19        8.45
+## 10    B 2013           57   0.17        7.85</code></pre>
+<p>Notice that R automatically identify the first row as a header row.
+That is because there is an optional “header” argument for the read.csv
+file, and the default for that argument is “TRUE”. If your data file
+does not have a header row, you would want to change the header argument
+to “FALSE”.</p>
+<p>You now have a data frame object ready to work with in R!</p>
+</div>
+<div id="getting-information-about-your-data-frame"
+class="section level3">
+<h3>5.3 Getting information about your data frame</h3>
+<p>R is pretty good at importing data and correctly identifying what
+time of data you have for each variable. Nevertheless, it is still
+important to take a look at your data frame to make sure it was imported
+correctly. You also might sometimes need a reminder of what variables
+you have in your data frame (I sometimes forget). Here, we will learn
+some ways to get basic information about your data frame.</p>
+<div id="viewing-your-data" class="section level4">
+<h4>Viewing your data</h4>
+<p>In the section above, we viewed the data frame right in the console
+by just typing the name of the data frame. If you have a small data
+frame like ours, that works pretty well, but if you have a large data
+frame with lots of variables, lots of observations, or both, that will
+be unwieldy, but we have some other options!</p>
+<p>One option is to just view the top few rows of our data frame. This
+is a good option if you want to remind yourself of what is in your data
+frame and confirm that everything looks the way you would expect (this
+can be helpful after you have imported your data or made changes to your
+data frame). To view your the top few rows of your data frame, use the
+<code>head()</code> function:</p>
+<pre class="r"><code>head(DATA)</code></pre>
+<pre><code>##   Tree Year Number.cones Growth Temperature
+## 1    A 2009            0   0.21        8.58
+## 2    A 2010           14   0.26        8.67
+## 3    A 2011            0   0.20        8.32
+## 4    A 2012           35   0.15        9.68
+## 5    A 2013           14   0.21        9.09
+## 6    B 2009           64   0.21        7.28</code></pre>
+<p>On occasion, you might want to view your entire data frame. If your
+data frame is large, you can use the <code>View()</code> function to
+view the data frame in a separate tab:</p>
+<pre class="r"><code>View(DATA)</code></pre>
+<p>You should now see your data frame appear in a new tab next to your
+script files.</p>
+<p>You can also view just the names of the variable (i.e., the column
+names) in your data frame:</p>
+<pre class="r"><code>names(DATA)</code></pre>
+<pre><code>## [1] &quot;Tree&quot;         &quot;Year&quot;         &quot;Number.cones&quot; &quot;Growth&quot;       &quot;Temperature&quot;</code></pre>
+</div>
+<div id="the-structure-of-your-data-frame" class="section level4">
+<h4>The structure of your data frame</h4>
+<p>The variables in your data frame can be a number of different data
+types, including continuous numeric data, integers, factors (categorical
+variables), and characters (text). When you import a data frame, R will
+do its best to identify the variable type based on the data in each
+column. It is usually pretty good, but sometimes it makes mistakes
+(often because we used some poor practices when entering the data, like
+putting notes into a variable column instead of having a separate column
+for notes). Sometimes it doesn’t matter if the data type is identified
+incorrectly, but for some purposes including statistical tests and
+graphing, it can be important. It is therefore good practice to check
+your data frame and make sure the data types are correct.</p>
+<p>To look at the structure of a data frame, including the data type for
+each variable, we use the <code>str()</code> function.</p>
+<pre class="r"><code>str(DATA)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    10 obs. of  5 variables:
+##  $ Tree        : chr  &quot;A&quot; &quot;A&quot; &quot;A&quot; &quot;A&quot; ...
+##  $ Year        : int  2009 2010 2011 2012 2013 2009 2010 2011 2012 2013
+##  $ Number.cones: int  0 14 0 35 14 64 22 64 22 57
+##  $ Growth      : num  0.21 0.26 0.2 0.15 0.21 0.21 0.23 0.23 0.19 0.17
+##  $ Temperature : num  8.58 8.67 8.32 9.68 9.09 7.28 7.36 7.05 8.45 7.85</code></pre>
+<p>You will now see a list of the variables in your data base. Next to
+each variable, it will show you the data type (chr = character, int =
+integer, num = continuous numeric), along with the first several values
+of each variable in your data frame. It looks like it did a good job
+identifying our data types, but let’s make one change to show you how it
+is done. Our Tree variable was identified as a character variable, but
+because that is a categorical variable identifying the tree each data
+point came from, it might be helpful to make it a factor variable
+instead. Run the following code to make the change:</p>
+<pre class="r"><code>DATA$Tree &lt;- as.factor(DATA$Tree)</code></pre>
+<p>Notice I used the <code>$</code> symbol to identify the variable in
+the data frame I wanted to change, and I told R to replace the original
+variable with the factor version of the save variable.</p>
+<p>Now let’s look at the structure of the data frame again.</p>
+<pre class="r"><code>str(DATA)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    10 obs. of  5 variables:
+##  $ Tree        : Factor w/ 2 levels &quot;A&quot;,&quot;B&quot;: 1 1 1 1 1 2 2 2 2 2
+##  $ Year        : int  2009 2010 2011 2012 2013 2009 2010 2011 2012 2013
+##  $ Number.cones: int  0 14 0 35 14 64 22 64 22 57
+##  $ Growth      : num  0.21 0.26 0.2 0.15 0.21 0.21 0.23 0.23 0.19 0.17
+##  $ Temperature : num  8.58 8.67 8.32 9.68 9.09 7.28 7.36 7.05 8.45 7.85</code></pre>
+<p>We can see that the Tree variable is now a factor with two different
+levels: A and B.</p>
+<p>There are equivalent functions to convert to the other variable
+types: <code>as.numeric()</code>, <code>as.integer</code>, and
+<code>as.character()</code>.</p>
 </div>
 </div>
-<div id="classical-frequentist-approach" class="section level3">
-<h3>5.2 Classical frequentist approach</h3>
-<p>Now that we have visualized the data, let’s run the t-test itself. We
-will set up the model using the t-test function: <code>t.test</code>.
-The first argument for this function is the formula for our model, where
-we tell R our independent and dependent variables. The dependent
-variable goes on the left and the independent variable goes on the
-right. The second argument is the name of the data set. Then then final
-argument “var.equal = TRUE” tells R that we are assuming our two
-treatments have equal variance.</p>
-<pre class="r"><code>civu_ttest &lt;- t.test(density_2006 ~ herbivory, data = civu, var.equal = TRUE)</code></pre>
-<p>To view the output, just type the name you gave to your t-test
-object:</p>
-<pre class="r"><code>civu_ttest</code></pre>
-<pre><code>## 
-##  Two Sample t-test
-## 
-## data:  density_2006 by herbivory
-## t = -8.2506, df = 148, p-value = 7.941e-14
-## alternative hypothesis: true difference in means between group 0 and group 1 is not equal to 0
-## 95 percent confidence interval:
-##  -21.07172 -12.92828
-## sample estimates:
-## mean in group 0 mean in group 1 
-##              21              38</code></pre>
-<p>You should see the following pieces in your output:</p>
+<div id="manipulating-data-frames-with-the-dplyr-package"
+class="section level3">
+<h3>5.4 Manipulating data frames with the <strong>dplyr</strong>
+package</h3>
+<p>There are any number of ways we might want to manipulate our data
+sets, and, like with many aspects of programming, there are various ways
+to go about it. In this class, we will focus on using the
+<strong>dplyr</strong> packages. We will look at a few different ways of
+manipulating our data frames, but there are many more! There is a great
+resource online called <a href="https://r4ds.had.co.nz/">R for Data
+Science</a>. It is a comprehensive guide to using R for managing,
+visualizing, and analyzing data in R, with a particular focus on
+<strong>dplyr</strong>. Check it out if you want/need to learn more!</p>
+<p>For this section, you will need to activate the
+<strong>dplyr</strong> packages. This is something that needs to be done
+every time you start a new R session if there are packages in addition
+to base R that you want to use. Enter the following code to activate
+<strong>dplyr</strong>:</p>
+<pre class="r"><code>library(dplyr)</code></pre>
+<div id="filtering-data" class="section level4">
+<h4>Filtering data</h4>
+<p>Filtering is used to select a subset of observations from your data
+frame. For example, our data frame contains data from two different
+trees, but we might want to create a data frame that contains only the
+data for a single tree. We can do this with the <code>filter</code>
+function as follows:</p>
+<pre class="r"><code>DATA_A &lt;- filter(DATA, Tree==&quot;A&quot;)
+DATA_A</code></pre>
+<pre><code>##   Tree Year Number.cones Growth Temperature
+## 1    A 2009            0   0.21        8.58
+## 2    A 2010           14   0.26        8.67
+## 3    A 2011            0   0.20        8.32
+## 4    A 2012           35   0.15        9.68
+## 5    A 2013           14   0.21        9.09</code></pre>
+<p>The new data frame now only has the data for Tree A. Notice a couple
+things about the code. First, notice the use of the double equals signs
+(<code>==</code>). We use the double equals signs when we are making a
+logical statement (i.e., give me all the values that equal a particular
+value). Also notice that the “A” is in quotes. For factor and character
+variables, the value of the variable needs to be in quotes.</p>
+<p>We are not restricted to using <code>==</code> in our logical
+statement. We can also use things like greater than (&gt;) or less than
+(&lt;), and we can include multiple criteria. Below is an example of
+using greater than or less than criteria for two different
+variables.</p>
+<pre class="r"><code>DATA_SUBSET &lt;- filter(DATA, Growth &lt; 0.2, Temperature &gt; 8)
+DATA_SUBSET</code></pre>
+<pre><code>##   Tree Year Number.cones Growth Temperature
+## 1    A 2012           35   0.15        9.68
+## 2    B 2012           22   0.19        8.45</code></pre>
+<p>The resulting data frame has only observations where growth was less
+that 0.2 and temperature was greater than 8.</p>
+</div>
+<div id="selecting-columns" class="section level4">
+<h4>Selecting columns</h4>
+<p>In the section above, we selected a subset of observations, but we
+might also want to select a subset of variables (columns) from our data
+frame. For example, maybe we are only interested in the number of cones
+produced by each tree in each year. We can use the <code>select()</code>
+function to select only those three variables:</p>
+<pre class="r"><code>DATA_CONES &lt;- select(DATA, Tree, Year, Number.cones)
+DATA_CONES</code></pre>
+<pre><code>##    Tree Year Number.cones
+## 1     A 2009            0
+## 2     A 2010           14
+## 3     A 2011            0
+## 4     A 2012           35
+## 5     A 2013           14
+## 6     B 2009           64
+## 7     B 2010           22
+## 8     B 2011           64
+## 9     B 2012           22
+## 10    B 2013           57</code></pre>
+</div>
+<div id="creating-new-variables" class="section level4">
+<h4>Creating new variables</h4>
+<p>One common manipulation we might want to make to a data frame is to
+calculate a new variable, possibly based on data we already have in our
+data frame. For example, we might have measured the length and width of
+a plant and then want to multiply the length and width variable together
+to calculate the area covered by the plant. We can use the
+<code>mutate()</code> function in the <strong>dplyr</strong> package to
+create new variables. In our example, we will log transform (i.e., take
+the natural log of) our temperature variable:</p>
+<pre class="r"><code>DATA_LOG &lt;- mutate(DATA,log_Temperature = log(Temperature))
+DATA_LOG</code></pre>
+<pre><code>##    Tree Year Number.cones Growth Temperature log_Temperature
+## 1     A 2009            0   0.21        8.58        2.149434
+## 2     A 2010           14   0.26        8.67        2.159869
+## 3     A 2011            0   0.20        8.32        2.118662
+## 4     A 2012           35   0.15        9.68        2.270062
+## 5     A 2013           14   0.21        9.09        2.207175
+## 6     B 2009           64   0.21        7.28        1.985131
+## 7     B 2010           22   0.23        7.36        1.996060
+## 8     B 2011           64   0.23        7.05        1.953028
+## 9     B 2012           22   0.19        8.45        2.134166
+## 10    B 2013           57   0.17        7.85        2.060514</code></pre>
+<p>If we wanted to add multiple new variables at the same time, we would
+simply add each new variable as a new argument, separated by commas.</p>
+</div>
+<div id="summarizing-data" class="section level4">
+<h4>Summarizing data</h4>
+<p>Another useful manipulation is summarizing our data. Maybe we want to
+summarize the data for each tree across all years of the study.There are
+a number of ways to summarize the data. We could take the average,
+maximum, minimum, sum, or any number of other functions. We’ll use a
+different function on each variable we summarize, so you can see a
+variety of examples.</p>
+<p>The first step in summarizing is to tell R what we want to use as our
+grouping variable(s). If we want to summarize the data for each tree
+across all years, Tree will be our grouping variable. We will create a
+new data frame, grouping our data by our grouping variable, using the
+<code>group_by()</code> function.</p>
+<pre class="r"><code>TREE &lt;- group_by(DATA,Tree)</code></pre>
+<p>If we had wanted to group by multiple variables, we could add them
+after tree, separated by commas.</p>
+<p>Now we will summarize the data for each tree. We will calculate the
+total (sum) number of cones, the average growth, and the maximum
+temperature.</p>
+<pre class="r"><code>DATA_SUMMARY &lt;- summarise(TREE, Total.cones = sum(Number.cones), Mean.growth = mean(Growth), Max.temperature = max(Temperature))
+DATA_SUMMARY</code></pre>
+<pre><code>## # A tibble: 2 × 4
+##   Tree  Total.cones Mean.growth Max.temperature
+##   &lt;fct&gt;       &lt;int&gt;       &lt;dbl&gt;           &lt;dbl&gt;
+## 1 A              63       0.206            9.68
+## 2 B             229       0.206            8.45</code></pre>
+<p>When we use the <code>summarise()</code> function, notice that our
+first argument is not our original data frame. It is the new data frame
+we created with the <code>group_by</code> function. The following
+arguments are the summary variables we want to create. We first provide
+a name for our new variable, followed by an equal sign, and then provide
+the function and variable we want to summarize. In this case we are
+creating three summary variable using different summary functions.</p>
+</div>
+</div>
+<div id="exercises" class="section level3">
+<h3>Exercises</h3>
+<!---LEARNR EX 1-6-->
+<iframe style="margin:0 auto; min-width: 100%;" id="myIframeL3" class="interactive" src="https://emilylschultz.shinyapps.io/RHandbookL3/" scrolling="no" frameborder="no">
+</iframe>
+<!---------------->
+</div>
+<div id="data-frames-team-challenge" class="section level3">
+<h3>Data Frames Team Challenge</h3>
+<p>Work with your team to complete the following tasks. Use the same
+DataFrameExample data set from above. (If the rest of your group isn’t
+ready yet, feel free to start on the Data Frames Practice Problems
+assignment while you wait.)</p>
 <ol style="list-style-type: decimal">
-<li>data: This just tells you what variables went into your model</li>
-<li>t: This is the value of your test statistic (t)</li>
-<li>df: This is your degrees of freedom. We will discuss this in more
-detail later, but it is related to your sample size.</li>
-<li>p-value: This is the probability of observing your test statistic or
-a more extreme test statistic, assuming your null model is true.</li>
-<li>alternative hypothesis: This is a verbal statement of the
-alternative hypothesis being tested.</li>
-<li>95 percent confidence interval: If you repeated this experiment over
-and over, you would expect that 95% of the time, the difference in the
-sample means of the two treatment would fall between these two
-values.</li>
-<li>sample estimates: These are the means calculated for your two
-treatment groups.</li>
+<li>Start with the original data frame. Extract the Number.cones column
+from the data frame and save it as a vector. (Review the Data Frame
+section in Lesson 2.3 if necessary.)</li>
+<li>Use indexing to remove the zeros from your vector. Then calculate
+the mean and standard deviation of the remaining numbers of cones.
+(Review the Vectors section in Lesson 2.3 if necessary.)</li>
+<li>Group the original data frame by year and summarize the data frame
+to calculate the mean growth and mean temperature for each year.</li>
+<li>Starting with your new summarized data frame, filter the data from
+to only include data from 2009. What was the average growth in
+2009?</li>
 </ol>
-<p>Based on this output, would you reject the null hypothesis and
-tentatively accept the alternative hypothesis?</p>
-</div>
-<div id="likelihood-based-approach" class="section level3">
-<h3>5.3 Likelihood-based approach</h3>
-<p>Next we will use a likelihood-based approach to test the same
-question. For this, we will start by building our two linear models,
-just as we did in the Model Building lesson:</p>
-<pre class="r"><code>civu_null &lt;- lm(density_2006 ~ 1, civu)
-civu_alt &lt;- lm(density_2006 ~ herbivory, civu)</code></pre>
-<p>Now, we just need to calculate the Akaike’s Information Criterion
-(AIC) values for the two models. We can do this using the
-<code>AIC</code> function. As the arguments, we just need to list the
-models we want to compare. We can compare more than two models at once,
-but for this question, we just have our null model and one alternative
-model.</p>
-<pre class="r"><code>AIC(civu_null, civu_alt)</code></pre>
-<pre><code>##           df      AIC
-## civu_null  2 1178.015
-## civu_alt   3 1123.255</code></pre>
-<p>You should see the output automatically appear in a table. The first
-column lists the model. The second column (df) lists the number of
-parameters in each model (remember, AIC penalizes for adding
-parameters). The final column lists the AIC values for each model. The
-lower the AIC value, the better the model. A difference of 2 or more
-between the AIC values indicates that one model is significantly better
-than the other.</p>
-<p>Based on this output, which is the better model? Is it significantly
-better?</p>
-<p>Does your conclusion from this approach match your conclusion from
-the classical frequentist approach?</p>
-</div>
-<div id="a-note-about-color-in-r" class="section level3">
-<h3>5.4 A note about color in R</h3>
-<p>When we made our density plot, we included the
-<code>scale_fill_manual</code> function to specify the colors we wanted
-to use in the graph. You are not required to include this function. If
-you leave it out, ggplot will automatically choose colors based on its
-default color package. However, the ggplot’s default color palette is
-not colorblind-friendly, so it is usually better to choose a different
-color palette. Below are some links to websites that can help you choose
-colors. When you list the colors you want to use, you can list the hex
-codes (as we do in our code in this lesson) or the name of the color
-(e.g., “blue”). If you use the <code>scale_fill_manual</code> function,
-or a similar function, to specify colors, be sure to include one color
-for every group in your variable. In our example, the variable displayed
-by the colors only had two groups (herbivory and no herbivory). If you
-have a variable with more than two groups, you need to list more than
-two colors.</p>
-<p>List of useful R color websites:</p>
-<ol style="list-style-type: decimal">
-<li><p><a
-href="https://sape.inf.usi.ch/quick-reference/ggplot2/colour">ggplot 2
-Quick reference: colors</a>. This website includes a chart will color
-names in R, along with additional information about using color in
-ggplot.</p></li>
-<li><p><a
-href="https://colorbrewer2.org/#type=sequential&amp;scheme=BuGn&amp;n=3">ColorBrewer</a>.
-The ColorBrewer website provides a set of color palettes that you can
-use in R. You can choose sequential, diverging, or qualitative palettes,
-and there is an option for colorblind-friendly palettes. The website
-will provide the hex codes for the colors in the palette.</p></li>
-<li><p><a
-href="https://github.com/BlakeRMills/MetBrewer?tab=readme-ov-file">MetBrewer</a>.
-MetBrewer, which also has an associated R package, provides a set of
-color palettes based on works of art at the Metropolitan Museum of Art.
-Not all of the palettes are colorblind-friendly, but you can find a list
-of colorblind-friendly palettes at the bottom of the webpage.</p></li>
-<li><p><a
-href="https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html">Introduction
-to the viridis color maps</a>. Viridis is an R package that has
-colorblind-friendly palettes. This website provides information on the
-use of the package. You can also see what some different R color
-palettes would look like to people with different forms of
-colorblindness.</p></li>
-<li><p><a
-href="https://www.simplifiedsciencepublishing.com/resources/best-color-palettes-for-scientific-figures-and-data-visualizations">Best
-Color Palettes for Scientific Figures and Data Visualizations</a> This
-website has some general guidelines for the use of color in scientific
-publishing, along with some specific colorblind-friendly palettes,
-including the hex codes.</p></li>
-<li><p><a href="https://github.com/jakelawlor/PNWColors">PNW colors</a>.
-This R package has a set of colorblind friendly palettes based on
-photographs of the Pacific Northwest.</p></li>
-</ol>
+<script>
+  iFrameResize({}, ".interactive");
+</script>
 </div>
 </div>
 

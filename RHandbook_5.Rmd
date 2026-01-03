@@ -1,5 +1,5 @@
 ---
-title: "ESS 3500 R Handbook, Lesson 3"
+title: "ESS 3500 R Handbook, Lesson 5"
 author: "Emily Schultz"
 date: "2023-01-29"
 output: 
@@ -14,10 +14,10 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Lesson 3: DATA FRAMES
+## Lesson 5: DATA FRAMES
 In this lesson, we will cover more details about how to work with data frames in R, including how to import data files into R, retrieve information about files, and manipulate data frames in R.
 
-### 3.1 Setting your working directory
+### 5.1 Setting your working directory
 Today we will be working on importing data into R, so it is first important for us to know how to tell R where to look (i.e., in what folder on our computer) for the files we want to import.
 
 In the first lesson, when we looked at the layout of RStudio, I noted that one of the tabs in the bottom right-hand corner is the "Files" tab. This tab will show you all the files that are in your working directory, which is the folder R will search to find and save files. R usually has a default folder that it will set as your working directory unless you tell it otherwise.
@@ -26,7 +26,7 @@ To help keep things organized, it is useful to store all of your R-related files
 
 There are a few ways to set your working directory. The easiest way for beginners is to use the drop-down menus in RStudio. Select "Session" from the menu bar at the top. Then hover over "Set Working Directory" and select "Choose Directory" from the new menu that appears. Then you will be able to use your file explorer to select the folder you want. When you do this, you will see a line a code appear in your console. The line of code is telling R to change the directory. If you know you will want to use that working directory again, then I would recommend copying and pasting the line of code into the top of your R script file. In the future, when you are working with that R script file, you can simply run that line of code to set the working directory.
 
-### 3.2 Loading data
+### 5.2 Loading data
 In the previous lesson, we created a simple data frame directly in R. In general, particularly with large data sets it is far easier to enter your data into a program like Excel and then import the data into R. For the remainder of the lesson, we will work with a simple example data set I provided you with called "DataFrameExample.csv". I recommend saving data files you want to work with in R as csv files. You can import Excel files into R, but it is often slower, especially if the files are large. The other benefit of csv files is that they are a non-proprietary file type, so they don't require a specific program like Excel. This will make it easier to share your files with other researchers.
 
 Save the "DataFrameExample.csv" file in the folder you want to use as your working directory for this lesson. If you haven't already, follow the directions in the previous section to set your working directory. Now you are ready to import the data. We will use the `read.csv()` function to import the data, and we will save the data as an object called `DATA`. R will automatically save it as a data frame object. Here is the code to use:
@@ -40,7 +40,7 @@ Notice that R automatically identify the first row as a header row. That is beca
 
 You now have a data frame object ready to work with in R!
 
-### 3.3 Getting information about your data frame
+### 5.3 Getting information about your data frame
 R is pretty good at importing data and correctly identifying what time of data you have for each variable. Nevertheless, it is still important to take a look at your data frame to make sure it was imported correctly. You also might sometimes need a reminder of what variables you have in your data frame (I sometimes forget). Here, we will learn some ways to get basic information about your data frame.
 
 #### Viewing your data
@@ -93,7 +93,7 @@ We can see that the Tree variable is now a factor with two different levels: A a
 
 There are equivalent functions to convert to the other variable types: `as.numeric()`, `as.integer`, and `as.character()`.
 
-### 3.4 Manipulating data frames with the **dplyr** package
+### 5.4 Manipulating data frames with the **dplyr** package
 There are any number of ways we might want to manipulate our data sets, and, like with many aspects of programming, there are various ways to go about it. In this class, we will focus on using the **dplyr** packages. We will look at a few different ways of manipulating our data frames, but there are many more! There is a great resource online called [R for Data Science](https://r4ds.had.co.nz/). It is a comprehensive guide to using R for managing, visualizing, and analyzing data in R, with a particular focus on **dplyr**. Check it out if you want/need to learn more!
 
 For this section, you will need to activate the **dplyr** packages. This is something that needs to be done every time you start a new R session if there are packages in addition to base R that you want to use. Enter the following code to activate **dplyr**:
