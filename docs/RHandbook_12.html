@@ -11,7 +11,7 @@
 
 <meta name="author" content="Emily Schultz" />
 
-<meta name="date" content="2023-04-23" />
+<meta name="date" content="2023-02-15" />
 
 <title>ESS 3500 R Handbook, Lesson 12</title>
 
@@ -273,22 +273,19 @@ $(document).ready(function () {
       <a href="RHandbook_6.html">Lesson 6: Assumptions and transformations</a>
     </li>
     <li>
-      <a href="RHandbook_7.html">Lesson 7: Variations on the t-test</a>
+      <a href="RHandbook_7.html">Lesson 7: ANOVA</a>
     </li>
     <li>
-      <a href="RHandbook_8.html">Lesson 8: ANOVA</a>
+      <a href="RHandbook_8.html">Lesson 8: Correlations</a>
     </li>
     <li>
-      <a href="RHandbook_9.html">Lesson 9: Correlations</a>
+      <a href="RHandbook_9.html">Lesson 9: Regressions</a>
     </li>
     <li>
-      <a href="RHandbook_10.html">Lesson 10: Regressions</a>
+      <a href="RHandbook_10.html">Lesson 10: Multiple predictors</a>
     </li>
     <li>
-      <a href="RHandbook_11.html">Lesson 11: Multiple predictors</a>
-    </li>
-    <li>
-      <a href="RHandbook_12.html">Lesson 12: Categorical data</a>
+      <a href="RHandbook_11.html">Lesson 11: Categorical data</a>
     </li>
   </ul>
 </li>
@@ -309,185 +306,410 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 12</h1>
 <h4 class="author">Emily Schultz</h4>
-<h4 class="date">2023-04-23</h4>
+<h4 class="date">2023-02-15</h4>
 
 </div>
 
 <div id="TOC">
 <ul>
-<li><a href="#lesson-12-categorical-data"
-id="toc-lesson-12-categorical-data">Lesson 12: Categorical Data</a>
+<li><a href="#lesson-12-assumptions-and-transformations"
+id="toc-lesson-12-assumptions-and-transformations">Lesson 12:
+Assumptions and Transformations</a>
 <ul>
-<li><a href="#goodness-of-fit" id="toc-goodness-of-fit">12.1 Goodness of
-fit</a></li>
-<li><a href="#contingency-table" id="toc-contingency-table">12.2
-Contingency table</a></li>
+<li><a href="#testing-for-normality" id="toc-testing-for-normality">12.1
+Testing for normality</a></li>
+<li><a href="#the-log-transform" id="toc-the-log-transform">12.2 The log
+transform</a></li>
+<li><a href="#testing-for-equal-variances"
+id="toc-testing-for-equal-variances">12.3 Testing for equal
+variances</a></li>
+<li><a href="#the-square-root-transform"
+id="toc-the-square-root-transform">12.4 The square root
+transform</a></li>
+<li><a href="#running-the-test" id="toc-running-the-test">12.5 Running
+the test</a></li>
+<li><a href="#welchs-tests" id="toc-welchs-tests">12.6 Welch’s
+tests</a></li>
+<li><a href="#practice-problems" id="toc-practice-problems">Practice
+problems</a></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="lesson-12-categorical-data" class="section level2">
-<h2>Lesson 12: Categorical Data</h2>
-<p>In all of our previous tests, we have worked with different versions
-of general linear models, in which our dependent variable have been
-continuous variable. In this lesson we will break away from the general
-linear model and work with categorial and count data.</p>
-<p>For this lesson, we will be working with data collected by Dr. Alan
-Garfinkel, who was researching methods for predicting the risk of heart
-attacks in older patients. Younger patients are often tested for heart
-attack risk by first exercising and then having their heart stress
-measured with an ECG. However, older patients are often unable to
-tolerate the exercise required for the test. Dr. Garfinkel was testing
-whether a medication called dobutamine, which mildly stresses the heart,
-can be used as an alternative. He gave patients a heart stress test
-after they took dobutamine, and then he followed the patients for a year
-to see if they had a heart attack within that time frame. This allowed
-him to test whether a positive result on the dobutamine stress test was
-a good predictor of heart attack risk.</p>
-<div id="goodness-of-fit" class="section level3">
-<h3>12.1 Goodness of fit</h3>
-<p>For our first test, we will run what is called a goodness of fit
-test. We can use this type of test to determine if the observed
-frequency of samples in different categories follow some expected
-frequency (the expected frequencies are the null hypothesis). In this
-example, we will work with the cardiac data and test whether male and
-female patients were equally represented in the study. In other words,
-was there a 50:50 ratio of male and female patients.</p>
-<p>First, load the data set. Be sure your working directory is set to
-the location of the cardiac data file.</p>
-<pre class="r"><code>cardiac &lt;- read.csv(&quot;cardiac.csv&quot;)</code></pre>
-<p>Now, make a simple bar graph showing the frequency of male and female
-patients in the sample.</p>
-<pre class="r"><code>library(ggplot2)
-ggplot(cardiac, aes(x=gender)) +
-  geom_bar() +
-  labs(x=&quot;Gender&quot;, y=&quot;Frequency&quot;) +
+<div id="lesson-12-assumptions-and-transformations"
+class="section level2">
+<h2>Lesson 12: Assumptions and Transformations</h2>
+<p>In this lesson, we will cover how to test two assumptions (normality
+and equal variances) of t-tests and other similar models and what to do
+when the assumptions are violated. Note that these assumptions apply
+whether we are using a classical frequentist approach or a maximum
+likelihood approach, and the methods we use for testing and addressing
+violations of assumptions is the same for both.</p>
+<p>For this lesson, we will work with a new data set that contains data
+from an experiment that was done to test for the effect of invasive
+grass removal on the plant community. As a first pass, the researchers
+simply wanted to know if removing the grasses from the plot at the start
+of the growing season was effective for reducing the invasive grass
+cover in the plot at the end of the growing season. You will work with
+two variables from this data set. Your independent variable is weed
+removal (the name of this variable is “Weed” in the data set), and your
+dependent variable is grass cover (the name of this variable is
+“Grass_cover” in the data set). Because we have a categorical
+independent variable with two values and a continuous dependent
+variable, a t-test is an appropriate test for these data, if the
+assumptions are met.</p>
+<p>Download the InvasiveGrass.csv file from Canvas. Set your working
+directory in R to the folder that contains the data file.</p>
+<p>Then load your data file into R using the usual ‘read.csv’ function.
+I am calling the data object “grass” for this example.</p>
+<pre class="r"><code>grass &lt;- read.csv(&quot;InvasiveGrass.csv&quot;)</code></pre>
+<p>We will also use the <strong>ggplot2</strong> package for this
+lesson, so load that package now as well:</p>
+<pre class="r"><code>library(ggplot2)</code></pre>
+<div id="testing-for-normality" class="section level3">
+<h3>12.1 Testing for normality</h3>
+<p>The assumption normality for t-tests is that the residuals (the
+leftover variation that is not explained by our model) are normally
+distributed. Therefore, in order to test this assumption, we need to
+first run our model and save the residuals to test.</p>
+<p>We will run a t-test using the ‘lm’ function, just like we did in the
+t-test lesson when we used the maximum likelihood approach, and we will
+store the test output in an object called “grass_ttest”. We use the ‘lm’
+function instead of the ‘t.test’ function because the ‘t.test’ function
+doesn’t save the residuals from the test. However, the models built by
+the two functions are exactly the same, so the residuals are the same
+regardless of the approach we use to test the models. We can still
+choose to use either approach after checking our assumptions.</p>
+<pre class="r"><code>grass_ttest &lt;- lm(Grass_cover ~ Weed, data = grass)</code></pre>
+<p>We will now save the residuals from the model using the
+<code>resid</code> function. Then we will store the residuals in a data
+frame, so we can graph them using <code>ggplot</code>. We will store the
+residuals in a data frame called “resids” and the variable name within
+the data frame will be “Residuals”.</p>
+<pre class="r"><code># Save residuals
+grass_resid &lt;- resid(grass_ttest)
+
+# Store residuals in a data frame
+resids &lt;- data.frame(Residuals = grass_resid)</code></pre>
+<p>Now that we have saved our residuals, we can move on to testing
+whether they are normally distributed.</p>
+<div id="histogram-of-residuals" class="section level4">
+<h4>Histogram of residuals</h4>
+<p>The first way to check for normality of residuals is to make a
+histogram to determine if the residuals look like they are normally
+distributed, or at least symmetrical. We will makes this graph using the
+residuals that we saved from our model in the previous section.</p>
+<pre class="r"><code>ggplot(resids, aes(x=Residuals)) +
+  geom_histogram() +
+  labs(x=&quot;Grass cover&quot;, y=&quot;Frequency&quot;) +
   theme_classic()</code></pre>
-<p><img src="RHandbook_12_files/figure-html/gender_bar-1.png" width="672" /></p>
-<p>Before we can run our Chi-square test to determine if males and
-females were equally represented, we have to summarize our data. The
-Chi-square test function in R requires a simple table with the count of
-samples in each category (the number of male and female patients, in
-this example). We can create this table easily in R using the
-<code>table</code> function. The argument for this function is the
-variable we want to summarize, in this case, the “gender” variable from
-our cardiac data frame. Sometimes it can also be helpful to see the
-proportions instead of the counts. We can convert our table into
-proportions using the <code>prop.table</code> function.</p>
-<pre class="r"><code>gender_table &lt;- table(cardiac$gender)
-gender_prop &lt;- prop.table(gender_table)</code></pre>
-<p>Now that we have our table with the counts of the two genders, we are
-ready to run our test. We will use the <code>chisq.test</code> function.
-The first arguments is the table with the counts, that we just created.
-The second argument is a vector with the expected proportion for each
-category. Because we are testing whether the genders are
-equally-represented, our expected frequencies (i.e., our null
-hypothesis) are 0.5 and 0.5.</p>
-<pre class="r"><code>gender_test &lt;- chisq.test(gender_table, p=c(0.5,0.5))
-gender_test</code></pre>
-<pre><code>## 
-##  Chi-squared test for given probabilities
-## 
-## data:  gender_table
-## X-squared = 24.953, df = 1, p-value = 5.873e-07</code></pre>
-<p>Based on the output, were male and female patients equally
-represented in the study?</p>
-<p>If they are not equally represented, it is also important to
-determine which category is over-represented and which is
-under-represented. It is pretty easy in this case because we only have
-two categories, and we were testing if they had equal proportions. In
-other cases, the math might not be quite as simple, but we can get R to
-help us out. We can look at some additional output from the test to see
-the observed and expected values for each category as follows.</p>
-<pre class="r"><code>gender_test$observed</code></pre>
-<pre><code>## 
-## female   male 
-##    338    220</code></pre>
-<pre class="r"><code>gender_test$expected</code></pre>
-<pre><code>## female   male 
-##    279    279</code></pre>
-<p>Which gender was over-represented, and which gender was
-under-represented?</p>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="RHandbook_12_files/figure-html/residalt_hist-1.png" width="672" /></p>
+<p>Do the residuals look normally distributed?</p>
 </div>
-<div id="contingency-table" class="section level3">
-<h3>12.2 Contingency table</h3>
-<p>For the next test, we will work with a different type of question.
-Instead of just comparing the frequency in different categories of one
-variable, we will work with two sets of categories and test whether the
-frequencies of one categorical variable are affected by the other
-categorical variable. In this case, we will use the same cardiac data
-set to test whether patients who tested positive for heart stress on an
-ECG after receiving dobutamine were more likely to have a myocardial
-infarction (heart attack) within the next year than patients who tested
-negative for heart stress.</p>
-<p>We’ll again begin by making a bar graph. This time, because we are
-looking at the frequencies in two different categories, we will make a
-stacked bar graph. We will use the ECG results as our x variable, and
-each bar the ECG result categories with have two colors, showing the
-proportion of patients in each of those categories that did or did not
-have a heart attack.</p>
-<pre class="r"><code>ggplot(cardiac, aes(x=posECG,fill=newMI)) +
-  geom_bar() +
-  labs(x=&quot;ECG results&quot;, y=&quot;Frequency&quot;) +
-  scale_fill_manual(values=c(&quot;#ce9642&quot;,&quot;#3b7c70&quot;)) +
+<div id="qqplot" class="section level4">
+<h4>qqplot</h4>
+<p>There is another type of graph that is useful for visualizing the
+normality of residuals, called a qqplot. This type of graph compares the
+residuals from a model with residuals that would be predicted based on a
+normal distribution. If we graph the residuals from our model against
+the predicted residuals, we would expect them to form a straight line if
+the residuals are normally distributed. If they do not form a straight
+line, that suggests the residuals are not normally distributed.</p>
+<p>To make a qqplot to test for a normal distribution, we can use the
+<code>qqnorm</code> function. Then we can use the <code>qqline</code>
+function to add a reference line to the plot, showing where the points
+should fall if the data are normally distributed. The input (argument)
+for both of these functions in the object with our saved residuals
+(grass_resid).</p>
+<pre class="r"><code>qqnorm(grass_resid)
+qqline(grass_resid)</code></pre>
+<p><img src="RHandbook_12_files/figure-html/qqplots-1.png" width="672" /></p>
+<p>When the points fall close to the line like this, that means that the
+distribution of our residuals is close to normal. Based on both types of
+graphs, it looks like our data are normally distributed, but we’ll cover
+a formal test for this as well.</p>
+</div>
+<div id="shapiro-wilks-test" class="section level4">
+<h4>Shapiro-Wilks test</h4>
+<p>The Shapiro-Wilks test is a formal test to determine if a
+distribution is normal. Our null hypothesis for this test is that the
+residuals are normally distributed.</p>
+<p>Running the test is pretty straightforward. We will use the
+<code>shapiro.test</code> function, and the only argument we need to
+input is our residuals from the models we built.</p>
+<pre class="r"><code>shapiro.test(grass_resid)</code></pre>
+<pre><code>## 
+##  Shapiro-Wilk normality test
+## 
+## data:  grass_resid
+## W = 0.95069, p-value = 0.1507</code></pre>
+<p>Based on the output of the tests, are the residuals normally
+distributed?</p>
+<p>Remember, though, there are downsides to this test. When you
+interpret the results, be sure to interpret them in the context of your
+sample size.</p>
+</div>
+</div>
+<div id="the-log-transform" class="section level3">
+<h3>12.2 The log transform</h3>
+<p>We have established that our data are normally distributed, but what
+if they weren’t? What would we do about it?</p>
+<p>If our residuals are not normally-distributed, particularly when we
+have skewed data, often a good option is to log transform our data. The
+log-transformed data will often be more normally distributed, and if
+they are, we can run our test on the log-transformed data. Even though
+our residuals are okay in this example, let’s try this transformation on
+our grass data and see what effect it has, just for practice!</p>
+<p>There is one catch before we do the log transform: we have some
+zeroes in our grass cover data, and the log of zero is undefined.
+Because there are only a few zeroes, we will add a small values to these
+zeroes before doing the transform. Based the the grass cover values,
+which are mostly between 0 and 1, we will use 0.01 as our small
+value.</p>
+<p>To add this value, we first have to figure out which grass cover
+values are equal to zero. We can use the handy ‘which’ function, which
+tells us which values in a vector fit a particular criteria (in this
+case, being equal to zero). We have to input the data frame and variable
+names (‘grass$Grass_cover’), as well as the criteria (‘==0’). We will
+save the position of the values that fit our criteria in an object
+called “indexes”.</p>
+<pre class="r"><code>indexes &lt;- which(grass$Grass_cover==0)</code></pre>
+<p>We can use the indexes to change the values from zero to 0.01. In the
+code below, ‘grass$Grass_cover[indexes]’ will tell R to pull out the
+values that we identified as being equal to zero, and ‘&lt;- 0.01’ will
+change them to 0.01.</p>
+<pre class="r"><code>grass$Grass_cover[indexes] &lt;- 0.01</code></pre>
+<p>Now we can log-transform our data and add a new column to the grass
+data frame to store our log-transformed grass cover data. I am calling
+the new variable “log_Grass_cover”.</p>
+<pre class="r"><code>grass$log_Grass_cover &lt;- log(grass$Grass_cover)</code></pre>
+<p>Finally, we will check to see if the log transformed data are normal,
+using the same approach as above.</p>
+<p>First, run the t-test, this time using “log_Grass_cover” as our
+dependent variable, save the residuals, and put them in a data
+frame.</p>
+<pre class="r"><code>grass_ttest_log &lt;- lm(log_Grass_cover~ Weed, data=grass)
+
+resid_log &lt;- resid(grass_ttest_log)
+
+resids_log &lt;- data.frame(Residuals = resid_log)</code></pre>
+<p>Now, we will make our graphs to check normality. Start with the
+histograms:</p>
+<pre class="r"><code>ggplot(resids_log, aes(x=Residuals)) +
+  geom_histogram() +
+  labs(x=&quot;log Grass Cover&quot;, y=&quot;Frequency&quot;) +
   theme_classic()</code></pre>
-<p><img src="RHandbook_12_files/figure-html/myo_bar-1.png" width="672" /></p>
-<p>Just like with the goodness of fit test, to run a Chi-square test on
-a contingency table, we have to convert our data to a table showing the
-frequency of individuals in each of the categories. In this case, our
-table will have two columns (positive and negative ECG tests) and two
-rows(heart attack or no heart attack). We will once again make two
-table: one showing the counts and the other showing the proportions in
-each category.</p>
-<pre class="r"><code>myo_table &lt;- table(cardiac$newMI,cardiac$posECG)
-myo_prop &lt;- prop.table(myo_table)</code></pre>
-<p>Now that we have our table with the counts, we can run our Chi-square
-test to see if patients who tested positive for heart stress were more
-likely to have a heart attack within the next year than patients who
-tested negative for heart stress. This time, we do not have to provide
-the expected frequencies because we are testing whether the frequency of
-heart attacks differs between the two test results, NOT if the frequency
-matches some specific expected frequency.</p>
-<pre class="r"><code>myo_test &lt;- chisq.test(myo_table)</code></pre>
-<pre><code>## Warning in chisq.test(myo_table): Chi-squared approximation may be incorrect</code></pre>
-<pre class="r"><code>myo_test</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="RHandbook_12_files/figure-html/residlog_hist-1.png" width="672" /></p>
+<p>Next, make the qqplots:</p>
+<pre class="r"><code>qqnorm(resid_log)
+qqline(resid_log)</code></pre>
+<p><img src="RHandbook_12_files/figure-html/qqplots_log-1.png" width="672" /></p>
+<p>And finally, we’ll run the Shapiro-Wilks test on the new
+residuals:</p>
+<pre class="r"><code>shapiro.test(resid_log)</code></pre>
 <pre><code>## 
-##  Pearson&#39;s Chi-squared test with Yates&#39; continuity correction
+##  Shapiro-Wilk normality test
 ## 
-## data:  myo_table
-## X-squared = 0.0013321, df = 1, p-value = 0.9709</code></pre>
-<p>Notice when you run this test, you get a warning saying that the
-“Chi-square approximation may be incorrect”. This is because you have a
-low sample size in one of your groups, so your count data might not be
-roughly normal. We can deal with this easily by adding an argument to
-our test. This argument will tell R to use simulations to estimate the
-p-value, which can be a better approach when you have low expected
-values for some groups.</p>
-<pre class="r"><code>myo_test &lt;- chisq.test(myo_table, simulate.p.value = TRUE)
-myo_test</code></pre>
+## data:  resid_log
+## W = 0.89604, p-value = 0.004918</code></pre>
+<p>Because our residuals were okay to begin with, after log-transforming
+the data makes them look worse! It’s definitely better to proceed with
+the un-transformed data so far, but we need to check our other
+assumption first.</p>
+</div>
+<div id="testing-for-equal-variances" class="section level3">
+<h3>12.3 Testing for equal variances</h3>
+<p>Another assumption of linear models is that the variance of our
+dependent variable is equal for different values of our independent
+variable.</p>
+<p>For this one, we do not need to run the models first to save
+residuals, so let’s jump right into the testing.</p>
+<div id="graphs-to-visualize-variance" class="section level4">
+<h4>Graphs to visualize variance</h4>
+<p>We will start with a simple visual test: making a box plot to compare
+the variation between the different categories.</p>
+<pre class="r"><code>ggplot(grass, aes(x=Weed, y=Grass_cover)) +
+  geom_boxplot() +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_12_files/figure-html/cone_boxplot-1.png" width="672" /></p>
+<p>It looks like the variances are pretty different between the two
+groups, so we seem to have a problem here, but we will look at the
+results of a formal test for equal variances too.</p>
+</div>
+<div id="levenes-test" class="section level4">
+<h4>Levene’s test</h4>
+<p>Levene’s test is a formal test that will check for equal variances.
+Note that is tends to be a bit sensitive, so it will sometimes pick up
+small differences in the variances that are not a problem, particularly
+if you have large sample sizes. With the Levene’s test, we are testing
+the null hypothesis that the variances are equal. Therefore if the
+p-value is less than 0.05, that suggests that the variances are not
+equal.</p>
+<p>The function for the Levene’s test is in the <code>car</code>
+package, so install (<code>install.packages("car")</code>) and load that
+package first.</p>
+<pre class="r"><code>library(car)</code></pre>
+<pre><code>## Loading required package: carData</code></pre>
+<pre><code>## Warning: package &#39;carData&#39; was built under R version 4.2.3</code></pre>
+<p>Now we can run the test:</p>
+<pre class="r"><code>leveneTest(Grass_cover ~ Weed, data = grass)</code></pre>
+<pre><code>## Warning in leveneTest.default(y = y, group = group, ...): group coerced to
+## factor.</code></pre>
+<pre><code>## Levene&#39;s Test for Homogeneity of Variance (center = median)
+##       Df F value  Pr(&gt;F)  
+## group  1  6.0694 0.01971 *
+##       30                  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Don’t worry if you get a warning message. It is just telling you that
+when it ran the test, it converted “Weed” from a character variable to a
+factor variable. Take a look at the p-value for the test. Based on this
+p-value, are the variances equal?</p>
+</div>
+</div>
+<div id="the-square-root-transform" class="section level3">
+<h3>12.4 The square root transform</h3>
+<p>We have established that we don’t have equal variance between our
+categories, so what can we do? The first thing we can try is
+transforming our data. If our data are skewed (not normally
+distributed), a log transform might help. However, if our data have a
+pretty symmetrical distribution (which we already determined they do), a
+log transform is unlikely to help. Instead, we can try a square root
+transform. Let’s see if that helps here.</p>
+<p>Like with the log transform, we will add a new variable to our data
+frame, but this time we will take the square root of our grass cover
+variable.</p>
+<pre class="r"><code>grass$sqrt_Grass_cover &lt;- sqrt(grass$Grass_cover)</code></pre>
+<p>Now, we can use our tests again to see if this helped.</p>
+<p>Start with the boxplot:</p>
+<pre class="r"><code>ggplot(grass, aes(x=Weed, y= sqrt_Grass_cover)) +
+  geom_boxplot() +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_12_files/figure-html/sqrt_boxplot-1.png" width="672" /></p>
+<p>It looks a lot better now, but we will check our Levene’s test
+too.</p>
+<pre class="r"><code>leveneTest(sqrt_Grass_cover ~ Weed, data = grass)</code></pre>
+<pre><code>## Warning in leveneTest.default(y = y, group = group, ...): group coerced to
+## factor.</code></pre>
+<pre><code>## Levene&#39;s Test for Homogeneity of Variance (center = median)
+##       Df F value Pr(&gt;F)
+## group  1  0.1745 0.6791
+##       30</code></pre>
+<p>Okay, it looks good, so our transform worked. We can now safely run a
+t-test using the square-root-transformed data.</p>
+</div>
+<div id="running-the-test" class="section level3">
+<h3>12.5 Running the test</h3>
+<p>At this point, we can test the model using either a classical
+frequentist approach or a maximum likelihood approach. I will show both
+methods here, but, again, note that this is just for the purposes of
+demonstration. Normally, you would just choose one approach to use.</p>
+<div id="classical-frequentist" class="section level4">
+<h4>Classical frequentist</h4>
+<p>To run a t-test using the classical frequentist approach, we will use
+the same t.test function that we learned in the last lesson. Note,
+however, that we now want to use the square-root-transformed variable
+(“sqrt_Grass_cover”) instead of the raw grass cover variable.</p>
+<pre class="r"><code>grass_ttest_sqrt &lt;- t.test(sqrt_Grass_cover~Weed, data=grass,var.equal=TRUE)
+grass_ttest_sqrt</code></pre>
 <pre><code>## 
-##  Pearson&#39;s Chi-squared test with simulated p-value (based on 2000
-##  replicates)
+##  Two Sample t-test
 ## 
-## data:  myo_table
-## X-squared = 0.10722, df = NA, p-value = 0.7806</code></pre>
-<p>Based on the test result, what do you conclude about whether the
-dobutamine stress test was a good predictor of heart attack risk?</p>
-<p>To help interpret the data (e.g., see which observed values might be
-higher or lower than expected), we can again look at the observed and
-expected frequencies in each category.</p>
-<pre class="r"><code>myo_test$observed</code></pre>
-<pre><code>##         
-##          neg pos
-##   new_MI  25   3
-##   no_MI  462  68</code></pre>
-<pre class="r"><code>myo_test$expected</code></pre>
-<pre><code>##         
-##                neg       pos
-##   new_MI  24.43728  3.562724
-##   no_MI  462.56272 67.437276</code></pre>
-<p>In this case, as expected from our p-value, the observed and expected
-frequencies match very closely.</p>
+## data:  sqrt_Grass_cover by Weed
+## t = 5.8639, df = 30, p-value = 2.041e-06
+## alternative hypothesis: true difference in means between group No removal and group Removal is not equal to 0
+## 95 percent confidence interval:
+##  0.2846221 0.5888279
+## sample estimates:
+## mean in group No removal    mean in group Removal 
+##                0.7529518                0.3162268</code></pre>
+<p>Based on the p-value, would you reject the null hypothesis that weed
+removal does not affect end-of-season grass cover?</p>
+</div>
+<div id="maximum-likelihood-approach" class="section level4">
+<h4>Maximum likelihood approach</h4>
+<p>Just like the last lesson, to use the maximum likelihood approach, we
+start by using the ‘lm’ function to build both the null and alternative
+models. Then we use the ‘AIC’ function to compare the AIC values for the
+two models. Remember, the model with the lower AIC value is the better
+model for our data.</p>
+<pre class="r"><code># Build models
+grass_null &lt;- lm(sqrt_Grass_cover~1, data=grass)
+grass_alt &lt;- lm(sqrt_Grass_cover~Weed, data=grass)
+
+# Compare AIC values
+AIC(grass_null, grass_alt)</code></pre>
+<pre><code>##            df       AIC
+## grass_null  2 17.502090
+## grass_alt   3 -4.935758</code></pre>
+<p>Which model is best? Is it significantly better than the other
+model?</p>
+</div>
+</div>
+<div id="welchs-tests" class="section level3">
+<h3>12.6 Welch’s tests</h3>
+<p>If the variances still aren’t equal after transforming the data, we
+can use a test, called the Welch’s test, that doesn’t assume equal
+variances. This will work for both a t-test and and ANOVA. Even though
+our square root transform did work in this example, let’s practice how
+to do a Welch’s test.</p>
+<p>To run the Welch’s test, we will use the same ‘t.test’ function that
+we used for a regular t-test, but we will change one argument. Instead
+of using the “var.equal=TRUE” setting, we will change it to
+“var.equal=FALSE”. Notice that we can run this test will the
+un-transformed Grass_cover variable because with this test, it is fine
+if the variances are not equal.</p>
+<pre class="r"><code>t.test(Grass_cover~Weed,grass,var.equal=FALSE)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  Grass_cover by Weed
+## t = 5.8226, df = 22.549, p-value = 6.711e-06
+## alternative hypothesis: true difference in means between group No removal and group Removal is not equal to 0
+## 95 percent confidence interval:
+##  0.3116919 0.6558079
+## sample estimates:
+## mean in group No removal    mean in group Removal 
+##                0.6169443                0.1331944</code></pre>
+<p>The output is similar to what you have seen before. You should see
+the t statistic, the degrees of freedom (df) and the p-value. Note that
+the df is a little different here that what you would get with a regular
+t-test. This is because we lose more degrees of freedom with the
+Levene’s test because we are calculating separate variances for each
+group.</p>
+<p>Note that the conclusion you would draw based on the Welch’s test
+using the un-transformed grass cover data is the same conclusion you
+would draw using the regular t-test on the square root transformed grass
+data.</p>
+</div>
+<div id="practice-problems" class="section level3">
+<h3>Practice problems</h3>
+<p>Use the steps below to test out this process on a different data set!
+You will work with data on the impact of mycorrhizal inoculation on
+plant density. Download the mycorrhizae.csv file from Canvas. When you
+are ready to start working with the data in R, be sure to set your
+working directly, load the data set, and load the
+<strong>ggplot2</strong> package before proceeding.</p>
+<ol style="list-style-type: decimal">
+<li>What are your null and alternative hypotheses for this
+question?</li>
+<li>Build model using the ‘lm’ function. Save the model residuals.</li>
+<li>Use a histogram and a qqplot to determine if the residuals are
+normally-distributed. You may also use a Shapiro-Wilk’s test as a formal
+test, if you would like.</li>
+<li>Use a boxplot and a Levene’s test to check for equal variances.</li>
+<li>Based on your exploration in questions 3 and 4, select an approach
+for addressing any violations of the assumptions.</li>
+<li>Run an appropriate test (addressing any violations of assumptions)
+to answer the original question (Does mycorrhizal inoculation affect
+plant density?). You may choose between a classical frequentist or
+maximum likelihood when you run this test.</li>
+<li>Write you conclusions, including any necessary statistics backing
+them up.</li>
+</ol>
+<p>I will post an answer key to these questions next week.</p>
 </div>
 </div>
 
