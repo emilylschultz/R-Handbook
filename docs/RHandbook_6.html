@@ -13,7 +13,7 @@
 
 <meta name="date" content="2023-02-15" />
 
-<title>ESS 3500 R Handbook, Lesson 6</title>
+<title>ESS 3500 R Handbook, Lesson 12</title>
 
 <script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -273,22 +273,19 @@ $(document).ready(function () {
       <a href="RHandbook_6.html">Lesson 6: Assumptions and transformations</a>
     </li>
     <li>
-      <a href="RHandbook_7.html">Lesson 7: Variations on the t-test</a>
+      <a href="RHandbook_7.html">Lesson 7: ANOVA</a>
     </li>
     <li>
-      <a href="RHandbook_8.html">Lesson 8: ANOVA</a>
+      <a href="RHandbook_8.html">Lesson 8: Correlations</a>
     </li>
     <li>
-      <a href="RHandbook_9.html">Lesson 9: Correlations</a>
+      <a href="RHandbook_9.html">Lesson 9: Regressions</a>
     </li>
     <li>
-      <a href="RHandbook_10.html">Lesson 10: Regressions</a>
+      <a href="RHandbook_10.html">Lesson 10: Multiple predictors</a>
     </li>
     <li>
-      <a href="RHandbook_11.html">Lesson 11: Multiple predictors</a>
-    </li>
-    <li>
-      <a href="RHandbook_12.html">Lesson 12: Categorical data</a>
+      <a href="RHandbook_11.html">Lesson 11: Categorical data</a>
     </li>
   </ul>
 </li>
@@ -307,7 +304,7 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 6</h1>
+<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 12</h1>
 <h4 class="author">Emily Schultz</h4>
 <h4 class="date">2023-02-15</h4>
 
@@ -315,23 +312,23 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#lesson-6-assumptions-and-transformations"
-id="toc-lesson-6-assumptions-and-transformations">Lesson 6: Assumptions
-and Transformations</a>
+<li><a href="#lesson-12-assumptions-and-transformations"
+id="toc-lesson-12-assumptions-and-transformations">Lesson 12:
+Assumptions and Transformations</a>
 <ul>
-<li><a href="#testing-for-normality" id="toc-testing-for-normality">6.1
+<li><a href="#testing-for-normality" id="toc-testing-for-normality">12.1
 Testing for normality</a></li>
-<li><a href="#the-log-transform" id="toc-the-log-transform">6.2 The log
+<li><a href="#the-log-transform" id="toc-the-log-transform">12.2 The log
 transform</a></li>
 <li><a href="#testing-for-equal-variances"
-id="toc-testing-for-equal-variances">6.3 Testing for equal
+id="toc-testing-for-equal-variances">12.3 Testing for equal
 variances</a></li>
 <li><a href="#the-square-root-transform"
-id="toc-the-square-root-transform">6.4 The square root
+id="toc-the-square-root-transform">12.4 The square root
 transform</a></li>
-<li><a href="#running-the-test" id="toc-running-the-test">6.5 Running
+<li><a href="#running-the-test" id="toc-running-the-test">12.5 Running
 the test</a></li>
-<li><a href="#welchs-tests" id="toc-welchs-tests">6.6 Welch’s
+<li><a href="#welchs-tests" id="toc-welchs-tests">12.6 Welch’s
 tests</a></li>
 <li><a href="#practice-problems" id="toc-practice-problems">Practice
 problems</a></li>
@@ -339,9 +336,9 @@ problems</a></li>
 </ul>
 </div>
 
-<div id="lesson-6-assumptions-and-transformations"
+<div id="lesson-12-assumptions-and-transformations"
 class="section level2">
-<h2>Lesson 6: Assumptions and Transformations</h2>
+<h2>Lesson 12: Assumptions and Transformations</h2>
 <p>In this lesson, we will cover how to test two assumptions (normality
 and equal variances) of t-tests and other similar models and what to do
 when the assumptions are violated. Note that these assumptions apply
@@ -370,7 +367,7 @@ I am calling the data object “grass” for this example.</p>
 lesson, so load that package now as well:</p>
 <pre class="r"><code>library(ggplot2)</code></pre>
 <div id="testing-for-normality" class="section level3">
-<h3>6.1 Testing for normality</h3>
+<h3>12.1 Testing for normality</h3>
 <p>The assumption normality for t-tests is that the residuals (the
 leftover variation that is not explained by our model) are normally
 distributed. Therefore, in order to test this assumption, we need to
@@ -455,7 +452,7 @@ sample size.</p>
 </div>
 </div>
 <div id="the-log-transform" class="section level3">
-<h3>6.2 The log transform</h3>
+<h3>12.2 The log transform</h3>
 <p>We have established that our data are normally distributed, but what
 if they weren’t? What would we do about it?</p>
 <p>If our residuals are not normally-distributed, particularly when we
@@ -523,7 +520,7 @@ the un-transformed data so far, but we need to check our other
 assumption first.</p>
 </div>
 <div id="testing-for-equal-variances" class="section level3">
-<h3>6.3 Testing for equal variances</h3>
+<h3>12.3 Testing for equal variances</h3>
 <p>Another assumption of linear models is that the variance of our
 dependent variable is equal for different values of our independent
 variable.</p>
@@ -554,7 +551,6 @@ equal.</p>
 package, so install (<code>install.packages("car")</code>) and load that
 package first.</p>
 <pre class="r"><code>library(car)</code></pre>
-<pre><code>## Warning: package &#39;car&#39; was built under R version 4.2.3</code></pre>
 <pre><code>## Loading required package: carData</code></pre>
 <pre><code>## Warning: package &#39;carData&#39; was built under R version 4.2.3</code></pre>
 <p>Now we can run the test:</p>
@@ -574,7 +570,7 @@ p-value, are the variances equal?</p>
 </div>
 </div>
 <div id="the-square-root-transform" class="section level3">
-<h3>6.4 The square root transform</h3>
+<h3>12.4 The square root transform</h3>
 <p>We have established that we don’t have equal variance between our
 categories, so what can we do? The first thing we can try is
 transforming our data. If our data are skewed (not normally
@@ -605,7 +601,7 @@ too.</p>
 t-test using the square-root-transformed data.</p>
 </div>
 <div id="running-the-test" class="section level3">
-<h3>6.5 Running the test</h3>
+<h3>12.5 Running the test</h3>
 <p>At this point, we can test the model using either a classical
 frequentist approach or a maximum likelihood approach. I will show both
 methods here, but, again, note that this is just for the purposes of
@@ -653,7 +649,7 @@ model?</p>
 </div>
 </div>
 <div id="welchs-tests" class="section level3">
-<h3>6.6 Welch’s tests</h3>
+<h3>12.6 Welch’s tests</h3>
 <p>If the variances still aren’t equal after transforming the data, we
 can use a test, called the Welch’s test, that doesn’t assume equal
 variances. This will work for both a t-test and and ANOVA. Even though

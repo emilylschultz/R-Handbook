@@ -1,5 +1,5 @@
 ---
-title: "ESS 3500 R Handbook, Lesson 6"
+title: "ESS 3500 R Handbook, Lesson 12"
 author: "Emily Schultz"
 date: "2023-02-15"
 output: 
@@ -12,7 +12,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Lesson 6: Assumptions and Transformations
+## Lesson 12: Assumptions and Transformations
 In this lesson, we will cover how to test two assumptions (normality and equal variances) of t-tests and other similar models and what to do when the assumptions are violated. Note that these assumptions apply whether we are using a classical frequentist approach or a maximum likelihood approach, and the methods we use for testing and addressing violations of assumptions is the same for both.
 
 For this lesson, we will work with a new data set that contains data from an experiment that was done to test for the effect of invasive grass removal on the plant community. As a first pass, the researchers simply wanted to know if removing the grasses from the plot at the start of the growing season was effective for reducing the invasive grass cover in the plot at the end of the growing season. You will work with two variables from this data set. Your independent variable is weed removal (the name of this variable is "Weed" in the data set), and your dependent variable is grass cover (the name of this variable is "Grass_cover" in the data set). Because we have a categorical independent variable with two values and a continuous dependent variable, a t-test is an appropriate test for these data, if the assumptions are met.
@@ -31,7 +31,7 @@ We will also use the **ggplot2** package for this lesson, so load that package n
 library(ggplot2)
 ```
 
-### 6.1 Testing for normality
+### 12.1 Testing for normality
 The assumption normality for t-tests is that the residuals (the leftover variation that is not explained by our model) are normally distributed. Therefore, in order to test this assumption, we need to first run our model and save the residuals to test.
 
 We will run a t-test using the 'lm' function, just like we did in the t-test lesson when we used the maximum likelihood approach, and we will store the test output in an object called "grass_ttest". We use the 'lm' function instead of the 't.test' function because the 't.test' function doesn't save the residuals from the test. However, the models built by the two functions are exactly the same, so the residuals are the same regardless of the approach we use to test the models. We can still choose to use either approach after checking our assumptions.
@@ -89,7 +89,7 @@ Based on the output of the tests, are the residuals normally distributed?
 
 Remember, though, there are downsides to this test. When you interpret the results, be sure to interpret them in the context of your sample size.
 
-### 6.2 The log transform
+### 12.2 The log transform
 We have established that our data are normally distributed, but what if they weren't? What would we do about it? 
 
 If our residuals are not normally-distributed, particularly when we have skewed data, often a good option is to log transform our data. The log-transformed data will often be more normally distributed, and if they are, we can run our test on the log-transformed data. Even though our residuals are okay in this example, let's try this transformation on our grass data and see what effect it has, just for practice!
@@ -150,7 +150,7 @@ shapiro.test(resid_log)
 
 Because our residuals were okay to begin with, after log-transforming the data makes them look worse! It's definitely better to proceed with the un-transformed data so far, but we need to check our other assumption first.
 
-### 6.3 Testing for equal variances
+### 12.3 Testing for equal variances
 Another assumption of linear models is that the variance of our dependent variable is equal for different values of our independent variable. 
 
 For this one, we do not need to run the models first to save residuals, so let's jump right into the testing.
@@ -183,7 +183,7 @@ leveneTest(Grass_cover ~ Weed, data = grass)
 
 Don't worry if you get a warning message. It is just telling you that when it ran the test, it converted "Weed" from a character variable to a factor variable. Take a look at the p-value for the test. Based on this p-value, are the variances equal?
 
-### 6.4 The square root transform
+### 12.4 The square root transform
 We have established that we don't have equal variance between our categories, so what can we do? The first thing we can try is transforming our data. If our data are skewed (not normally distributed), a log transform might help. However, if our data have a pretty symmetrical distribution (which we already determined they do), a log transform is unlikely to help. Instead, we can try a square root transform. Let's see if that helps here.
 
 Like with the log transform, we will add a new variable to our data frame, but this time we will take the square root of our grass cover variable.
@@ -210,7 +210,7 @@ leveneTest(sqrt_Grass_cover ~ Weed, data = grass)
 
 Okay, it looks good, so our transform worked. We can now safely run a t-test using the square-root-transformed data.
 
-### 6.5 Running the test
+### 12.5 Running the test
 At this point, we can test the model using either a classical frequentist approach or a maximum likelihood approach. I will show both methods here, but, again, note that this is just for the purposes of demonstration. Normally, you would just choose one approach to use.
 
 #### Classical frequentist
@@ -237,7 +237,7 @@ AIC(grass_null, grass_alt)
 
 Which model is best? Is it significantly better than the other model?
 
-### 6.6 Welch's tests
+### 12.6 Welch's tests
 If the variances still aren't equal after transforming the data, we can use a test, called the Welch's test, that doesn't assume equal variances. This will work for both a t-test and and ANOVA. Even though our square root transform did work in this example, let's practice how to do a Welch's test.
 
 To run the Welch's test, we will use the same 't.test' function that we used for a regular t-test, but we will change one argument. Instead of using the "var.equal=TRUE" setting, we will change it to "var.equal=FALSE". Notice that we can run this test will the un-transformed Grass_cover variable because with this test, it is fine if the variances are not equal.
