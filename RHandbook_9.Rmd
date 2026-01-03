@@ -1,5 +1,5 @@
 ---
-title: "ESS 3500 R Handbook, Lesson 4"
+title: "ESS 3500 R Handbook, Lesson 9"
 author: "Emily Schultz"
 date: "2023-02-15"
 output: 
@@ -12,7 +12,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
 ```
 
-## Lesson 4: DISTRIBUTIONS AND DESCRIPTIVE STATISTICS
+## Lesson 9: DISTRIBUTIONS AND DESCRIPTIVE STATISTICS
 
 In this lesson, we will cover how to graph distributions in R and how to calculate descriptive statistics to describe those distributions. The good news is, you have already learned some of the descriptive statistics functions, so they will be a review. You will also get to make your first graphs using the ggplot2 package!
 
@@ -22,7 +22,7 @@ We will work with the **BKSnow.csv** file, which has monthly snowfall data for B
 snow <- read.csv("BKSnow.csv")
 ```
 
-### 4.1 Graphing distributions
+### 9.1 Graphing distributions
 In this section, we will make our first foray into graphing! We will use the **ggplot2** package for making graphs because it is easier to make nice looking graphs in ggplot than in base R.
 
 Load the **tidyverse** package for this session:
@@ -63,7 +63,7 @@ ggplot(data = snow, aes(x = JULJAN)) +
 
 Now we have a histogram that both shows us the distribution of our data and looks pretty nice!
 
-### 4.2 Descriptive statistics
+### 9.2 Descriptive statistics
 
 #### Central tendency
 In class, we discussed three measures of central tendency: mean, median, and mode. Below, we will cover how to calculate each for the "JULJAN" variable in the data frame.
@@ -157,7 +157,7 @@ var_JULJAN
 
 Notice the relationship between the two. The standard deviation is the square root of the variance, so we could also calculate one from the other.
 
-### 4.3 Adding probability distributions
+### 9.3 Adding probability distributions
 So far, we have been working with frequency distributions of our data, but we have been discussing using formal statistical distributions to represent our data. Now we will practice calculating a formal distribution (the normal distribution) and comparing it to our data.
 
 R has a function, `dnorm`, that can be used to calculate the probability density of a value for a particular outcome. We can use this function to graph the probability density function for snowfall in Breckenridge by using the function to calculate the probability density for a wide range a values and graphing the output.

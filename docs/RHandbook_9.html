@@ -312,140 +312,302 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#lesson-9-linear-regression"
-id="toc-lesson-9-linear-regression">Lesson 9: Linear Regression</a>
+<li><a href="#lesson-9-distributions-and-descriptive-statistics"
+id="toc-lesson-9-distributions-and-descriptive-statistics">Lesson 9:
+DISTRIBUTIONS AND DESCRIPTIVE STATISTICS</a>
 <ul>
-<li><a href="#simple-linear-regression"
-id="toc-simple-linear-regression">9.1 Simple linear regression</a></li>
+<li><a href="#graphing-distributions"
+id="toc-graphing-distributions">9.1 Graphing distributions</a></li>
+<li><a href="#descriptive-statistics"
+id="toc-descriptive-statistics">9.2 Descriptive statistics</a></li>
+<li><a href="#adding-probability-distributions"
+id="toc-adding-probability-distributions">9.3 Adding probability
+distributions</a></li>
+<li><a href="#team-challenge" id="toc-team-challenge">Team
+challenge</a></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="lesson-9-linear-regression" class="section level2">
-<h2>Lesson 9: Linear Regression</h2>
-<p>In this lesson, you will tackle a test that can be used when you have
-two continuous variables: linear regression. We will work with a plant
-cover data set that looks at climate variables as possible predictors of
-native plant cover.</p>
-<div id="simple-linear-regression" class="section level3">
-<h3>9.1 Simple linear regression</h3>
-<p>In this first section, we will individually test the effect of mean
-temperature and maximum temperature on the cover of native plant
-species. To begin, we will build and visualize the models.</p>
-<p>First, load the data set. Be sure your working directory is set
-correctly.</p>
-<pre class="r"><code>plant &lt;- read.csv(&quot;PlantSumm.csv&quot;)</code></pre>
-<p>For now, we’ll build three models: the null model, an alternative
-model for mean temperature, and an alternative model for maximum
-temperature.</p>
-<pre class="r"><code>plant_null &lt;- lm(tot_cover ~ 1, plant)
-plant_mean &lt;- lm(tot_cover ~ Mean_tempC, plant)
-plant_max &lt;- lm(tot_cover ~ Max_tempC, plant)</code></pre>
-<p>To view the output of your models, type the name of each model. Just
-like when we have worked with this model before, the null model will
-have just an intercept, and the alternative model will have a intercept
-and a slope term for the effect of either mean or maximum temperature on
-plant cover.</p>
-<p>Now, let’s create graphs to visualize our data. Because we have two
-continuous variables, a scatterplot is a good option. We will also
-include a best fit line based on our alternative model. We’ll make two
-graphs, one for each of our independent variables. If you haven’t
-already, load the <code>ggplot2</code> package first.</p>
-<pre class="r"><code>library(ggplot2)
-ggplot(plant, aes(x=Mean_tempC, y=tot_cover)) +
-  geom_point() +
-  geom_smooth(method=&quot;lm&quot;)+
-  labs(x=&quot;Mean temperature (C)&quot;, y=&quot;Total plant cover&quot;) +
+<div id="lesson-9-distributions-and-descriptive-statistics"
+class="section level2">
+<h2>Lesson 9: DISTRIBUTIONS AND DESCRIPTIVE STATISTICS</h2>
+<p>In this lesson, we will cover how to graph distributions in R and how
+to calculate descriptive statistics to describe those distributions. The
+good news is, you have already learned some of the descriptive
+statistics functions, so they will be a review. You will also get to
+make your first graphs using the ggplot2 package!</p>
+<p>We will work with the <strong>BKSnow.csv</strong> file, which has
+monthly snowfall data for Breckenridge, dating back to the late 1940s.
+Download the data file and upload that file into R now (be sure to set
+your working directory first, and save your code in a script file):</p>
+<pre class="r"><code>snow &lt;- read.csv(&quot;BKSnow.csv&quot;)</code></pre>
+<div id="graphing-distributions" class="section level3">
+<h3>9.1 Graphing distributions</h3>
+<p>In this section, we will make our first foray into graphing! We will
+use the <strong>ggplot2</strong> package for making graphs because it is
+easier to make nice looking graphs in ggplot than in base R.</p>
+<p>Load the <strong>tidyverse</strong> package for this session:</p>
+<pre class="r"><code>library(ggplot2)</code></pre>
+<p>In this section, you will learn to make histograms. Making this type
+of graph is often one of the first steps in exploratory data analysis,
+which gives us a feel for what our data look like before we start formal
+analysis.</p>
+<p>Histograms are useful for visualizing how our data are distributed.
+Are they close to a normal (bell-shaped) distribution? Are they skewed?
+Biomodal? Are there outliers? All of these questions can be answered
+with a histogram.</p>
+<p>We will start by making a histogram of our “JULJAN” variable, which
+is the total snowfall from July to January. When you use the
+<strong>ggplot2</strong> package to make graphs, you will start with one
+line of code that tells ggplot what data to use for your graph. Then you
+add additional lines of code to create and modify your graph. Here is
+the code to make a simple histogram, without changing any default
+settings:</p>
+<pre class="r"><code>ggplot(data = snow, aes(x = JULJAN)) +
+  geom_histogram() </code></pre>
+<p><img src="RHandbook_9_files/figure-html/histogram-1.png" width="672" /></p>
+<p>In the first line of code above, we start with the
+<code>ggplot</code> function. The first argument of the function (data)
+is the data frame that contains the data you want to graph (it needs to
+be a data frame object). We want to use our <code>snow</code> dataframe.
+Next is the aesthetics argument (aes), where you list the variables you
+want to graph. Notice that “aes” is followed by parentheses. This is
+because you can list multiple variable for this argument, so you put the
+list of variable inside the parentheses. For our histogram, we are only
+using one variable (JULJAN), and this is our x variable. We end the line
+with a + sign to indicate that we are adding additional code on the next
+line to create the graph. In the second line of code, we are telling
+ggplot that we want to use the data from the first line of code to
+create a histogram. We don’t need to add any arguments to the
+<code>geom_histogram</code> because we already told ggplot what data to
+use, and we aren’t changing any default settings.</p>
+<p>Now let’s take a look at a few ways we can modify our graph to make
+it look nicer. First, let’s change our axis labels. “JULJAN” is sensible
+for a column heading because it’s brief and it doesn’t have any spaces,
+but it looks a little odd on a graph, and it’s not descriptive enough
+for an axis label. I also like to start my axis titles with a capital
+letter. We will add another line to the code with the <code>labs</code>
+function to change the axis labels. Don’t forget to add a plus sign to
+the end of the geom_histogram line to indicate that you are adding more
+code for the graph below.</p>
+<pre class="r"><code>ggplot(data = snow, aes(x = JULJAN)) +
+  geom_histogram() +
+  labs(x = &quot;Snowfall from July to January&quot;, y = &quot;Frequency&quot;)</code></pre>
+<p><img src="RHandbook_9_files/figure-html/axis_labels-1.png" width="672" /></p>
+<p>I also find the grey background to be distracting, so we will change
+the theme to get rid of the background. Again, we will add another line
+of code, so add the plus sign to the end of the labs line.</p>
+<pre class="r"><code>ggplot(data = snow, aes(x = JULJAN)) +
+  geom_histogram() +
+  labs(x = &quot;Snowfall from July to January&quot;, y = &quot;Frequency&quot;) +
   theme_classic()</code></pre>
-<p><img src="RHandbook_9_files/figure-html/plant_scatter-1.png" width="672" /></p>
-<pre class="r"><code>ggplot(plant, aes(x=Max_tempC, y=tot_cover)) +
-  geom_point() +
-  geom_smooth(method=&quot;lm&quot;)+
-  labs(x=&quot;Max temperature (C)&quot;, y=&quot;Total plant cover&quot;) +
+<p><img src="RHandbook_9_files/figure-html/theme-1.png" width="672" /></p>
+<p>Now we have a histogram that both shows us the distribution of our
+data and looks pretty nice!</p>
+</div>
+<div id="descriptive-statistics" class="section level3">
+<h3>9.2 Descriptive statistics</h3>
+<div id="central-tendency" class="section level4">
+<h4>Central tendency</h4>
+<p>In class, we discussed three measures of central tendency: mean,
+median, and mode. Below, we will cover how to calculate each for the
+“JULJAN” variable in the data frame.</p>
+<p>You have used the <code>mean</code> function before, but this time we
+will calculate the mean of a column in data frame instead of the mean of
+a vector. Notice the use of the optional <code>na.rm=T</code> argument
+to remove missing values before calculating the mean.</p>
+<pre class="r"><code>mean_JULJAN &lt;- mean(snow$JULJAN,na.rm=T)
+mean_JULJAN</code></pre>
+<pre><code>## [1] 84.30972</code></pre>
+<p>Calculating the median is similarly intuitive:</p>
+<pre class="r"><code>median_JULJAN &lt;- median(snow$JULJAN,na.rm=T)</code></pre>
+<p>Unfortunately, there is not a built-in function for calculating the
+mode in R, but there are a few options for determining the mode. Likely
+the easiest is to install <strong>DescTools</strong> package, which does
+have a mode function.</p>
+<pre class="r"><code>install.packages(&quot;DescTools&quot;)</code></pre>
+<p>You will only need to run the install packages command once, and then
+it will be installed on your computer.</p>
+<p>To load the package and calculate the mode, run</p>
+<pre class="r"><code>library(DescTools)
+mode_JULJAN &lt;- Mode(snow$JULJAN)
+mode_JULJAN</code></pre>
+<pre><code>## [1] NA
+## attr(,&quot;freq&quot;)
+## [1] NA</code></pre>
+<p>In the output, the top number you will see is the mode. If there are
+multiple modes, you will see a vector listing all of the modes instead
+of a single number. The number on the bottom is the frequency of the
+mode (how often that value appeared in the data set). Notice in this
+case, the values are both <code>NA</code>. Based on the variable type
+for the JULJAN variable and the definition of the mode, why do you think
+this is? What type of variable might be more likely to have a mode?</p>
+<p>The mode is the measure of central tendency we will use the least in
+this class, and it is often enough to infer it visually from a frequency
+histogram.</p>
+<p>Next, we will add lines representing the mean and median to the
+histogram we made above. This will allow us to visualize where these
+values fall relative to the distribution of our data. We can do this by
+adding two lines to the codes we already wrote to create our
+histogram:</p>
+<pre class="r"><code>ggplot(data = snow, aes(x = JULJAN)) +
+  geom_histogram() +
+  geom_vline(aes(xintercept=mean_JULJAN),color=&quot;blue&quot;,linewidth=1) +
+  geom_vline(aes(xintercept=median_JULJAN),color=&quot;orange&quot;,linewidth=1) +
+  labs(x = &quot;Snowfall from July to January&quot;, y = &quot;Frequency&quot;) +
   theme_classic()</code></pre>
-<p><img src="RHandbook_9_files/figure-html/plant_scatter-2.png" width="672" /></p>
-<div id="classical-frequentist-approach" class="section level4">
-<h4>Classical Frequentist Approach</h4>
-<p>Let’s again start by analyzing the models using a frequentist
-approach. We don’t actually need to run any additional tests for this.
-We can just look at some additional output from the models we already
-ran.</p>
-<p>To view the additional output, use the <code>summary</code>
-function.</p>
-<pre class="r"><code>summary(plant_mean)</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = tot_cover ~ Mean_tempC, data = plant)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -21.707 -13.027   4.722  10.964  21.556 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)   40.812      4.359   9.362 1.42e-06 ***
-## Mean_tempC    -2.451      3.993  -0.614    0.552    
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 15.47 on 11 degrees of freedom
-##   (6 observations deleted due to missingness)
-## Multiple R-squared:  0.03311,    Adjusted R-squared:  -0.05479 
-## F-statistic: 0.3767 on 1 and 11 DF,  p-value: 0.5518</code></pre>
-<pre class="r"><code>summary(plant_max)</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = tot_cover ~ Max_tempC, data = plant)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -26.058  -7.017   3.003   7.405  19.695 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)   41.846      3.913  10.695 3.76e-07 ***
-## Max_tempC     -6.526      3.583  -1.821   0.0958 .  
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 13.79 on 11 degrees of freedom
-##   (6 observations deleted due to missingness)
-## Multiple R-squared:  0.2317, Adjusted R-squared:  0.1618 
-## F-statistic: 3.317 on 1 and 11 DF,  p-value: 0.09585</code></pre>
-<p>When you view the output, you will see a number of things. First, you
-will be able to see the the formula you used to build the models. Then
-you will see some information on the distribution of the residuals (the
-leftover variation not explained by your model). Next, you will see the
-coefficients from your model, along with standard error of the
-estimates. The coefficients section will also show you t-values and
-p-values for each coefficient. These are one-sample t-tests comparing
-the value of the coefficient to zero.</p>
-<p>The information we really want for our linear regression test is down
-at the very bottom. In the final section, you will see some R-squared
-values. These are a measure of how much variation in your dependent
-variable is explained by your independent variable (we will talk about
-this more in class). Below that, you will see the output of the linear
-regression test. First is the F-statistic (the same statistic that was
-calculated for the ANOVA). Then you will see the p-value. Based on these
-values, would your reject or accept the null hypothesis? What does this
-tell you about the effect of temperature on plant growth?</p>
+<p><img src="RHandbook_9_files/figure-html/center_visual-1.png" width="672" /></p>
+<p>The two lines we added are the lines using the
+<code>geom_vline</code> function, which adds a vertical line to the
+graph. The first argument for this function is the aes argument, like we
+saw in the <code>ggplot</code> function. To add a vertical line, we need
+to give R the x-intercept of that line. In this case, we want to add
+lines representing the mean and median, so the intercepts of the lines
+will be the mean and median of the “JULJAN” variable that we calculated
+above. After the aes argument, I also add to optional arguments: color
+and linewidth. The color argument allows you to change the line color.
+You can use either the name of the color or the hex code. The linewidth
+function allows you to change the thickness of the line. Here, by
+setting the linewidth to 1, we are making the lines thicker than the
+default, so they are easier to see.</p>
+<p>Based on the mean and median, would you say the data are normally
+distributed or skewed (i.e., log normal)?</p>
+<p>Let’s see how this affects our interpretation of current snowfall and
+how it compares to what is “normal”. We will pull out the July to
+January snowfall from this year and see how it compares to the mean and
+median.</p>
+<p>First, we will extract and save this year’s snowfall. This will come
+from the “JULJAN” variable in our snow data frame, so we can extract
+that column using the $ symbol. Then we will want to take only the last
+value from that column. We can do that using [] to index the column. We
+could count the number of rows in the data frame and use that number to
+extract the last value, but there is a shortcut. The <code>nrow</code>
+function will count the number of rows in a data frame for use, so we
+can just use that function inside the brackets to calculate the correct
+index.</p>
+<p>The full code for this looks like this:</p>
+<pre class="r"><code>snow_2024 &lt;- snow$JULJAN[nrow(snow)]</code></pre>
+<p>Now that we have the value, we can add it to our histogram, again
+using the <code>geom_vline</code> function, to visually compare it to
+the mean and median:</p>
+<pre class="r"><code>ggplot(data = snow, aes(x = JULJAN)) +
+  geom_histogram() +
+  geom_vline(aes(xintercept=mean_JULJAN),color=&quot;blue&quot;,linewidth=1) +
+  geom_vline(aes(xintercept=median_JULJAN),color=&quot;orange&quot;,linewidth=1) +
+  geom_vline(aes(xintercept=snow_2024),color=&quot;black&quot;,linewidth=1) +
+  labs(x = &quot;Snowfall from July to January&quot;, y = &quot;Frequency&quot;) +
+  theme_classic()</code></pre>
+<p><img src="RHandbook_9_files/figure-html/compare-1.png" width="672" /></p>
+<p>Based on this new graph, is the 2023-2024 July to January snowfall
+lower than normal or higher than normal?</p>
 </div>
-<div id="likelihood-based-approach" class="section level4">
-<h4>Likelihood-based approach</h4>
-<p>Next we will use a likelihood-based approach to test the same
-question. Once again, the approach is the same as what you used for the
-t-test and ANOVA, using the <code>AIC</code> function to compare the
-models. Since we have three models, we can include all three in the AIC
-function and then compare the AIC from both the plant_mean and plant_max
-models to the null model.</p>
-<pre class="r"><code>AIC(plant_null, plant_mean, plant_max)</code></pre>
-<pre><code>##            df      AIC
-## plant_null  2 110.3634
-## plant_mean  3 111.9256
-## plant_max   3 108.9372</code></pre>
-<p>Based on this output, what would you conclude about the effect of
-mean and maximum temperature on plant growth?</p>
+<div id="variation" class="section level4">
+<h4>Variation</h4>
+<p>In this section, you will practice calculating measures of
+variability in a data set: standard deviation (which you have already
+learned) and variance (which is just as easy).</p>
+<p>We’ll continue working with the “JULJAN” and “LOG_JULJAN” variables
+in our data frame.</p>
+<p>Calculate the standard deviation and variance as follows:</p>
+<pre class="r"><code>sd_JULJAN &lt;- sd(snow$JULJAN,na.rm=T)
+sd_JULJAN</code></pre>
+<pre><code>## [1] 28.01594</code></pre>
+<pre class="r"><code>var_JULJAN &lt;- var(snow$JULJAN,na.rm=T)
+var_JULJAN</code></pre>
+<pre><code>## [1] 784.8927</code></pre>
+<p>Notice the relationship between the two. The standard deviation is
+the square root of the variance, so we could also calculate one from the
+other.</p>
 </div>
+</div>
+<div id="adding-probability-distributions" class="section level3">
+<h3>9.3 Adding probability distributions</h3>
+<p>So far, we have been working with frequency distributions of our
+data, but we have been discussing using formal statistical distributions
+to represent our data. Now we will practice calculating a formal
+distribution (the normal distribution) and comparing it to our data.</p>
+<p>R has a function, <code>dnorm</code>, that can be used to calculate
+the probability density of a value for a particular outcome. We can use
+this function to graph the probability density function for snowfall in
+Breckenridge by using the function to calculate the probability density
+for a wide range a values and graphing the output.</p>
+<p>Based on the histogram we made, a good range of values to use is 1 to
+200 because that covers the full range of snowfall values that we
+observed. When we use the <code>dnorm</code> function, we will provide
+this range as the first argument. We can create this sequence of numbers
+using the <code>:</code> symbol. Then, to calculate the probability
+density of all of these snowfall values, we have to provide the mean and
+standard deviation of our distribution as the next two arguments. We
+will use the mean and standard deviation we calculated for our JULJAN
+variable above. We will save the probability densities values that we
+calculate in a vector called “pdens”.</p>
+<pre class="r"><code>pdens &lt;- dnorm(1:200,mean=mean_JULJAN,sd=sd_JULJAN)</code></pre>
+<p>In order to graph our data using ggplot, we have to put the data in a
+data frame. We will create a data frame with two variables: one with the
+range of snowfall values and the second with the probability densities
+of those snowfall values.</p>
+<pre class="r"><code>pdens_data &lt;- data.frame(snow=1:200,pdens=pdens)</code></pre>
+<p>Finally, we can graph this distribution on top of our histogram, so
+we can compare the distribution of our data with the probability
+distribution.</p>
+<p>We will do this by adding another layer to our graph, with the
+<code>geom_density</code> function. In this function, we are using a
+different data set that the one we used for the rest of our graph
+(“pdens_data” instead of “snow). Because of this, inside this function,
+we have to tell R the new data set we want to use (first argument) and
+the values we want to graph (x and y inside the aes argument). In this
+case we want to graph the probability density for each snowfall value.
+Then we include another argument (stat =”identity”), which tells R that
+we want to graph the probability density based on the value we provide
+in our data frame, rather that calculating the density based on the
+frequency of values in the data frame. Finally, the last argument again
+changes the thickness of the line.</p>
+<p>Notice I have also modified the <code>geom_histogram</code> function.
+I added an argument (<code>aes(y=..density..)</code>). This change
+rescales to values in the histogram so they represent a probability
+density, rather than a frequency. This will put the values on the same
+scale as the probability density function we calculated, so we can
+effectively compare the distribution of our data to the probability
+distribution.</p>
+<p>Here’s the full code for the graph:</p>
+<pre class="r"><code>ggplot(snow,aes(x=JULJAN)) +
+  geom_histogram(aes(y=..density..))+
+  geom_vline(aes(xintercept=mean_JULJAN),color=&quot;blue&quot;,linewidth=1) +
+  geom_vline(aes(xintercept=median_JULJAN),color=&quot;orange&quot;,linewidth=1) +
+  geom_density(data=pdens_data,aes(x=snow,y=pdens),stat=&quot;identity&quot;,linewidth=1)+
+  theme_classic()</code></pre>
+<p><img src="RHandbook_9_files/figure-html/normal_graph-1.png" width="672" /></p>
+</div>
+<div id="team-challenge" class="section level3">
+<h3>Team challenge</h3>
+<p>Throughout this exercise, we worked the the JULJAN variable, which is
+the total snowfall from July to January. One thing we noticed is that
+there is a little bit of skew in this variable. In class, I mentioned
+that we can sometimes force a skewed distribution to be normal by taking
+the log of the variable. We will try that out here and see how it
+changes our exploratory analysis of historical snowfall and how this
+year’s snowfall compares, following the steps below.</p>
+<ol style="list-style-type: decimal">
+<li><p>Use the <code>mutate</code> function to calculate the log of the
+JULJAN variable and add it to the “snow” data frame.</p></li>
+<li><p>Calculate the mean and median of the log JULJAN
+variable.</p></li>
+<li><p>Extract the value of the log JULJAN variable for
+2023-2024.</p></li>
+<li><p>Use the <code>dnorm</code> function to calculate the probability
+densities of a range of values for the log JULJAN variable. I would
+recommend a range from 2.5 to 6. Because this is a small range, you will
+get a better-looking curve if your sequence of values uses increments of
+0.1 instead of 1. You can do this with the <code>seq</code> function as
+follows: <code>seq(2.5,6,0.1)</code>. Just use this in place of the
+<code>1:200</code> in the code you practiced above.</p></li>
+<li><p>Create a data frame with the range of snowfall values and the
+probability densities that you calculated above.</p></li>
+<li><p>Make a histogram showing the distribution of the log JULJAN data,
+the probability distribution, the mean and median of the log JULJAN
+data, and the 2023-2024 value of the log JULJAN data.</p></li>
+</ol>
 </div>
 </div>
 
