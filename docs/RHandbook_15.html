@@ -13,7 +13,7 @@
 
 <meta name="date" content="2023-02-15" />
 
-<title>ESS 3500 R Handbook, Lesson 10</title>
+<title>ESS 3500 R Handbook, Lesson 15</title>
 
 <script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -258,34 +258,46 @@ $(document).ready(function () {
       <a href="RHandbook_1.html">Lesson 1: Software installation</a>
     </li>
     <li>
-      <a href="RHandbook_2.html">Lesson 2: R Basics</a>
+      <a href="RHandbook_2.html">Lesson 2: Data management</a>
     </li>
     <li>
-      <a href="RHandbook_3.html">Lesson 3: Data frames</a>
+      <a href="RHandbook_3.html">Lesson 3: Graphs</a>
     </li>
     <li>
-      <a href="RHandbook_4.html">Lesson 4: Distributions and descriptive statistics</a>
+      <a href="RHandbook_4.html">Lesson 4: R basics</a>
     </li>
     <li>
-      <a href="RHandbook_5.html">Lesson 5: Two-sample t-test</a>
+      <a href="RHandbook_5.html">Lesson 5: Data frames</a>
     </li>
     <li>
-      <a href="RHandbook_6.html">Lesson 6: Assumptions and transformations</a>
+      <a href="RHandbook_6.html">Lesson 6: Graphing in R</a>
     </li>
     <li>
-      <a href="RHandbook_7.html">Lesson 7: ANOVA</a>
+      <a href="RHandbook_7.html">Lesson 7: Hypothesis testing</a>
     </li>
     <li>
-      <a href="RHandbook_8.html">Lesson 8: Correlations</a>
+      <a href="RHandbook_8.html">Lesson 8: Probability</a>
     </li>
     <li>
-      <a href="RHandbook_9.html">Lesson 9: Regressions</a>
+      <a href="RHandbook_9.html">Lesson 9: Probability distributions</a>
     </li>
     <li>
-      <a href="RHandbook_10.html">Lesson 10: Multiple predictors</a>
+      <a href="RHandbook_10.html">Lesson 10: Chi-square tests</a>
     </li>
     <li>
-      <a href="RHandbook_11.html">Lesson 11: Categorical data</a>
+      <a href="RHandbook_11.html">Lesson 11: T-tests</a>
+    </li>
+    <li>
+      <a href="RHandbook_12.html">Lesson 12: Assumptions and transformations</a>
+    </li>
+    <li>
+      <a href="RHandbook_13.html">Lesson 13: ANOVA</a>
+    </li>
+    <li>
+      <a href="RHandbook_14.html">Lesson 14: Correlations and Regressions</a>
+    </li>
+    <li>
+      <a href="RHandbook_15.html">Lesson 15: Multiple predictors</a>
     </li>
   </ul>
 </li>
@@ -304,7 +316,7 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 10</h1>
+<h1 class="title toc-ignore">ESS 3500 R Handbook, Lesson 15</h1>
 <h4 class="author">Emily Schultz</h4>
 <h4 class="date">2023-02-15</h4>
 
@@ -312,25 +324,25 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#lesson-10-multiple-predictors"
-id="toc-lesson-10-multiple-predictors">Lesson 10: Multiple
+<li><a href="#lesson-15-multiple-predictors"
+id="toc-lesson-15-multiple-predictors">Lesson 15: Multiple
 Predictors</a>
 <ul>
 <li><a href="#two-categorical-variables-two-way-anova"
-id="toc-two-categorical-variables-two-way-anova">10.1 Two categorical
+id="toc-two-categorical-variables-two-way-anova">15.1 Two categorical
 variables (Two-way ANOVA)</a></li>
 <li><a href="#continuous-and-categorial-predictors-ancova"
-id="toc-continuous-and-categorial-predictors-ancova">10.2 Continuous and
+id="toc-continuous-and-categorial-predictors-ancova">15.2 Continuous and
 categorial predictors (ANCOVA)</a></li>
 <li><a href="#two-continuous-predictors-multiple-regression"
-id="toc-two-continuous-predictors-multiple-regression">10.3 Two
+id="toc-two-continuous-predictors-multiple-regression">15.3 Two
 continuous predictors (multiple regression)</a></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="lesson-10-multiple-predictors" class="section level2">
-<h2>Lesson 10: Multiple Predictors</h2>
+<div id="lesson-15-multiple-predictors" class="section level2">
+<h2>Lesson 15: Multiple Predictors</h2>
 <p>In the previous lessons, we have worked with models that have only
 one independent and one dependent variable. However, it is common to
 have more than one independent variable that we would like the test.
@@ -351,7 +363,7 @@ get started.</p>
 library(dplyr)</code></pre>
 <div id="two-categorical-variables-two-way-anova"
 class="section level3">
-<h3>10.1 Two categorical variables (Two-way ANOVA)</h3>
+<h3>15.1 Two categorical variables (Two-way ANOVA)</h3>
 <p>For our first example, we will work with two categorical predictor
 variables. We will use a data set from a medical test related to
 hyptertension. One common cause of hypertension is high sodium levels,
@@ -478,7 +490,7 @@ interaction?</p>
 </div>
 <div id="continuous-and-categorial-predictors-ancova"
 class="section level3">
-<h3>10.2 Continuous and categorial predictors (ANCOVA)</h3>
+<h3>15.2 Continuous and categorial predictors (ANCOVA)</h3>
 <p>For our final example, we will look at a blend of the previous two
 types of predictors and consider a case where we have one continuous and
 one categorical predictor. We will use an example of butterfly endurance
@@ -529,7 +541,7 @@ temperature, genotype, and their interaction on butterfly endurance?</p>
 </div>
 <div id="two-continuous-predictors-multiple-regression"
 class="section level3">
-<h3>10.3 Two continuous predictors (multiple regression)</h3>
+<h3>15.3 Two continuous predictors (multiple regression)</h3>
 <p>For our next example, we will work with two continuous predictor
 variables, sometimes called a multiple regression. We will use the
 climate and plant cover data we used for our simple regression

@@ -1,5 +1,5 @@
 ---
-title: "ESS 3500 R Handbook, Lesson 10"
+title: "ESS 3500 R Handbook, Lesson 15"
 author: "Emily Schultz"
 date: "2023-02-15"
 output: 
@@ -12,7 +12,7 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Lesson 10: Multiple Predictors
+## Lesson 15: Multiple Predictors
 In the previous lessons, we have worked with models that have only one independent and one dependent variable. However, it is common to have more than one independent variable that we would like the test. This is often particularly true when we do observational studies, and there are a whole suite of variables that might affect the response we measure. In this lesson, we will cover models with multiple predictors. We will focus on examples with only two predictors, but the methods can easily be extended to include more than two predictors as well.
 
 For these examples, we will only look at the likelihood approach, which can be more powerful for testing multiple alternative hypothesis. However, similar tests can be done with a classic frequentist approach, using two-way ANOVAs, ANCOVAs, and stepwise (multiple) regression, for the three examples, respectively.
@@ -24,7 +24,7 @@ library(ggplot2)
 library(dplyr)
 ```
 
-### 10.1 Two categorical variables (Two-way ANOVA)
+### 15.1 Two categorical variables (Two-way ANOVA)
 For our first example, we will work with two categorical predictor variables. We will use a data set from a medical test related to hyptertension. One common cause of hypertension is high sodium levels, which are controlled in part by an enzyme in the kidney called Na-K-ATPase. Researchers tested the activity of Na-K-ATPase in two strains of lab rats: a control strain and a strain selected to spontaneously develop hypertension. They wanted to know if Na-K-ATPase activity varied between these two strains and, if so, what sites in the kidney varied in their enzyme activity. The two independent variables are the rat strain (normal or hypertensive) and the kidney site (DCT, CCD, or OMC).
 
 #### Visualizing and building the models
@@ -109,7 +109,7 @@ AIC(kidney_null,kidney_hyper,kidney_site,kidney_both,kidney_int)
 
 Based on the output table, which model was the best? Was it significantly better than the next best model? What do the differences in AIC values tell you about the effects of each predictor and their interaction?
 
-### 10.2 Continuous and categorial predictors (ANCOVA)
+### 15.2 Continuous and categorial predictors (ANCOVA)
 For our final example, we will look at a blend of the previous two types of predictors and consider a case where we have one continuous and one categorical predictor. We will use an example of butterfly endurance and how it is affected by both temperature and the genotype of the butterfly.
 
 #### Visualizing and building the models
@@ -150,7 +150,7 @@ AIC(butter_null,butter_temp,butter_geno,butter_both,butter_int)
 
 Based on these AIC values, what can you conclude about the effects of temperature, genotype, and their interaction on butterfly endurance?
 
-### 10.3 Two continuous predictors (multiple regression)
+### 15.3 Two continuous predictors (multiple regression)
 For our next example, we will work with two continuous predictor variables, sometimes called a multiple regression. We will use the climate and plant cover data we used for our simple regression lesson.
 
 In the simple, we ran two regressions: one for each of our two models. However, we have discussed the problems with running multiple tests on the same data set. Furthermore, if we run separate tests for our different predictors, we can't look for interactions between the variables. To address this, we can instead run a multiple regression, in which we will account for both mean temperature and maximum temperature at the same time.
