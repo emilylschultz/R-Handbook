@@ -9,25 +9,33 @@ navbar:
       menu:
       - text: "Lesson 1: Software installation"
         href: RHandbook_1.html
-      - text: "Lesson 2: R Basics"
+      - text: "Lesson 2: Data management"
         href: RHandbook_2.html
-      - text: "Lesson 3: Data frames"
+      - text: "Lesson 3: Graphs"
         href: RHandbook_3.html
-      - text: "Lesson 4: Distributions and descriptive statistics"
+      - text: "Lesson 4: R basics"
         href: RHandbook_4.html
-      - text: "Lesson 5: Two-sample t-test"
+      - text: "Lesson 5: Data frames"
         href: RHandbook_5.html
-      - text: "Lesson 6: Assumptions and transformations"
+      - text: "Lesson 6: Graphing in R"
         href: RHandbook_6.html
-      - text: "Lesson 7: ANOVA"
+      - text: "Lesson 7: Hypothesis testing"
         href: RHandbook_7.html
-      - text: "Lesson 8: Correlations"
+      - text: "Lesson 8: Probability"
         href: RHandbook_8.html
-      - text: "Lesson 9: Regressions"
+      - text: "Lesson 9: Probability distributions"
         href: RHandbook_9.html
-      - text: "Lesson 10: Multiple predictors"
+      - text: "Lesson 10: Chi-square tests"
         href: RHandbook_10.html
-      - text: "Lesson 11: Categorical data"
+      - text: "Lesson 11: T-tests"
         href: RHandbook_11.html
+      - text: "Lesson 12: Assumptions and transformations"
+        href: RHandbook_6.html
+      - text: "Lesson 13: ANOVA"
+        href: RHandbook_7.html
+      - text: "Lesson 14: Correlations and Regressions"
+        href: RHandbook_9.html
+      - text: "Lesson 15: Multiple predictors"
+        href: RHandbook_10.html
     - text: "R Templates"
       href: RHandbook_templates.html
