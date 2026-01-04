@@ -30,12 +30,12 @@ navbar:
       - text: "Lesson 11: T-tests"
         href: RHandbook_11.html
       - text: "Lesson 12: Assumptions and transformations"
-        href: RHandbook_6.html
+        href: RHandbook_12.html
       - text: "Lesson 13: ANOVA"
-        href: RHandbook_7.html
+        href: RHandbook_13.html
       - text: "Lesson 14: Correlations and Regressions"
-        href: RHandbook_9.html
+        href: RHandbook_14.html
       - text: "Lesson 15: Multiple predictors"
-        href: RHandbook_10.html
+        href: RHandbook_15.html
     - text: "R Templates"
       href: RHandbook_templates.html
