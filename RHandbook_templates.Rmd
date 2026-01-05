@@ -38,7 +38,7 @@ VECTOR[-c(X1,X2)] # remove values X1 and X2 from a vector
 
 ### Data frame basics
 ```{r databasic}
-DATA <- data.frame(VARIALBE1=VALUES1,VARIALBE2=VALUES2,...) # create a data frame by inputing values for variables
+DATA <- data.frame(VARIALBE1=VALUES1,VARIALBE2=VALUES2,...) # create a data frame by inputting values for variables
 
 DATA$VARIABLE # Extract a variable from a data frame
 DATA[[X,Y]] # Extract the value in row X and column Y
@@ -124,16 +124,83 @@ ggplot(DATA, aes(x=INDEPENDENTVARIABLE, y=DEPENDENTVARIABLE))+
   theme_classic()
 ```
 
-## Building general linear models
+## Classical frequentist tests
+### Chi-square tests
+Categorical independent variable, discrete (count) dependent variable
+```{r chi}
+# Goodness of fit test: compare the frequency in one categorical variable to an expected frequency
+chisq.test(DATATABLE, p=c(EXPECTEDFREQUENCY1,EXPECTEDFREQUENCY2,...)) # The data table should be a table with a simple count for each category. You need to include one expected frequency for each category, so add additional expected frequencies if you have more than two categories.
+
+# Contingency table test: Use when you have counts for two categorical variables to test whether the frequencies of one categorical variable are affected by the other categorical variable
+chisq.test(DATATABLE, simulate.p.value = TRUE/FALSE) # Set the simulate.p.value argument to true if you have a low sample size (<5) in one or more category
+
+# If your data frame is not formatted as a simple count for each category, but instead lists the category value for each observation, you can use the table function to create the data tables for the chi.square function:
+DATATABLE <- table(DATA$VARIABLE1,...) # If you have more than one categorical variable that you want to summarize, list all variables in the arguments
+```
+
+### T-tests
+Categorical independent variable (only 2 categories), continuous dependent variable
+```{r ttest}
+# Two sample t-test, equal variances
+t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = TRUE)
+
+# Two sample t-test, unequal variances
+t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = FALSE)
+
+# Mann-Whitney-Wilcox test (alternative to t-test for when residuals are not normally-distributed)
+wilcox.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = TRUE)
+
+# One sample t-test
+t.test(x = DATA$DEPENDENTVARIABLE, mu = TRUEMEAN)
+
+# Paired t-test
+paired <- t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, paired = TRUE)
+```
+
+### ANOVA
+Categorical independent variable (2+ categories), continuous dependent variable
+```{r anova}
+# ANOVA, equal variances
+aov(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = TRUE)
+
+# ANOVA, unequal variances (Welch's ANOVA)
+oneway.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = FALSE)
+
+# Kruskal-Wallis test (alternative to ANOVA for when residuals are not normally-distributed)
+kruskal.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = TRUE)
+```
+
+### Linear regression 
+Continuous independent variable, continuous dependent variable
+```{r regression}
+# Build model
+MODEL <- lm(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, DATA)
+
+# View model summary
+summary(MODEL)
+```
+
+### Multiple predictors 
+Continuous dependent variable, independent variables can be continuous or categorical
+```{r multiple}
+# Model with no interaction between independent variables
+MODEL <- lm(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE1 + INDEPENDENTVARIABLE2, DATA)
+
+# Build model with no interaction between independent variables
+MODEL <- lm(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE1*INDEPENDENTVARIABLE2, DATA)
+
+# View model summary
+summary(MODEL)
+```
+
+## General linear models
+T-tests, ANOVAs, linear regressions, and models with multiple predictors (two-way ANOVAs, multiple regressions, ANCOVAs) are all part of a broader class of models called general linear models. The lm function can be used to build any of these models. To include random effects in the model in addition to fixed effects, use the lmer function.
 ```{r models}
-# Null model
-null <- lm(INDEPENDENTVARIABLE ~ 1, DATA)
+# Fixed effects model
+fixed <- lm(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, DATA) # You can add in additional independent variables by adding them onto the forumla. Use a + sign to add variables if you don't want to include interactions between variables and a * to include interactions.
 
-# Alternative model
-alternative <- lm(INDEPENDENTVARIABLE ~ DEPENDENTVARIABLE, DATA)
-
-# Paired t-test, random effects model
-paired <- lm(INDEPENDENTVARIABLE ~ DEPENDENTVARIABLE + (1|SAMPLENUMBER), DATA)
+# Random effects model (SAMPLENUMBER is the random effect)
+random <- lmer(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE + (1|SAMPLENUMBER), DATA) # You can add in additional independent variables by adding them onto the forumla. Use a + sign to add variables if you don't want to include interactions between variables and a * to include interactions.
 
 # Extracting coefficients
 COEFFICIENTS <- summary(MODELNAME)$coefficients
@@ -142,28 +209,16 @@ COEFFICIENTS <- summary(MODELNAME)$coefficients
 SIGMA <- summary(MODELNAME)$sigma
 ```
 
-## Running statistical tests
-### Maximum likelihood approach (code has the same structure for all tests)
+## Maximum likelihood approach 
+Code has the same structure for all general linear model tests
 ```{r likelihood}
-# First use the lm function (see previous section) to build your models
-# Calculate AIC
+# First use the lm function (see previous section) to build null and alternative models to represent your hypotheses
+null <- lm(DEPENDENTVARIABLE ~ 1, DATA)
+
+# Alternative model
+alternative <- lm(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, DATA)
+
+# Calculate AIC to compare your models
 AIC(null,altnernative) # You can compare more than two models at a time, so if you have more than one alternative model, you can add them to the list.
 
-```
-
-### Classical frequentist
-#### T-tests
-Categorical independent variable (only 2 categories), continuous independent variable
-```{r ttest}
-# Two sample t-test, equal variances
-t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = TRUE)
-
-# Two sample t-test, unequal variances
-t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = FALSE)
-
-# One sample t-test
-t.test(x = DATA$DEPENDENTVARIABLE, mu = TRUEMEAN)
-
-# Paired t-test
-paired <- t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, paired = TRUE)
 ```

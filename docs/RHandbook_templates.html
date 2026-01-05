@@ -258,37 +258,46 @@ $(document).ready(function () {
       <a href="RHandbook_1.html">Lesson 1: Software installation</a>
     </li>
     <li>
-      <a href="RHandbook_2.html">Lesson 2: R Basics</a>
+      <a href="RHandbook_2.html">Lesson 2: Data management</a>
     </li>
     <li>
-      <a href="RHandbook_3.html">Lesson 3: Data frames</a>
+      <a href="RHandbook_3.html">Lesson 3: Graphs</a>
     </li>
     <li>
-      <a href="RHandbook_4.html">Lesson 4: Distributions and descriptive statistics</a>
+      <a href="RHandbook_4.html">Lesson 4: R basics</a>
     </li>
     <li>
-      <a href="RHandbook_5.html">Lesson 5: Linear models</a>
+      <a href="RHandbook_5.html">Lesson 5: Data frames</a>
     </li>
     <li>
-      <a href="RHandbook_6.html">Lesson 6: Data visualization</a>
+      <a href="RHandbook_6.html">Lesson 6: Graphing in R</a>
     </li>
     <li>
-      <a href="RHandbook_7.html">Lesson 7: T-tests</a>
+      <a href="RHandbook_7.html">Lesson 7: Hypothesis testing</a>
     </li>
     <li>
-      <a href="RHandbook_8.html">Lesson 8: ANOVA</a>
+      <a href="RHandbook_8.html">Lesson 8: Probability</a>
     </li>
     <li>
-      <a href="RHandbook_9.html">Lesson 9: Two-way ANOVA</a>
+      <a href="RHandbook_9.html">Lesson 9: Probability distributions</a>
     </li>
     <li>
-      <a href="RHandbook_10.html">Lesson 10: Assumptions and transformations</a>
+      <a href="RHandbook_10.html">Lesson 10: Chi-square tests</a>
     </li>
     <li>
-      <a href="RHandbook_11.html">Lesson 11: Correlations and regressions</a>
+      <a href="RHandbook_11.html">Lesson 11: T-tests</a>
     </li>
     <li>
-      <a href="RHandbook_12.html">Lesson 12: Categorical data</a>
+      <a href="RHandbook_12.html">Lesson 12: Assumptions and transformations</a>
+    </li>
+    <li>
+      <a href="RHandbook_13.html">Lesson 13: ANOVA</a>
+    </li>
+    <li>
+      <a href="RHandbook_14.html">Lesson 14: Correlations and Regressions</a>
+    </li>
+    <li>
+      <a href="RHandbook_15.html">Lesson 15: Multiple predictors</a>
     </li>
   </ul>
 </li>
@@ -341,7 +350,7 @@ VECTOR[-c(X1,X2)] # remove values X1 and X2 from a vector</code></pre>
 </div>
 <div id="data-frame-basics" class="section level3">
 <h3>Data frame basics</h3>
-<pre class="r"><code>DATA &lt;- data.frame(VARIALBE1=VALUES1,VARIALBE2=VALUES2,...) # create a data frame by inputing values for variables
+<pre class="r"><code>DATA &lt;- data.frame(VARIALBE1=VALUES1,VARIALBE2=VALUES2,...) # create a data frame by inputting values for variables
 
 DATA$VARIABLE # Extract a variable from a data frame
 DATA[[X,Y]] # Extract the value in row X and column Y</code></pre>
@@ -428,45 +437,33 @@ ggplot(DATA, aes(x=INDEPENDENTVARIABLE, y=DEPENDENTVARIABLE))+
   theme_classic()</code></pre>
 </div>
 </div>
-<div id="building-general-linear-models" class="section level2">
-<h2>Building general linear models</h2>
-<pre class="r"><code># Null model
-null &lt;- lm(INDEPENDENTVARIABLE ~ 1, DATA)
+<div id="classical-frequentist-tests" class="section level2">
+<h2>Classical frequentist tests</h2>
+<div id="chi-square-tests" class="section level3">
+<h3>Chi-square tests</h3>
+<p>Categorical independent variable, discrete (count) dependent
+variable</p>
+<pre class="r"><code># Goodness of fit test: compare the frequency in one categorical variable to an expected frequency
+chisq.test(DATATABLE, p=c(EXPECTEDFREQUENCY1,EXPECTEDFREQUENCY2,...)) # The data table should be a table with a simple count for each category. You need to include one expected frequency for each category, so add additional expected frequencies if you have more than two categories.
 
-# Alternative model
-alternative &lt;- lm(INDEPENDENTVARIABLE ~ DEPENDENTVARIABLE, DATA)
+# Contingency table test: Use when you have counts for two categorical variables to test whether the frequencies of one categorical variable are affected by the other categorical variable
+chisq.test(DATATABLE, simulate.p.value = TRUE/FALSE) # Set the simulate.p.value argument to true if you have a low sample size (&lt;5) in one or more category
 
-# Paired t-test, random effects model
-paired &lt;- lm(INDEPENDENTVARIABLE ~ DEPENDENTVARIABLE + (1|SAMPLENUMBER), DATA)
-
-# Extracting coefficients
-COEFFICIENTS &lt;- summary(MODELNAME)$coefficients
-
-# Extracting model standard deviation
-SIGMA &lt;- summary(MODELNAME)$sigma</code></pre>
+# If your data frame is not formatted as a simple count for each category, but instead lists the category value for each observation, you can use the table function to create the data tables for the chi.square function:
+DATATABLE &lt;- table(DATA$VARIABLE1,...) # If you have more than one categorical variable that you want to summarize, list all variables in the arguments</code></pre>
 </div>
-<div id="running-statistical-tests" class="section level2">
-<h2>Running statistical tests</h2>
-<div
-id="maximum-likelihood-approach-code-has-the-same-structure-for-all-tests"
-class="section level3">
-<h3>Maximum likelihood approach (code has the same structure for all
-tests)</h3>
-<pre class="r"><code># First use the lm function (see previous section) to build your models
-# Calculate AIC
-AIC(null,altnernative) # You can compare more than two models at a time, so if you have more than one alternative model, you can add them to the list.</code></pre>
-</div>
-<div id="classical-frequentist" class="section level3">
-<h3>Classical frequentist</h3>
-<div id="t-tests" class="section level4">
-<h4>T-tests</h4>
+<div id="t-tests" class="section level3">
+<h3>T-tests</h3>
 <p>Categorical independent variable (only 2 categories), continuous
-independent variable</p>
+dependent variable</p>
 <pre class="r"><code># Two sample t-test, equal variances
 t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = TRUE)
 
 # Two sample t-test, unequal variances
 t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = FALSE)
+
+# Mann-Whitney-Wilcox test (alternative to t-test for when residuals are not normally-distributed)
+wilcox.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = TRUE)
 
 # One sample t-test
 t.test(x = DATA$DEPENDENTVARIABLE, mu = TRUEMEAN)
@@ -474,7 +471,73 @@ t.test(x = DATA$DEPENDENTVARIABLE, mu = TRUEMEAN)
 # Paired t-test
 paired &lt;- t.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, paired = TRUE)</code></pre>
 </div>
+<div id="anova" class="section level3">
+<h3>ANOVA</h3>
+<p>Categorical independent variable (2+ categories), continuous
+dependent variable</p>
+<pre class="r"><code># ANOVA, equal variances
+aov(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = TRUE)
+
+# ANOVA, unequal variances (Welch&#39;s ANOVA)
+oneway.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = FALSE)
+
+# Kruskal-Wallis test (alternative to ANOVA for when residuals are not normally-distributed)
+kruskal.test(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, data = DATA, var.equal = TRUE)</code></pre>
 </div>
+<div id="linear-regression" class="section level3">
+<h3>Linear regression</h3>
+<p>Continuous independent variable, continuous dependent variable</p>
+<pre class="r"><code># Build model
+MODEL &lt;- lm(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, DATA)
+
+# View model summary
+summary(MODEL)</code></pre>
+</div>
+<div id="multiple-predictors" class="section level3">
+<h3>Multiple predictors</h3>
+<p>Continuous dependent variable, independent variables can be
+continuous or categorical</p>
+<pre class="r"><code># Model with no interaction between independent variables
+MODEL &lt;- lm(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE1 + INDEPENDENTVARIABLE2, DATA)
+
+# Build model with no interaction between independent variables
+MODEL &lt;- lm(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE1*INDEPENDENTVARIABLE2, DATA)
+
+# View model summary
+summary(MODEL)</code></pre>
+</div>
+</div>
+<div id="general-linear-models" class="section level2">
+<h2>General linear models</h2>
+<p>T-tests, ANOVAs, linear regressions, and models with multiple
+predictors (two-way ANOVAs, multiple regressions, ANCOVAs) are all part
+of a broader class of models called general linear models. The lm
+function can be used to build any of these models. To include random
+effects in the model in addition to fixed effects, use the lmer
+function.</p>
+<pre class="r"><code># Fixed effects model
+fixed &lt;- lm(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, DATA) # You can add in additional independent variables by adding them onto the forumla. Use a + sign to add variables if you don&#39;t want to include interactions between variables and a * to include interactions.
+
+# Random effects model (SAMPLENUMBER is the random effect)
+random &lt;- lmer(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE + (1|SAMPLENUMBER), DATA) # You can add in additional independent variables by adding them onto the forumla. Use a + sign to add variables if you don&#39;t want to include interactions between variables and a * to include interactions.
+
+# Extracting coefficients
+COEFFICIENTS &lt;- summary(MODELNAME)$coefficients
+
+# Extracting model standard deviation
+SIGMA &lt;- summary(MODELNAME)$sigma</code></pre>
+</div>
+<div id="maximum-likelihood-approach" class="section level2">
+<h2>Maximum likelihood approach</h2>
+<p>Code has the same structure for all general linear model tests</p>
+<pre class="r"><code># First use the lm function (see previous section) to build null and alternative models to represent your hypotheses
+null &lt;- lm(DEPENDENTVARIABLE ~ 1, DATA)
+
+# Alternative model
+alternative &lt;- lm(DEPENDENTVARIABLE ~ INDEPENDENTVARIABLE, DATA)
+
+# Calculate AIC to compare your models
+AIC(null,altnernative) # You can compare more than two models at a time, so if you have more than one alternative model, you can add them to the list.</code></pre>
 </div>
 
 
