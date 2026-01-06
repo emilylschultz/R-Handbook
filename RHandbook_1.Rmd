@@ -12,6 +12,7 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+knitr::include_url("https://emilylschultz.shinyapps.io/RHandbookL1/")
 ```
 
 <!---LEARNR EX Lesson 1-->
