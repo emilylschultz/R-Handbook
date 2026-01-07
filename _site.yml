@@ -11,11 +11,11 @@ navbar:
         href: RHandbook_1.html
       - text: "Lesson 2: Data management"
         href: RHandbook_2.html
-      - text: "Lesson 3: Graphs"
+      - text: "Lesson 3: R basics"
         href: RHandbook_3.html
-      - text: "Lesson 4: R basics"
+      - text: "Lesson 4: Data frames"
         href: RHandbook_4.html
-      - text: "Lesson 5: Data frames"
+      - text: "Lesson 5: Data visualization"
         href: RHandbook_5.html
       - text: "Lesson 6: Graphing in R"
         href: RHandbook_6.html

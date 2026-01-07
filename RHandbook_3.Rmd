@@ -1,12 +1,220 @@
 ---
-title: "R Handbook Lesson 3"
+title: "ESS 3500 R Handbook, Lesson 3"
 author: "Emily Schultz"
-date: "2026-01-04"
-output: html_document
+date: "2023-01-29"
+output: 
+  html_document:
+    toc: true
+    toc_depth: 3
+    includes:
+      in_header: header.html
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Lesson 3: Graphs
+## Lesson 3: R BASICS
+### 3.1 Basic R commands
+At it's most basic, R can function like a powerful calculator. You can use all of the basic arithmetic operators in R, as follows:
+
+1. addition: +
+2. subtraction: -
+3. multiplication: *
+4. division: /
+5. exponentiation: ^
+
+Try them out! Type each of the following commands, shown in the grey boxes below, into the console in RStudio, and R will give you the answer in the console, just below your line of code! (Note: The words that come after the "#" symbol are comments, not code. They are just notes about the code, and R will ignore them when it runs the code.)
+
+```{r basic_arithmetic}
+# Addition
+3+6
+# Subtraction
+4-9
+# Multiplication
+6*7
+# Division
+8/2
+# Exponentiation
+3^5
+```
+
+
+R also has built-in functions that can be used for other types of arithmetic calculations. There are many, but a few examples are listed below. In the examples, "X" can be any number or set of numbers.
+
+```{r arithmetic_functions,eval=FALSE}
+log(X) # natural logarithm of x
+log10(X) # logarithm base 10 of x
+sqrt(X) # square root of x
+abs(X) # absolute value of x
+```
+
+Go ahead and try out these functions. You can use any value you want in place of X!
+
+### 3.2 Saving and recalling values
+Starting here, when you type the code I provide, put it into a script file and then run the code from the script file. This will provide you will a record of the commands you are learning. Don't forget to add comments to your code, like the comments in the examples above!
+
+To start harnessing the full power of R, we want to be able to save our values, so we can use them in additional calculations. This section will cover how to save values as variables and how to use those variables in new calculations.
+
+Let's say you are studying the population size of a plant. You go out and count the number of plants in three different plots. Then you also want to calculate the total number of plants across all three plots.
+
+First, lets save the number of plants each plot as three separate variables. Use `<-` to name your variable and assign a value to a variable. Generally speaking, you can name your variable whatever you want, but avoid spaces in the name. I recommend you give your variables names that are short but informative. Throughout this handbook, I will use all caps when I name objects to make them stand out and indicate that, unlike the functions, you are free to change to names to make sense for your analysis.
+
+```{r variables}
+PLOT1 <- 4
+PLOT2 <- 7
+PLOT3 <- 6
+```
+
+After you run these three lines of code, you should see your three variables listed in your Environment window in the upper right-hand corner of RStudio. This can help you keep track of the variables and other objects you create in R.
+
+Now let's use our variables to calculate the total number of plants across all three plots and save that total as a new variable.
+```{r variable_calculation}
+TOTAL <- PLOT1 + PLOT2 + PLOT3
+```
+
+If you now want to view the value of the total plot count, just type in the variable name (Note that R is case-sensitive):
+```{r view_variation}
+TOTAL
+```
+
+We could continue to use any of these variables in additional calculations.
+
+### 3.3 Types of R objects
+In the previous section we created a type of R object called a variable, which is just a single value. A variable is just one of many object types you can create in R. We will look at a couple other types here.
+
+#### Vectors
+A vector is a collection of multiple values stored together in a single object. Lets again work with our plant example from above. This time, instead of saving out plant counts as separate variables, we will store them together in a singe vector. To do so, we will use a new function, the concatenate function: `c()`.
+
+```{r vector}
+PLANT_COUNTS <- c(4,7,6)
+```
+
+If you view this vector object by typing in the object name, you will see all values listed.
+
+```{r vector_view}
+PLANT_COUNTS
+```
+
+Saving multiple values in a single object can help simplify our code and the calculations we do, especially if we are working with a lot of numbers. Let's now take a look at some functions we can use to do calculations with the numbers stored in vectors.
+
+When we worked with variables above, we added our plot counts together to get the total numbers of plants across all plots. We can use a shortcut to calculate the total using our vector and the `sum` function:
+
+```{r sum}
+sum(PLANT_COUNTS)
+```
+
+We can also calculate things like the mean and standard deviation of the values in vectors:
+
+```{r mean_sd}
+mean(PLANT_COUNTS)
+sd(PLANT_COUNTS)
+```
+
+Okay, so we stored all these numbers in a vector, but what if we just want to work with one of the values from a vector? Well, we can do that by providing R with an index to tell it which of the values from the vector we want. For example, let's say we want to save the plant counts from each plot as separate variables. We can do that as follows:
+
+```{r index}
+PLOT1 <- PLANT_COUNTS[1]
+PLOT2 <- PLANT_COUNTS[2]
+PLOT3 <- PLANT_COUNTS[3]
+```
+
+The indices are the numbers inside the brackets, telling R the position of the value we want from the vector. Single brackets are always used for indexing vectors.
+
+We can also select multiple values from a vector in various ways. If we want multiple adjacent values, we can use the colon symbol (`:`) to select the range of values we want. If we wanted to select the first two values from our `PLANT_COUNTS` vector, we would do that as follows:
+
+```{r range}
+PLOT1_2 <- PLANT_COUNTS[1:2]
+```
+
+If we want to select non-adjacent values, we can again make use of our concatenate function to do that. We will essentially create a vector with the list of the indices of the values we want. To select the first and third values from our `PLANT_COUNTS` vector, we could do the following:
+
+```{r nonadjacent}
+PLOT1_3 <- PLANT_COUNTS[c(1,3)]
+```
+
+We can also tell R to remove values from a vector, which is useful if we want to include most of the values and only remove a few. Another way of creating the `PLOT1_3` vector would be to remove the second value. We do that using the minus symbol:
+
+```{r remove}
+PLOT1_3 <- PLANT_COUNTS[-2]
+```
+
+We can also remove multiple values by combining the minus symbol with either the colon to tell R to remove a range of values or with the concatenate function to specify individuals values we want to remove. Here are examples of both:
+
+```{r remove_multiple}
+PLOT1 <- PLANT_COUNTS[-(2:3)]
+PLOT2 <- PLANT_COUNTS[-c(1,3)]
+```
+
+What you might be starting to notice is that there are often multiple ways to do the same thing. Sometimes one strategy will be more efficient than other, but often multiple strategies will work! There is rarely one correct way to write code (but there are lots of wrong ways to write code).
+
+#### Data frames
+Another type of R object we will work with frequently in this class is a data frame. Think of a data frame as the R version of a spreadsheet. You can have columns for different variables, with rows for your observations of each variable. You can create data frames directly in R or you can import them from another file on your computer (or download them from the internet, in some cases). In the next lesson, we will cover data frames in more detail, including how to important them. Here, we will create a simple data frame in R, so you can see the basic structure of a data frame.
+
+Let's continue with our plant count example from above. Previously, we stored the data either as variables or as vectors. Now, lets put it into a data frame instead. We will have one column with our plot numbers and one with our plot counts. To create the data frame, we will use the `date.frame()` function. Inside the parentheses of the function, we will tell R what variables we want and what data we want to add for each variable. Here is one way we could create our plant counts data frame:
+
+```{r dataframe}
+PLANT_DATA <- data.frame(PLOT=c(1:3),PLANT_COUNT=PLANT_COUNTS)
+PLANT_DATA
+```
+
+When you view the data frame, you can now see two columns: the first with your plot numbers and the second with the plant count for each plot. Now let's break down the code we used to create the data frame. First, note that we are saving this as a new object called `PLANT_DATA`. Because we are creating it with the `data.frame` function, it will be a data frame object. Inside the parentheses of the `data.frame` function, we told R to create two different variable, one called "PLOT" and one called "PLANT_COUNT". We tell R these are two separate variables by separating them with a comma. If we wanted, we could add additional variables. We are not limited to two. To tell R what data to add to each variable, we first use the equals sign after the variable name and then tell R what numbers to add. For the Plot variable, I again used the concatenate function to tell R that the Plot variable should have the numbers 1 through 3, in order. To create the Plant_counts variable, I simply told R to use the `PLANT_COUNTS` vector we already created.
+
+Once we have created a data frame, it is possible to extract particular data from the data frame, if we don't want to work with all of the data at once. If we want to extract a particular column of data, we can do that by telling R the name of the data frame, followed by the `$` symbol, followed by the name of the column we want:
+
+```{r extract_column}
+PLANT_COUNTS <- PLANT_DATA$PLANT_COUNT
+PLANT_COUNTS
+```
+
+Notice that the column we extracted is now in the form of a vector!
+
+We can also extract a single value using indexing, similar to the way we extracted values from a vector. When we are working with data frames, though, we will use double brackets, and we have to give R two indices, one for the row and one for the column, in that order.
+
+```{r extract_value}
+PLOT1 <- PLANT_DATA[[1,2]]
+PLOT1
+```
+
+Here we extracted the value in the first row and second column from the `PLANT_DATA` data frame, which is the plant count from plot 1.
+
+In the next lesson, we will look at several additional ways to manipulate data frames in R, specifically focusing on using the **tidyverse** family of packages, that includes packages designed for working with data frames.
+
+### 3.4 Functions
+As you worked through the first three sections in this lesson, you practiced using a number of different functions. Now that you have seen and used a few examples, we will go some general aspects of functions.
+
+All functions in R have the same basic structure, which is helpful for learning new functions. Whenever you use a function, you will first type the name of the function (e.g., `mean` or `c`), followed by parentheses. Inside the parentheses, you will provide the "arguments" for the function. But what are arguments? The arguments are the inputs that R needs to carry out the function. Functions usually have at least one required argument, and they often have additional optional arguments as well.
+
+Let's look at the `mean` function as an example. We used the mean function above to calculate the mean number of plants in our plant counts vector:
+
+```{r mean}
+mean(PLANT_COUNTS)
+```
+
+The mean function has one required argument: x, which is the set of numbers for which you want to calculate the mean. We provided the `PLANT_COUNTS` vector as the object for that argument. There are also additional optional arguments for the `mean` function. The optional arguments usually have default values that are used if you do not specify those arguments in your code. Often the defaults are what we want, but other times, we might want to change them. An example for our `mean` function is the "na.rm" argument. This argument tells R how to handle missing data points (NAs) in the data. The default if for this argument to be set to "FALSE", meaning R will not remove NAs from the data, and, as a result, if you have any NAs in the data, you will get NA as your mean. This is useful for detecting places where you have missing data if you didn't know they were missing. However, sometimes we might want R to remove the NAs and calculate the mean of the remaining data points. To do this, we would include the na.rm argument in our code and change its value to "TRUE" (or simply "T"). You can see the difference below, where I add an NA to our plant_counts vector, and then calculate the mean using both options.
+
+```{r na.rm}
+PLANT_COUNTS <- c(PLANT_COUNTS,NA)
+mean(PLANT_COUNTS)
+mean(PLANT_COUNTS, na.rm=T)
+```
+
+Notice that when I provided the argument for x (the set of numbers), I didn't include the name of the argument, I did not specify the name of the argument, but I did specify the name of the na.rm argument, followed by an equal sign before giving the value for that argument. If you give R the arguments in order, without skipping any, you do not need to specify the name of the argument. But if you list them in the wrong order or skip arguments, you do need to specify the name. In this example, I know that x is the first argument, but na.rm is the third. I could therefore get away with not giving the name of the first argument because I had that one in the right position, but I did need to specify the name of the na.rm argument because I skipped an optional argument and had the na.rm argument in the second position instead of the third. 
+
+But how do you know what a function does, what arguments you need in a function and what the correct order of the arguments is? We will cover that in the next section.
+
+### 3.5 Getting help in R
+If you forget how to use a function, need to learn a new function, or aren't sure where to begin to carry out a procedure in R, never fear! There are a lot of ways to get help. You are always welcome to use any resources to help with your coding. This handbook will stay on the Canvas page, and you can return to it at any time to refresh your memory on the things it covers. Another excellent way to get help is to make use of the internet. There is a huge community of R users out there, so there are tons of resources online. If you do a search for a problem you are having or a procedure you need to carry out, I can almost guarantee you will find answers online. A simple search will bring up plenty of resources, including videos and tutorials, for all of the functions we will use in this class.
+
+R also has its own help pages for every function, both functions in base R and functions in packages you download. Sometimes they are a bit technical, but they can be helpful for reminding you what functions do and what arguments you need to include in the function. There are a couple of ways to access the help pages. In RStudio, there is a Help tab in the bottom right-hand corner. You can search for a function or a topic in this help tab. You can also type code directly into the console to access a help page. If you know the name of the function you want, type `?` followed by the function name. For example if you want information about the standard deviation function, you would type `?sd`. The help page will open in the bottom right-hand corner on RStudio. If you can't remember the name of the function, you can search for a keyword instead, using `$$` followed by the keyword, and you will get a list of functions that are related to your keyword. If you knew you wanted to calculate the standard deviation, but didn't remember the function was `sd`, for example, you could type `??standarddeviation`. Note that you can't include a space in your keyword.
+
+### Exercises
+<!---LEARNR EX 1-6-->
+   
+<iframe style="margin:0 auto; min-width: 100%;" id="myIframeL2" class="interactive" src="https://emilylschultz.shinyapps.io/RHandbookL4/" scrolling="no" frameborder="no"></iframe>
+   
+<!---------------->
+
+<script>
+  iFrameResize({}, ".interactive");
+</script>

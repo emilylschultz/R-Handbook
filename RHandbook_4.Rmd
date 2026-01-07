@@ -14,206 +14,166 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## Lesson 4: R BASICS
-### 4.1 Basic R commands
-At it's most basic, R can function like a powerful calculator. You can use all of the basic arithmetic operators in R, as follows:
+## Lesson 4: DATA FRAMES
+In this lesson, we will cover more details about how to work with data frames in R, including how to import data files into R, retrieve information about files, and manipulate data frames in R.
 
-1. addition: +
-2. subtraction: -
-3. multiplication: *
-4. division: /
-5. exponentiation: ^
+### 4.1 Setting your working directory
+Today we will be working on importing data into R, so it is first important for us to know how to tell R where to look (i.e., in what folder on our computer) for the files we want to import.
 
-Try them out! Type each of the following commands, shown in the grey boxes below, into the console in RStudio, and R will give you the answer in the console, just below your line of code! (Note: The words that come after the "#" symbol are comments, not code. They are just notes about the code, and R will ignore them when it runs the code.)
+In the first lesson, when we looked at the layout of RStudio, I noted that one of the tabs in the bottom right-hand corner is the "Files" tab. This tab will show you all the files that are in your working directory, which is the folder R will search to find and save files. R usually has a default folder that it will set as your working directory unless you tell it otherwise.
 
-```{r basic_arithmetic}
-# Addition
-3+6
-# Subtraction
-4-9
-# Multiplication
-6*7
-# Division
-8/2
-# Exponentiation
-3^5
+To help keep things organized, it is useful to store all of your R-related files for a single project in the same folder, and you will likely want to keep separate folders for separate projects. Then when you open R, you can set your working directory to that folder for the project you want to work on.
+
+There are a few ways to set your working directory. The easiest way for beginners is to use the drop-down menus in RStudio. Select "Session" from the menu bar at the top. Then hover over "Set Working Directory" and select "Choose Directory" from the new menu that appears. Then you will be able to use your file explorer to select the folder you want. When you do this, you will see a line a code appear in your console. The line of code is telling R to change the directory. If you know you will want to use that working directory again, then I would recommend copying and pasting the line of code into the top of your R script file. In the future, when you are working with that R script file, you can simply run that line of code to set the working directory.
+
+### 4.2 Loading data
+In the previous lesson, we created a simple data frame directly in R. In general, particularly with large data sets it is far easier to enter your data into a program like Excel and then import the data into R. For the remainder of the lesson, we will work with a simple example data set I provided you with called "DataFrameExample.csv". I recommend saving data files you want to work with in R as csv files. You can import Excel files into R, but it is often slower, especially if the files are large. The other benefit of csv files is that they are a non-proprietary file type, so they don't require a specific program like Excel. This will make it easier to share your files with other researchers.
+
+Save the "DataFrameExample.csv" file in the folder you want to use as your working directory for this lesson. If you haven't already, follow the directions in the previous section to set your working directory. Now you are ready to import the data. We will use the `read.csv()` function to import the data, and we will save the data as an object called `DATA`. R will automatically save it as a data frame object. Here is the code to use:
+
+```{r import_data}
+DATA <- read.csv("DataFrameExample.csv")
+DATA
+```
+
+Notice that R automatically identify the first row as a header row. That is because there is an optional "header" argument for the read.csv file, and the default for that argument is "TRUE". If your data file does not have a header row, you would want to change the header argument to "FALSE".
+
+You now have a data frame object ready to work with in R!
+
+### 4.3 Getting information about your data frame
+R is pretty good at importing data and correctly identifying what time of data you have for each variable. Nevertheless, it is still important to take a look at your data frame to make sure it was imported correctly. You also might sometimes need a reminder of what variables you have in your data frame (I sometimes forget). Here, we will learn some ways to get basic information about your data frame.
+
+#### Viewing your data
+In the section above, we viewed the data frame right in the console by just typing the name of the data frame. If you have a small data frame like ours, that works pretty well, but if you have a large data frame with lots of variables, lots of observations, or both, that will be unwieldy, but we have some other options!
+
+One option is to just view the top few rows of our data frame. This is a good option if you want to remind yourself of what is in your data frame and confirm that everything looks the way you would expect (this can be helpful after you have imported your data or made changes to your data frame). To view your the top few rows of your data frame, use the `head()` function:
+
+```{r head}
+head(DATA)
+```
+
+On occasion, you might want to view your entire data frame. If your data frame is large, you can use the `View()` function to view the data frame in a separate tab:
+
+```{r view}
+View(DATA)
+```
+
+You should now see your data frame appear in a new tab next to your script files.
+
+You can also view just the names of the variable (i.e., the column names) in your data frame:
+
+```{r names}
+names(DATA)
+```
+
+#### The structure of your data frame
+The variables in your data frame  can be a number of different data types, including continuous numeric data, integers, factors (categorical variables), and characters (text). When you import a data frame, R will do its best to identify the variable type based on the data in each column. It is usually pretty good, but sometimes it makes mistakes (often because we used some poor practices when entering the data, like putting notes into a variable column instead of having a separate column for notes). Sometimes it doesn't matter if the data type is identified incorrectly, but for some purposes including statistical tests and graphing, it can be important. It is therefore good practice to check your data frame and make sure the data types are correct.
+
+To look at the structure of a data frame, including the data type for each variable, we use the `str()` function.
+
+```{r structure}
+str(DATA)
+```
+
+You will now see a list of the variables in your data base. Next to each variable, it will show you the data type (chr = character, int = integer, num = continuous numeric), along with the first several values of each variable in your data frame. It looks like it did a good job identifying our data types, but let's make one change to show you how it is done. Our Tree variable was identified as a character variable, but because that is a categorical variable identifying the tree each data point came from, it might be helpful to make it a factor variable instead. Run the following code to make the change:
+
+```{r data_type}
+DATA$Tree <- as.factor(DATA$Tree)
+```
+
+Notice I used the `$` symbol to identify the variable in the data frame I wanted to change, and I told R to replace the original variable with the factor version of the save variable.
+
+Now let's look at the structure of the data frame again.
+
+```{r structure_again}
+str(DATA)
+```
+
+We can see that the Tree variable is now a factor with two different levels: A and B.
+
+There are equivalent functions to convert to the other variable types: `as.numeric()`, `as.integer`, and `as.character()`.
+
+### 4.4 Manipulating data frames with the **dplyr** package
+There are any number of ways we might want to manipulate our data sets, and, like with many aspects of programming, there are various ways to go about it. In this class, we will focus on using the **dplyr** packages. We will look at a few different ways of manipulating our data frames, but there are many more! There is a great resource online called [R for Data Science](https://r4ds.had.co.nz/). It is a comprehensive guide to using R for managing, visualizing, and analyzing data in R, with a particular focus on **dplyr**. Check it out if you want/need to learn more!
+
+For this section, you will need to activate the **dplyr** packages. This is something that needs to be done every time you start a new R session if there are packages in addition to base R that you want to use. Enter the following code to activate **dplyr**:
+
+```{r dplyr, results = 'hide', message = FALSE}
+library(dplyr)
 ```
 
 
-R also has built-in functions that can be used for other types of arithmetic calculations. There are many, but a few examples are listed below. In the examples, "X" can be any number or set of numbers.
+#### Filtering data
+Filtering is used to select a subset of observations from your data frame. For example, our data frame contains data from two different trees, but we might want to create a data frame that contains only the data for a single tree. We can do this with the `filter` function as follows:
 
-```{r arithmetic_functions,eval=FALSE}
-log(X) # natural logarithm of x
-log10(X) # logarithm base 10 of x
-sqrt(X) # square root of x
-abs(X) # absolute value of x
+```{r filter}
+DATA_A <- filter(DATA, Tree=="A")
+DATA_A
 ```
 
-Go ahead and try out these functions. You can use any value you want in place of X!
+The new data frame now only has the data for Tree A. Notice a couple things about the code. First, notice the use of the double equals signs (`==`). We use the double equals signs when we are making a logical statement (i.e., give me all the values that equal a particular value). Also notice that the "A" is in quotes. For factor and character variables, the value of the variable needs to be in quotes.
 
-### 4.2 Saving and recalling values
-Starting here, when you type the code I provide, put it into a script file and then run the code from the script file. This will provide you will a record of the commands you are learning. Don't forget to add comments to your code, like the comments in the examples above!
+We are not restricted to using `==` in our logical statement. We can also use things like greater than (>) or less than (<), and we can include multiple criteria. Below is an example of using greater than or less than criteria for two different variables.
 
-To start harnessing the full power of R, we want to be able to save our values, so we can use them in additional calculations. This section will cover how to save values as variables and how to use those variables in new calculations.
-
-Let's say you are studying the population size of a plant. You go out and count the number of plants in three different plots. Then you also want to calculate the total number of plants across all three plots.
-
-First, lets save the number of plants each plot as three separate variables. Use `<-` to name your variable and assign a value to a variable. Generally speaking, you can name your variable whatever you want, but avoid spaces in the name. I recommend you give your variables names that are short but informative. Throughout this handbook, I will use all caps when I name objects to make them stand out and indicate that, unlike the functions, you are free to change to names to make sense for your analysis.
-
-```{r variables}
-PLOT1 <- 4
-PLOT2 <- 7
-PLOT3 <- 6
+```{r multiple_filter}
+DATA_SUBSET <- filter(DATA, Growth < 0.2, Temperature > 8)
+DATA_SUBSET
 ```
 
-After you run these three lines of code, you should see your three variables listed in your Environment window in the upper right-hand corner of RStudio. This can help you keep track of the variables and other objects you create in R.
+The resulting data frame has only observations where growth was less that 0.2 and temperature was greater than 8.
 
-Now let's use our variables to calculate the total number of plants across all three plots and save that total as a new variable.
-```{r variable_calculation}
-TOTAL <- PLOT1 + PLOT2 + PLOT3
+#### Selecting columns
+In the section above, we selected a subset of observations, but we might also want to select a subset of variables (columns) from our data frame. For example, maybe we are only interested in the number of cones produced by each tree in each year. We can use the `select()` function to select only those three variables:
+
+```{r select}
+DATA_CONES <- select(DATA, Tree, Year, Number.cones)
+DATA_CONES
 ```
 
-If you now want to view the value of the total plot count, just type in the variable name (Note that R is case-sensitive):
-```{r view_variation}
-TOTAL
+#### Creating new variables
+One common manipulation we might want to make to a data frame is to calculate a new variable, possibly based on data we already have in our data frame. For example, we might have measured the length and width of a plant and then want to multiply the length and width variable together to calculate the area covered by the plant. We can use the `mutate()` function in the **dplyr** package to create new variables. In our example, we will log transform (i.e., take the natural log of) our temperature variable:
+
+```{r mutate}
+DATA_LOG <- mutate(DATA,log_Temperature = log(Temperature))
+DATA_LOG
 ```
 
-We could continue to use any of these variables in additional calculations.
+If we wanted to add multiple new variables at the same time, we would simply add each new variable as a new argument, separated by commas.
 
-### 4.3 Types of R objects
-In the previous section we created a type of R object called a variable, which is just a single value. A variable is just one of many object types you can create in R. We will look at a couple other types here.
+#### Summarizing data
+Another useful manipulation is summarizing our data. Maybe we want to summarize the data for each tree across all years of the study.There are a number of ways to summarize the data. We could take the average, maximum, minimum, sum, or any number of other functions. We'll use a different function on each variable we summarize, so you can see a variety of examples.
 
-#### Vectors
-A vector is a collection of multiple values stored together in a single object. Lets again work with our plant example from above. This time, instead of saving out plant counts as separate variables, we will store them together in a singe vector. To do so, we will use a new function, the concatenate function: `c()`.
+The first step in summarizing is to tell R what we want to use as our grouping variable(s). If we want to summarize the data for each tree across all years, Tree will be our grouping variable. We will create a new data frame, grouping our data by our grouping variable, using the `group_by()` function.
 
-```{r vector}
-PLANT_COUNTS <- c(4,7,6)
+```{r group}
+TREE <- group_by(DATA,Tree)
 ```
 
-If you view this vector object by typing in the object name, you will see all values listed.
+If we had wanted to group by multiple variables, we could add them after tree, separated by commas.
 
-```{r vector_view}
-PLANT_COUNTS
+Now we will summarize the data for each tree. We will calculate the total (sum) number of cones, the average growth, and the maximum temperature.
+
+```{r summarise}
+DATA_SUMMARY <- summarise(TREE, Total.cones = sum(Number.cones), Mean.growth = mean(Growth), Max.temperature = max(Temperature))
+DATA_SUMMARY
 ```
 
-Saving multiple values in a single object can help simplify our code and the calculations we do, especially if we are working with a lot of numbers. Let's now take a look at some functions we can use to do calculations with the numbers stored in vectors.
-
-When we worked with variables above, we added our plot counts together to get the total numbers of plants across all plots. We can use a shortcut to calculate the total using our vector and the `sum` function:
-
-```{r sum}
-sum(PLANT_COUNTS)
-```
-
-We can also calculate things like the mean and standard deviation of the values in vectors:
-
-```{r mean_sd}
-mean(PLANT_COUNTS)
-sd(PLANT_COUNTS)
-```
-
-Okay, so we stored all these numbers in a vector, but what if we just want to work with one of the values from a vector? Well, we can do that by providing R with an index to tell it which of the values from the vector we want. For example, let's say we want to save the plant counts from each plot as separate variables. We can do that as follows:
-
-```{r index}
-PLOT1 <- PLANT_COUNTS[1]
-PLOT2 <- PLANT_COUNTS[2]
-PLOT3 <- PLANT_COUNTS[3]
-```
-
-The indices are the numbers inside the brackets, telling R the position of the value we want from the vector. Single brackets are always used for indexing vectors.
-
-We can also select multiple values from a vector in various ways. If we want multiple adjacent values, we can use the colon symbol (`:`) to select the range of values we want. If we wanted to select the first two values from our `PLANT_COUNTS` vector, we would do that as follows:
-
-```{r range}
-PLOT1_2 <- PLANT_COUNTS[1:2]
-```
-
-If we want to select non-adjacent values, we can again make use of our concatenate function to do that. We will essentially create a vector with the list of the indices of the values we want. To select the first and third values from our `PLANT_COUNTS` vector, we could do the following:
-
-```{r nonadjacent}
-PLOT1_3 <- PLANT_COUNTS[c(1,3)]
-```
-
-We can also tell R to remove values from a vector, which is useful if we want to include most of the values and only remove a few. Another way of creating the `PLOT1_3` vector would be to remove the second value. We do that using the minus symbol:
-
-```{r remove}
-PLOT1_3 <- PLANT_COUNTS[-2]
-```
-
-We can also remove multiple values by combining the minus symbol with either the colon to tell R to remove a range of values or with the concatenate function to specify individuals values we want to remove. Here are examples of both:
-
-```{r remove_multiple}
-PLOT1 <- PLANT_COUNTS[-(2:3)]
-PLOT2 <- PLANT_COUNTS[-c(1,3)]
-```
-
-What you might be starting to notice is that there are often multiple ways to do the same thing. Sometimes one strategy will be more efficient than other, but often multiple strategies will work! There is rarely one correct way to write code (but there are lots of wrong ways to write code).
-
-#### Data frames
-Another type of R object we will work with frequently in this class is a data frame. Think of a data frame as the R version of a spreadsheet. You can have columns for different variables, with rows for your observations of each variable. You can create data frames directly in R or you can import them from another file on your computer (or download them from the internet, in some cases). In the next lesson, we will cover data frames in more detail, including how to important them. Here, we will create a simple data frame in R, so you can see the basic structure of a data frame.
-
-Let's continue with our plant count example from above. Previously, we stored the data either as variables or as vectors. Now, lets put it into a data frame instead. We will have one column with our plot numbers and one with our plot counts. To create the data frame, we will use the `date.frame()` function. Inside the parentheses of the function, we will tell R what variables we want and what data we want to add for each variable. Here is one way we could create our plant counts data frame:
-
-```{r dataframe}
-PLANT_DATA <- data.frame(PLOT=c(1:3),PLANT_COUNT=PLANT_COUNTS)
-PLANT_DATA
-```
-
-When you view the data frame, you can now see two columns: the first with your plot numbers and the second with the plant count for each plot. Now let's break down the code we used to create the data frame. First, note that we are saving this as a new object called `PLANT_DATA`. Because we are creating it with the `data.frame` function, it will be a data frame object. Inside the parentheses of the `data.frame` function, we told R to create two different variable, one called "PLOT" and one called "PLANT_COUNT". We tell R these are two separate variables by separating them with a comma. If we wanted, we could add additional variables. We are not limited to two. To tell R what data to add to each variable, we first use the equals sign after the variable name and then tell R what numbers to add. For the Plot variable, I again used the concatenate function to tell R that the Plot variable should have the numbers 1 through 3, in order. To create the Plant_counts variable, I simply told R to use the `PLANT_COUNTS` vector we already created.
-
-Once we have created a data frame, it is possible to extract particular data from the data frame, if we don't want to work with all of the data at once. If we want to extract a particular column of data, we can do that by telling R the name of the data frame, followed by the `$` symbol, followed by the name of the column we want:
-
-```{r extract_column}
-PLANT_COUNTS <- PLANT_DATA$PLANT_COUNT
-PLANT_COUNTS
-```
-
-Notice that the column we extracted is now in the form of a vector!
-
-We can also extract a single value using indexing, similar to the way we extracted values from a vector. When we are working with data frames, though, we will use double brackets, and we have to give R two indices, one for the row and one for the column, in that order.
-
-```{r extract_value}
-PLOT1 <- PLANT_DATA[[1,2]]
-PLOT1
-```
-
-Here we extracted the value in the first row and second column from the `PLANT_DATA` data frame, which is the plant count from plot 1.
-
-In the next lesson, we will look at several additional ways to manipulate data frames in R, specifically focusing on using the **tidyverse** family of packages, that includes packages designed for working with data frames.
-
-### 4.4 Functions
-As you worked through the first three sections in this lesson, you practiced using a number of different functions. Now that you have seen and used a few examples, we will go some general aspects of functions.
-
-All functions in R have the same basic structure, which is helpful for learning new functions. Whenever you use a function, you will first type the name of the function (e.g., `mean` or `c`), followed by parentheses. Inside the parentheses, you will provide the "arguments" for the function. But what are arguments? The arguments are the inputs that R needs to carry out the function. Functions usually have at least one required argument, and they often have additional optional arguments as well.
-
-Let's look at the `mean` function as an example. We used the mean function above to calculate the mean number of plants in our plant counts vector:
-
-```{r mean}
-mean(PLANT_COUNTS)
-```
-
-The mean function has one required argument: x, which is the set of numbers for which you want to calculate the mean. We provided the `PLANT_COUNTS` vector as the object for that argument. There are also additional optional arguments for the `mean` function. The optional arguments usually have default values that are used if you do not specify those arguments in your code. Often the defaults are what we want, but other times, we might want to change them. An example for our `mean` function is the "na.rm" argument. This argument tells R how to handle missing data points (NAs) in the data. The default if for this argument to be set to "FALSE", meaning R will not remove NAs from the data, and, as a result, if you have any NAs in the data, you will get NA as your mean. This is useful for detecting places where you have missing data if you didn't know they were missing. However, sometimes we might want R to remove the NAs and calculate the mean of the remaining data points. To do this, we would include the na.rm argument in our code and change its value to "TRUE" (or simply "T"). You can see the difference below, where I add an NA to our plant_counts vector, and then calculate the mean using both options.
-
-```{r na.rm}
-PLANT_COUNTS <- c(PLANT_COUNTS,NA)
-mean(PLANT_COUNTS)
-mean(PLANT_COUNTS, na.rm=T)
-```
-
-Notice that when I provided the argument for x (the set of numbers), I didn't include the name of the argument, I did not specify the name of the argument, but I did specify the name of the na.rm argument, followed by an equal sign before giving the value for that argument. If you give R the arguments in order, without skipping any, you do not need to specify the name of the argument. But if you list them in the wrong order or skip arguments, you do need to specify the name. In this example, I know that x is the first argument, but na.rm is the third. I could therefore get away with not giving the name of the first argument because I had that one in the right position, but I did need to specify the name of the na.rm argument because I skipped an optional argument and had the na.rm argument in the second position instead of the third. 
-
-But how do you know what a function does, what arguments you need in a function and what the correct order of the arguments is? We will cover that in the next section.
-
-### 4.5 Getting help in R
-If you forget how to use a function, need to learn a new function, or aren't sure where to begin to carry out a procedure in R, never fear! There are a lot of ways to get help. You are always welcome to use any resources to help with your coding. This handbook will stay on the Canvas page, and you can return to it at any time to refresh your memory on the things it covers. Another excellent way to get help is to make use of the internet. There is a huge community of R users out there, so there are tons of resources online. If you do a search for a problem you are having or a procedure you need to carry out, I can almost guarantee you will find answers online. A simple search will bring up plenty of resourses, including videos and tutorials, for all of the functions we will use in this class.
-
-R also has its own help pages for every function, both functions in base R and functions in packages you download. Sometimes they are a bit technical, but they can be helpful for reminding you what functions do and what arguments you need to include in the function. There are a couple of ways to access the help pages. In RStudio, there is a Help tab in the bottom right-hand corner. You can search for a function or a topic in this help tab. You can also type code directly into the console to access a help page. If you know the name of the function you want, type `?` followed by the function name. For example if you want information about the standard deviation function, you would type `?sd`. The help page will open in the bottom right-hand corner on RStudio. If you can't remember the name of the function, you can search for a keyword instead, using `$$` followed by the keyword, and you will get a list of functions that are related to your keyword. If you knew you wanted to calculate the standard deviation, but didn't remember the function was `sd`, for example, you could type `??standarddeviation`. Note that you can't include a space in your keyword.
+When we use the `summarise()` function, notice that our first argument is not our original data frame. It is the new data frame we created with the `group_by` function. The following arguments are the summary variables we want to create. We first provide a name for our new variable, followed by an equal sign, and then provide the function and variable we want to summarize. In this case we are creating three summary variable using different summary functions.
 
 ### Exercises
 <!---LEARNR EX 1-6-->
    
-<iframe style="margin:0 auto; min-width: 100%;" id="myIframeL2" class="interactive" src="https://emilylschultz.shinyapps.io/RHandbookL4/" scrolling="no" frameborder="no"></iframe>
+<iframe style="margin:0 auto; min-width: 100%;" id="myIframeL3" class="interactive" src="https://emilylschultz.shinyapps.io/RHandbookL5/" scrolling="no" frameborder="no"></iframe>
    
 <!---------------->
+
+### Data Frames Team Challenge
+Work with your team to complete the following tasks. Use the same DataFrameExample data set from above. (If the rest of your group isn't ready yet, feel free to start on the Data Frames Practice Problems assignment while you wait.)
+
+1. Start with the original data frame. Extract the Number.cones column from the data frame and save it as a vector. (Review the Data Frame section in Lesson 2.3 if necessary.)
+2. Use indexing to remove the zeros from your vector. Then calculate the mean and standard deviation of the remaining numbers of cones. (Review the Vectors section in Lesson 2.3 if necessary.)
+3. Group the original data frame by year and summarize the data frame to calculate the mean growth and mean temperature for each year.
+4. Starting with your new summarized data frame, filter the data from to only include data from 2009. What was the average growth in 2009?
 
 <script>
   iFrameResize({}, ".interactive");
