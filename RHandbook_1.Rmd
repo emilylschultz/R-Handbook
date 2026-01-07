@@ -4,18 +4,15 @@ author: "Emily Schultz"
 date: "2023-01-15"
 output: 
   html_document:
-    toc: true
-    toc_depth: 3
     includes:
       in_header: header.html
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
-knitr::include_url("https://emilylschultz.shinyapps.io/RHandbookL1/")
 ```
 
-<!---LEARNR EX Lesson 1-->
+<!---LEARNR Interactive-->
    
 <iframe style="margin:0 auto; min-width: 100%;" id="myIframeL2" class="interactive" src="https://emilylschultz.shinyapps.io/RHandbookL1/" scrolling="no" frameborder="no"></iframe>
    
