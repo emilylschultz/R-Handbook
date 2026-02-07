@@ -122,22 +122,3 @@ Based on this output, which is the better model? Is it significantly better?
 
 Does your conclusion from this approach match your conclusion from the classical frequentist approach?
 
-### 11.4 A note about color in R
-When we made our density plot, we included the `scale_fill_manual` function to specify the colors we wanted to use in the graph. You are not required to include this function. If you leave it out, ggplot will automatically choose colors based on its default color package. However, the ggplot's default color palette is not colorblind-friendly, so it is usually better to choose a different color palette. Below are some links to websites that can help you choose colors. When you list the colors you want to use, you can list the hex codes (as we do in our code in this lesson) or the name of the color (e.g., "blue"). If you use the `scale_fill_manual` function, or a similar function, to specify colors, be sure to include one color for every group in your variable. In our example, the variable displayed by the colors only had two groups (herbivory and no herbivory). If you have a variable with more than two groups, you need to list more than two colors.
-
-List of useful R color websites:
-
-1. [ggplot 2 Quick reference: colors](https://sape.inf.usi.ch/quick-reference/ggplot2/colour). This website includes a chart will color names in R, along with additional information about using color in ggplot.
-
-2. [ColorBrewer](https://colorbrewer2.org/#type=sequential&scheme=BuGn&n=3). The ColorBrewer website provides a set of color palettes that you can use in R. You can choose sequential, diverging, or qualitative palettes, and there is an option for colorblind-friendly palettes. The website will provide the hex codes for the colors in the palette.
-
-3. [MetBrewer](https://github.com/BlakeRMills/MetBrewer?tab=readme-ov-file). MetBrewer, which also has an associated R package, provides a set of color palettes based on works of art at the Metropolitan Museum of Art. Not all of the palettes are colorblind-friendly, but you can find a list of colorblind-friendly palettes at the bottom of the webpage.
-
-4. [Introduction to the viridis color maps](https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html). Viridis is an R package that has colorblind-friendly palettes. This website provides information on the use of the package. You can also see what some different R color palettes would look like to people with different forms of colorblindness.
-
-5. [Best Color Palettes for Scientific Figures and Data Visualizations](https://www.simplifiedsciencepublishing.com/resources/best-color-palettes-for-scientific-figures-and-data-visualizations) This website has some general guidelines for the use of color in scientific publishing, along with some specific colorblind-friendly palettes, including the hex codes.
-
-6. [PNW colors](https://github.com/jakelawlor/PNWColors). This R package has a set of colorblind friendly palettes based on photographs of the Pacific Northwest.
-
-
-
