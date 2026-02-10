@@ -178,8 +178,6 @@ You should see a scatterplot with a trendline representing the relationship betw
 
 What we can see from the graph is that there is, in general, a negative relationship between macroalgae cover and density of coral recruits, but there is a lot of scatter around the line when macroalgae cover is very low.
 
-There are many different types of graphs and ways we can modify our graphs using ggplot. We will cover some of these in future lessons as we get into statistical tests. But these types of graphs will give you a good starting point for exploring your own data sets! If you would like to explore more about data visualization using the **ggplot** package, the [R for Data Science](https://r4ds.had.co.nz/) eBook is a good resource, and many other resources are a mere internet search away!
-
 ## 6.7 A note about color in R
 When we made our density plot, we included the `scale_fill_manual` function to specify the colors we wanted to use in the graph. You are not required to include this function. If you leave it out, ggplot will automatically choose colors based on its default color package. However, the ggplot's default color palette is not colorblind-friendly, so it is usually better to choose a different color palette. Below are some links to websites that can help you choose colors. When you list the colors you want to use, you can list the hex codes (as we do in our code in this lesson) or the name of the color (e.g., "blue"). If you use the `scale_fill_manual` function, or a similar function, to specify colors, be sure to include one color for every group in your variable. In our example, the variable displayed by the colors only had three groups (low, medium, and high), so we listed three colors.
 
@@ -197,4 +195,16 @@ List of useful R color websites:
 
 6. [PNW colors](https://github.com/jakelawlor/PNWColors). This R package has a set of colorblind friendly palettes based on photographs from the Pacific Northwest.
 
+## Exercises
 
+<!---LEARNR EX 1-7-->
+   
+<iframe style="margin:0 auto; min-width: 100%;" id="myIframeL3" class="interactive" src="https://rby8g8-emily-schultz.shinyapps.io/RHandbookL6/" scrolling="no" frameborder="no"></iframe>
+   
+<!---------------->
+
+There are many different types of graphs and ways we can modify our graphs using ggplot. We will cover some of these in future lessons as we get into statistical tests. But these types of graphs will give you a good starting point for exploring your own data sets! If you would like to explore more about data visualization using the **ggplot** package, the [R for Data Science](https://r4ds.had.co.nz/) eBook is a good resource, and many other resources are a mere internet search away!
+
+<script>
+  iFrameResize({}, ".interactive");
+</script>
