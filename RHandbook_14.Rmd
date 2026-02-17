@@ -12,11 +12,42 @@ output:
 knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
 ```
 
-## Lesson 14: Linear Regression
-In this lesson, you will tackle a test that can be used when you have two continuous variables: linear regression. We will work with a plant cover data set that looks at climate variables as possible predictors of native plant cover.
+# Lesson 14: Correlation and Linear Regression
+In this lesson, you will tackle tests that can be used when you have two continuous variables: correlations and linear regressions. We will work with a plant cover data set that looks at climate variables as possible predictors of native plant cover.
+
+## Lesson 14.1: Correlations
+For our correlation analysis, we are going to look at correlations between three climate variables from a data set on the effects of climate on plant cover. The tree variables we will test are: total precipitation (Totprecip), mean temperature (Mean_tempC), and maximum temperature (Max_tempC). There are often relationships between different climate variables, but those relationships are not usually causal (e.g., higher precipitation doesn't cause higher temperatures), so a correlation analysis is the right way to go for analyzing these relationships.
+
+### Visualizing our data
+First, load the data set. Be sure your working directory is set correctly.
+
+```{r plant_data}
+plant <- read.csv("PlantSumm.csv")
+```
+
+To visualize relationships between two continuous variables, a scatterplot is a good approach. With a correlation, we don't always add a best fit line (the best fit line is the output of a regression analysis). Here we have three climate variables, so we want to look at the pairwise relationships between each pair of variables. We could do that with three completely separate plots, but there's a faster way! With the `pairs` function, we can generate a grid of plots that shows the relationship between all pairs of variables we want to include in our analysis. We just provide a formula with the variables we want to include and the data set from which they come.
+
+```{r corr_plot}
+pairs(~ Totprecip + Mean_tempC + Max_tempC, data = plant) 
+```
+
+In the output, you can see the variables on the diagonal and the scatterplot for each pair of variables. (Note that the plots below the diagonal are just repeats of the plots above the diagonal, but with the axes switched). Which variables appear to have a strong correlation?
+
+### Running the correlation test
+Now we will run a formal test to see if the correlations are significant. You can download additional packages that will automatically run the test for all pairs of variables in our data set, but we will just use the base R function (`cor.test`), so we'll run a separate test for each pair of variables. 
+
+To run the pairwise tests, we'll use the `with` function in combination with the `cor.test` function, to pull out the two variables we want from the plant data set and run the correlation for those two variables.
+
+```{r corr_test}
+with(plant,cor.test(Mean_tempC,Max_tempC))
+with(plant,cor.test(Mean_tempC,Totprecip))
+with(plant,cor.test(Max_tempC,Totprecip))
+```
+
+Based on the output of these tests, which are statistically significant? Are the correlations positive or negative?
 
 
-### 14.1 Simple linear regression
+## 14.2 Simple linear regression
 In this first section, we will individually test the effect of mean temperature and maximum temperature on the cover of native plant species. To begin, we will build and visualize the models.
 
 First, load the data set. Be sure your working directory is set correctly.
@@ -52,7 +83,7 @@ ggplot(plant, aes(x=Max_tempC, y=tot_cover)) +
   theme_classic()
 ```
 
-#### Classical Frequentist Approach
+### Classical Frequentist Approach
 Let's again start by analyzing the models using a frequentist approach. We don't actually need to run any additional tests for this. We can just look at some additional output from the models we already ran.
 
 To view the additional output, use the `summary` function.
@@ -66,7 +97,7 @@ When you view the output, you will see a number of things. First, you will be ab
 
 The information we really want for our linear regression test is down at the very bottom. In the final section, you will see some R-squared values. These are a measure of how much variation in your dependent variable is explained by your independent variable (we will talk about this more in class). Below that, you will see the output of the linear regression test. First is the F-statistic (the same statistic that was calculated for the ANOVA). Then you will see the p-value. Based on these values, would your reject or accept the null hypothesis? What does this tell you about the effect of temperature on plant growth?
 
-#### Likelihood-based approach
+### Likelihood-based approach
 Next we will use a likelihood-based approach to test the same question. Once again, the approach is the same as what you used for the t-test and ANOVA, using the `AIC` function to compare the models. Since we have three models, we can include all three in the AIC function and then compare the AIC from both the plant_mean and plant_max models to the null model.
 
 ```{r cone_aic}

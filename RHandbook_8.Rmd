@@ -12,33 +12,159 @@ output:
 knitr::opts_chunk$set(echo = TRUE, message=FALSE, warning=FALSE)
 ```
 
-## Lesson 8: Correlations
-For our correlation analysis, we are going to look at correlations between three climate variables from a data set on the effects of climate on plant cover. The tree variables we will test are: total precipitation (Totprecip), mean temperature (Mean_tempC), and maximum temperature (Max_tempC). There are often relationships between different climate variables, but those relationships are not usually causal (e.g., higher precipitation doesn't cause higher temperatures), so a correlation analysis is the right way to go for analyzing these relationships.
+# Lesson 8: Probability 
 
-### 8.1 Visualizing our data
-First, load the data set. Be sure your working directory is set correctly.
+## Lession 8.1 Probility Basics
 
-```{r plant_data}
-plant <- read.csv("PlantSumm.csv")
-```
+Probability is a field of mathematics that is used for the study of random events. It allows us to quantify the likelihood of particular outcomes. In scientific research, when we sample from a population, the act of sampling is a random event. When we analyze data, we use probability to help us draw conclusions based on the particular outcome we observe in our data.
 
-To visualize relationships between two continuous variables, a scatterplot is a good approach. With a correlation, we don't always add a best fit line (the best fit line is the output of a regression analysis). Here we have three climate variables, so we want to look at the pairwise relationships between each pair of variables. We could do that with three completely separate plots, but there's a faster way! With the `pairs` function, we can generate a grid of plots that shows the relationship between all pairs of variables we want to include in our analysis. We just provide a formula with the variables we want to include and the data set from which they come.
+### Basic laws of probability
 
-```{r corr_plot}
-pairs(~ Totprecip + Mean_tempC + Max_tempC, data = plant) 
-```
+The probability of an event is defined as the likelihood that particular event occurs. In order to calculate the probability, we have to define the event and the sample space: 
 
-In the output, you can see the variables on the diagonal and the scatterplot for each pair of variables. (Note that the plots below the diagonal are just repeats of the plots above the diagonal, but with the axes switched). Which variables appear to have a strong correlation?
++ **Event**: A specific outcome or set of outcomes
 
-### 8.2 Running the correlation test
-Now we will run a formal test to see if the correlations are significant. You can download additional packages that will automatically run the test for all pairs of variables in our data set, but we will just use the base R function (`cor.test`), so we'll run a separate test for each pair of variables. 
++ **Sample space**: The full set of possible outcomes
 
-To run the pairwise tests, we'll use the `with` function in combination with the `cor.test` function, to pull out the two variables we want from the plant data set and run the correlation for those two variables.
+We can then calculate the probability by dividing the number of favorable outcomes (the number of outcomes that match the criteria defined by our event) by the total number of possible outcomes.
 
-```{r corr_test}
-with(plant,cor.test(Mean_tempC,Max_tempC))
-with(plant,cor.test(Mean_tempC,Totprecip))
-with(plant,cor.test(Max_tempC,Totprecip))
-```
+$$
+P(\text{Event}) = \frac{\text{Number of favorable outcomes}}{\text{Total number of possible outcomes}}
+$$
+In this equation, $P(\text{Event})$ is shorthand for the probability of the event.
 
-Based on the output of these tests, which are statistically significant? Are the correlations positive or negative?
+If we know the probability of an event and the total number of possible outcomes, we can also flip this equation around to calculate the number of favorable outcomes:
+
+$$
+\text{Number of favorable outcomes} = \text{Total number of possible outcomes} \times P(\text{Event})
+$$
+The formula for calculating probability leads to some useful rules that can help us understand and calculate probabilities:
+
+1. The values of probabilities are between 0 and 1.
+2. The probability of an impossible event is 0. 
+3. The probability of a certain event is 1.
+4. The sum of the probabilities for all possible events is 1 
+5. The probability that an event does not happen is 1 minus the probability that the event does happen. (This follows from rule 4 because an event happening and an event not happening represent all possible outcome, so the probabilities of the two must add to one.)
+
+Now let's look at some examples of how we can use these equations for calculating probabilities:
+
+#### Example 1
+A plant community has 50 individuals of species 1, 40 individuals of species 2, 20 individuals of species 3, and 10 individuals of species 4. If we randomly select an individual from the population, what is the probability that individual is species 3?
+
+Let's start by identifying our event and sample space:
+
+Event: Selecting an individual of species 3. There are 20 favorable outcomes because there are 20 individuals of species 3.
+Sample space: The total number of individuals in the community
+
+Then we'll calculate our probability:
+
+$$
+P(\text{Species 3}) = \frac{30}{50 + 40 + 20 + 10} = \frac{30}{120} = 0.25
+$$
+
+#### Example 2
+*Staphylococcus aureus* is a bacteria species that can cause disease in humans, and it is known for high levels of antibiotic resistance. It is estimated that the rate of Penicillin G resistance in *Staphylococcus aureus* is 80%, or $\frac{4}{5}$. If there are 120,000 patients with bloodstream infections from *Staphylococcus aureus*, how many of those patients would be expected to have strain that is resistant to Penicillin G?
+
+For this one, we are given the probability of Penicillin G resistance ($\frac{4}{5}$) and the total number of outcomes (120,000), so we can work backwards to calculate the number of "favorable events" (i.e., number of patients with a resistant strain).
+
+$$
+\text{Number resistant} = 120000 \times \frac{4}{5} = 96000
+$$
+
+#### Example 3
+Wetland-associated frog species in the United States have a $\frac{2}{5}$ chance of being infected with chytrid fungus. What is the probability that a wetland-associated frog is not infected with chytrid?
+
+To answer this, we can use the law of probability that states that the probability that an event does not happen is 1 minus the probability that the event does happen:
+
+$$
+P(\text{Uninfected}) = 1 - P(\text{Infected}) = 1 - \frac{2}{5} = \frac{3}{5}
+$$
+
+### Probabilties of multiple events
+In the section above, we calculated the probability of single events. However, often we want to know the probability of multiple events. In this section we will cover rules for combining together the probabilities of multiple events. There are two general types of questions that involve combining together probabilities for multiple events:
+
+1. What is the probability that two or more events both/all happen? (What is the probability of event A and B both happening?)
+2. What is the probability of one event or another event(s) happening? (What is the probability that event A or event B happens?)
+
+To combine together probabilities in this way, we use the multiplication and addition rules, respectively. To help me remember which is which, I try to remember the relationship between the key words in the question and the rule I need to use:
+
++ **BOTH**/**AND** = Multiplication rule
++ **EITHER**/**OR** = Addition rule
+
+For this section, we will assume that the events we are considering are independent. In other words, the outcome of one event does not influence the probability of the outcome of the other event(s).
+
+#### Multiplication rule
+If we want to know the probability that two events, lets call them events A and B, both happen (i.e., event A **AND** event B happen), we use the multiplication rule. We simply multiply together the probabilities of event A and event B to get the probability that event A and B both happen:
+
+$$
+P(\text{A and B}) = P(\text{A}) \times P(\text{B})
+$$
+For example, if we roll two dice, and we want to know the probability of rolling a 6 on both dice, we would calculate that as follows:
+
+$$
+P(6 \text{ and } 6) = \frac{1}{6} \times \frac{1}{6} = \frac{1}{36}
+$$
+
+#### Addition rule
+If we want to know the probability that one event **OR** another event happens, we use the addition rule. We add together the probabilities of the individual events to get the probability that either one of the events happens.
+
+$$
+P(\text{A or B}) = P(\text{A}) + P(\text{B})
+$$
+For example, if we roll a die and want to know the probability of rolling an even number (2, 4, or 6), we would calculate that by adding together the probabilities of each one of those possible outcomes:
+
+$$
+P(2, 4, \text{ or } 6) = \frac{1}{6} + \frac{1}{6} + \frac{1}{6} = \frac{3}{6} = \frac{1}{2}
+$$
+This version of the addition rule only works for events that are mutually exclusive, meaning that if one event happens, the other(s) cannot. This is true in the example we used of rolling the die. If we roll a single die once, and get a 2, that means we can't also get a 4 or 6. If two events are not mutually exclusive (they can both happen at the same time), then we have to use an alternative version of the addition rule to account for that.
+
+#### Addition rule for non-mutually exclusive events
+When we have non-mutually-exclusive events, which can both happen at the same time, if we use the addition rule above to estimate the probability that either of the events happens, we will over-estimate the probability. This is because the addition rule will essentially double-count the probability of both events happening. This is easier to understand if we look at a visual representation of the probability of the events.
+
+In the diagram below, the outer rectangle represents the sample space, or the full set of possible outcomes. The area of the blue circle represents the probability that event A happens, and the area orange circle represents the probability that event B happens. The area of overlap between the two is the probability that both events happen.
+
+![A rectangle containing two overlapping cirlces labeled A and B](NonMutuallyExclusive.png){width=60%}
+<br>
+
+To calculate the probability that either event A or event B happens, we want to calculate the area that is surrounded by the black outline around the two circles. If we do that by adding together the total area of both circles, the area of overlap in the middle will be counted twice, but to accurately calculate the area, we only want to count it once.
+
+We can account for this by adapting our addition formula to subtract out that area of overlap. In other words, we have to subtract out the probability of A and B both happening. This takes us back to the multiplication rule. To calculate the probability of both A and B happening, we multiply the two probabilities together, so that is the value we need to subtract from the addition rule:
+
+$$
+P(\text{A or B}) = P(\text{A}) + P(\text{B}) - P(\text{A})P(\text{B})
+$$
+Here's an example of how this works. Say we are interested in the prevalence of parasites in a population of elk. There are two common parasites in the population: tapeworm cysts (*Taenia krabbei*) and brainworm nematodes (*Parelaphostrongylus tenuis*). You know the frequency of tapeworms is 0.3 and the frequency of brainworm 2 is 0.4, and it is possible for a single individual to be infected with both parasites at the same time (i.e., infection by the two parasites is not mutually-exclusive). You want to know the probability that an individual in the population is infected with at least one of the parasites. We can do that using the modified addition equation for non-mutually exclusive events, as shown below (T = tapeworm, B = brainworm):
+
+$$
+P(\text{T or B}) = P(\text{T}) + P(\text{B}) - P(\text{T})P(\text{B})
+$$
+$$
+P(\text{T or B}) = 0.3 + 0.4 - (0.3\times0.4) = 0.58
+$$
+Therefore, the probability of an individual being infected with at least one of the parasites is 0.58. Had we used the addition rule for mutually-exclusive events, we would have incorrectly estimated the probability to be 0.7.
+
+### Exercises: Applications in ecology and evolution
+Now that we have gotten an overview of some of the basic rules of probability, we will look at some examples of ways we use these rules in the context of ecology and evolution.
+
+#### Mendelian Genetics
+In pea plants, the shape of the seeds are controlled by a single gene. Round is the dominant trait and wrinkled is the recessive trait. Two parent pea plants are heterozygous for this trait (they have one dominant allele and one recessive allele). The dominant and recessive alleles have equal probability of passed on to the offspring. What is the probability that the offspring are homozygous dominant (i.e. what is the probability that they get a dominant allele from parent one and a dominant allele from parent 2)?
+
+What is the probability that the offspring are heterozygous (i.e, what is the probability that the offspring receive a dominant allele from parent 1 and a recessive allele from parent 2 or a recessive allele from parent 1 and a dominant allele from parent 2)?
+
+### Population genetics
+Researchers are studying the heterozygosity of two genes in a population of bison. In the population, $\frac{2}{5}$ of the bison are heterozygous for the first gene, and $\frac{1}{2}$ are heterozygous for the second gene. What is the probability that a bison is heterozygous for at least one of the genes?
+
+#### Simpson's Diversity Index
+The Simpson's Diversity Index is a method of calculating the diversity of biological communities. It is rooted in the laws of probability. The index calculates the probability that if you randomly select two individuals from the community, the two individuals will be from the same species. The more diverse the community, the lower the probability they will be the same species.
+
+A community has 10 individuals of species 1, 5 individuals of species 2, and 4 individuals of species three.
+
+If you draw 2 individuals from that community, with replacement (meaning that after you draw one individual, they are returned to the community before drawing the second, so the number of individuals in the community is the same for both), what is the probability that both invididuals are species 1?
+
+What is the probability that they are both species 2?
+
+What is the probability that they are both species 3?
+
+What is the total probability that if you randomly select two individuals from the community, the two individuals will be from the same species (i.e, both species 1, both species 2, or both species 3)?
+
+## Lession 8.2 Probility - Beyond the Basics
