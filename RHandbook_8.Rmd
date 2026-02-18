@@ -6,6 +6,8 @@ output:
   html_document:
     toc: true
     toc_depth: 3
+    includes:
+      in_header: header.html
 ---
 
 ```{r setup, include=FALSE}
@@ -144,27 +146,16 @@ $$
 Therefore, the probability of an individual being infected with at least one of the parasites is 0.58. Had we used the addition rule for mutually-exclusive events, we would have incorrectly estimated the probability to be 0.7.
 
 ### Exercises: Applications in ecology and evolution
-Now that we have gotten an overview of some of the basic rules of probability, we will look at some examples of ways we use these rules in the context of ecology and evolution.
 
-#### Mendelian Genetics
-In pea plants, the shape of the seeds are controlled by a single gene. Round is the dominant trait and wrinkled is the recessive trait. Two parent pea plants are heterozygous for this trait (they have one dominant allele and one recessive allele). The dominant and recessive alleles have equal probability of passed on to the offspring. What is the probability that the offspring are homozygous dominant (i.e. what is the probability that they get a dominant allele from parent one and a dominant allele from parent 2)?
-
-What is the probability that the offspring are heterozygous (i.e, what is the probability that the offspring receive a dominant allele from parent 1 and a recessive allele from parent 2 or a recessive allele from parent 1 and a dominant allele from parent 2)?
-
-### Population genetics
-Researchers are studying the heterozygosity of two genes in a population of bison. In the population, $\frac{2}{5}$ of the bison are heterozygous for the first gene, and $\frac{1}{2}$ are heterozygous for the second gene. What is the probability that a bison is heterozygous for at least one of the genes?
-
-#### Simpson's Diversity Index
-The Simpson's Diversity Index is a method of calculating the diversity of biological communities. It is rooted in the laws of probability. The index calculates the probability that if you randomly select two individuals from the community, the two individuals will be from the same species. The more diverse the community, the lower the probability they will be the same species.
-
-A community has 10 individuals of species 1, 5 individuals of species 2, and 4 individuals of species three.
-
-If you draw 2 individuals from that community, with replacement (meaning that after you draw one individual, they are returned to the community before drawing the second, so the number of individuals in the community is the same for both), what is the probability that both invididuals are species 1?
-
-What is the probability that they are both species 2?
-
-What is the probability that they are both species 3?
-
-What is the total probability that if you randomly select two individuals from the community, the two individuals will be from the same species (i.e, both species 1, both species 2, or both species 3)?
+<!---LEARNR EX 1-7-->
+   
+<iframe style="margin:0 auto; min-width: 100%;" id="myIframeL3" class="interactive" src="https://rby8g8-emily-schultz.shinyapps.io/RHandbookL8/
+" scrolling="no" frameborder="no"></iframe>
+   
+<!---------------->
 
 ## Lession 8.2 Probility - Beyond the Basics
+
+<script>
+  iFrameResize({}, ".interactive");
+</script>

@@ -34,6 +34,7 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/iframe-resizer/3.5.16/iframeResizer.min.js" type="text/javascript"></script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -324,8 +325,11 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#lesson-8-probability-basics"
-id="toc-lesson-8-probability-basics">Lesson 8: Probability Basics</a>
+<li><a href="#lesson-8-probability" id="toc-lesson-8-probability">Lesson
+8: Probability</a>
+<ul>
+<li><a href="#lession-8.1-probility-basics"
+id="toc-lession-8.1-probility-basics">Lession 8.1 Probility Basics</a>
 <ul>
 <li><a href="#basic-laws-of-probability"
 id="toc-basic-laws-of-probability">Basic laws of probability</a></li>
@@ -336,19 +340,25 @@ events</a></li>
 id="toc-exercises-applications-in-ecology-and-evolution">Exercises:
 Applications in ecology and evolution</a></li>
 </ul></li>
+<li><a href="#lession-8.2-probility---beyond-the-basics"
+id="toc-lession-8.2-probility---beyond-the-basics">Lession 8.2 Probility
+- Beyond the Basics</a></li>
+</ul></li>
 </ul>
 </div>
 
-<div id="lesson-8-probability-basics" class="section level1">
-<h1>Lesson 8: Probability Basics</h1>
+<div id="lesson-8-probability" class="section level1">
+<h1>Lesson 8: Probability</h1>
+<div id="lession-8.1-probility-basics" class="section level2">
+<h2>Lession 8.1 Probility Basics</h2>
 <p>Probability is a field of mathematics that is used for the study of
 random events. It allows us to quantify the likelihood of particular
 outcomes. In scientific research, when we sample from a population, the
 act of sampling is a random event. When we analyze data, we use
 probability to help us draw conclusions based on the particular outcome
 we observe in our data.</p>
-<div id="basic-laws-of-probability" class="section level2">
-<h2>Basic laws of probability</h2>
+<div id="basic-laws-of-probability" class="section level3">
+<h3>Basic laws of probability</h3>
 <p>The probability of an event is defined as the likelihood that
 particular event occurs. In order to calculate the probability, we have
 to define the event and the sample space:</p>
@@ -387,8 +397,8 @@ possible outcome, so the probabilities of the two must add to one.)</li>
 </ol>
 <p>Now let’s look at some examples of how we can use these equations for
 calculating probabilities:</p>
-<div id="example-1" class="section level3">
-<h3>Example 1</h3>
+<div id="example-1" class="section level4">
+<h4>Example 1</h4>
 <p>A plant community has 50 individuals of species 1, 40 individuals of
 species 2, 20 individuals of species 3, and 10 individuals of species 4.
 If we randomly select an individual from the population, what is the
@@ -403,8 +413,8 @@ P(\text{Species 3}) = \frac{30}{50 + 40 + 20 + 10} = \frac{30}{120} =
 0.25
 \]</span></p>
 </div>
-<div id="example-2" class="section level3">
-<h3>Example 2</h3>
+<div id="example-2" class="section level4">
+<h4>Example 2</h4>
 <p><em>Staphylococcus aureus</em> is a bacteria species that can cause
 disease in humans, and it is known for high levels of antibiotic
 resistance. It is estimated that the rate of Penicillin G resistance in
@@ -422,8 +432,8 @@ strain).</p>
 \text{Number resistant} = 120000 \times \frac{4}{5} = 96000
 \]</span></p>
 </div>
-<div id="example-3" class="section level3">
-<h3>Example 3</h3>
+<div id="example-3" class="section level4">
+<h4>Example 3</h4>
 <p>Wetland-associated frog species in the United States have a <span
 class="math inline">\(\frac{2}{5}\)</span> chance of being infected with
 chytrid fungus. What is the probability that a wetland-associated frog
@@ -437,8 +447,8 @@ P(\text{Uninfected}) = 1 - P(\text{Infected}) = 1 - \frac{2}{5} =
 \]</span></p>
 </div>
 </div>
-<div id="probabilties-of-multiple-events" class="section level2">
-<h2>Probabilties of multiple events</h2>
+<div id="probabilties-of-multiple-events" class="section level3">
+<h3>Probabilties of multiple events</h3>
 <p>In the section above, we calculated the probability of single events.
 However, often we want to know the probability of multiple events. In
 this section we will cover rules for combining together the
@@ -460,8 +470,11 @@ in the question and the rule I need to use:</p>
 rule</li>
 <li><strong>EITHER</strong>/<strong>OR</strong> = Addition rule</li>
 </ul>
-<div id="multiplication-rule" class="section level3">
-<h3>Multiplication rule</h3>
+<p>For this section, we will assume that the events we are considering
+are independent. In other words, the outcome of one event does not
+influence the probability of the outcome of the other event(s).</p>
+<div id="multiplication-rule" class="section level4">
+<h4>Multiplication rule</h4>
 <p>If we want to know the probability that two events, lets call them
 events A and B, both happen (i.e., event A <strong>AND</strong> event B
 happen), we use the multiplication rule. We simply multiply together the
@@ -476,8 +489,8 @@ follows:</p>
 P(6 \text{ and } 6) = \frac{1}{6} \times \frac{1}{6} = \frac{1}{36}
 \]</span></p>
 </div>
-<div id="addition-rule" class="section level3">
-<h3>Addition rule</h3>
+<div id="addition-rule" class="section level4">
+<h4>Addition rule</h4>
 <p>If we want to know the probability that one event <strong>OR</strong>
 another event happens, we use the addition rule. We add together the
 probabilities of the individual events to get the probability that
@@ -500,8 +513,8 @@ same time), then we have to use an alternative version of the addition
 rule to account for that.</p>
 </div>
 <div id="addition-rule-for-non-mutually-exclusive-events"
-class="section level3">
-<h3>Addition rule for non-mutually exclusive events</h3>
+class="section level4">
+<h4>Addition rule for non-mutually exclusive events</h4>
 <p>When we have non-mutually-exclusive events, which can both happen at
 the same time, if we use the addition rule above to estimate the
 probability that either of the events happens, we will over-estimate the
@@ -553,57 +566,21 @@ the probability to be 0.7.</p>
 </div>
 </div>
 <div id="exercises-applications-in-ecology-and-evolution"
+class="section level3">
+<h3>Exercises: Applications in ecology and evolution</h3>
+<!---LEARNR EX 1-7-->
+<iframe style="margin:0 auto; min-width: 100%;" id="myIframeL3" class="interactive" src="https://rby8g8-emily-schultz.shinyapps.io/RHandbookL8/
+" scrolling="no" frameborder="no">
+</iframe>
+<!---------------->
+</div>
+</div>
+<div id="lession-8.2-probility---beyond-the-basics"
 class="section level2">
-<h2>Exercises: Applications in ecology and evolution</h2>
-<p>Now that we have gotten an overview of some of the basic rules of
-probability, we will look at some examples of ways we use these rules in
-the context of ecology and evolution.</p>
-<div id="mendelian-genetics" class="section level3">
-<h3>Mendelian Genetics</h3>
-<p>In pea plants, the shape of the seeds are controlled by a single
-gene. Round is the dominant trait and wrinkled is the recessive trait.
-Two parent pea plants are heterozygous for this trait (they have one
-dominant allele and one recessive allele). The dominant and recessive
-alleles have equal probability of passed on to the offspring. What is
-the probability that the offspring are homozygous dominant (i.e. what is
-the probability that they get a dominant allele from parent one and a
-dominant allele from parent 2)?</p>
-<p>What is the probability that the offspring are heterozygous (i.e,
-what is the probability that the offspring receive a dominant allele
-from parent 1 and a recessive allele from parent 2 or a recessive allele
-from parent 1 and a dominant allele from parent 2)?</p>
-</div>
-<div id="population-genetics" class="section level3">
-<h3>Population genetics</h3>
-<p>Researchers are studying the heterozygosity of two genes in a
-population of bison. In the population, <span
-class="math inline">\(\frac{2}{5}\)</span> of the bison are heterozygous
-for the first gene, and <span class="math inline">\(\frac{1}{2}\)</span>
-are heterozygous for the second gene. What is the probability that a
-bison is heterozygous for at least one of the genes?</p>
-</div>
-<div id="simpsons-diversity-index" class="section level3">
-<h3>Simpson’s Diversity Index</h3>
-<p>The Simpson’s Diversity Index is a method of calculating the
-diversity of biological communities. It is rooted in the laws of
-probability. The index calculates the probability that if you randomly
-select two individuals from the community, the two individuals will be
-from the same species. The more diverse the community, the lower the
-probability they will be the same species.</p>
-<p>A community has 10 individuals of species 1, 5 individuals of species
-2, and 4 individuals of species three.</p>
-<p>If you draw 2 individuals from that community, with replacement
-(meaning that after you draw one individual, they are returned to the
-community before drawing the second, so the number of individuals in the
-community is the same for both), what is the probability that both
-invididuals are species 1?</p>
-<p>What is the probability that they are both species 2?</p>
-<p>What is the probability that they are both species 3?</p>
-<p>What is the total probability that if you randomly select two
-individuals from the community, the two individuals will be from the
-same species (i.e, both species 1, both species 2, or both species
-3)?</p>
-</div>
+<h2>Lession 8.2 Probility - Beyond the Basics</h2>
+<script>
+  iFrameResize({}, ".interactive");
+</script>
 </div>
 </div>
 
