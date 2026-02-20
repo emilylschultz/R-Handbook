@@ -340,9 +340,15 @@ events</a></li>
 id="toc-exercises-applications-in-ecology-and-evolution">Exercises:
 Applications in ecology and evolution</a></li>
 </ul></li>
-<li><a href="#lession-8.2-probility---beyond-the-basics"
-id="toc-lession-8.2-probility---beyond-the-basics">Lession 8.2 Probility
-- Beyond the Basics</a></li>
+<li><a href="#lession-8.2-advanced-probability"
+id="toc-lession-8.2-advanced-probability">Lession 8.2 Advanced
+Probability</a>
+<ul>
+<li><a href="#conditional-probability"
+id="toc-conditional-probability">Conditional probability</a></li>
+<li><a href="#binomial-theorem" id="toc-binomial-theorem">Binomial
+Theorem</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </div>
@@ -575,12 +581,387 @@ class="section level3">
 <!---------------->
 </div>
 </div>
-<div id="lession-8.2-probility---beyond-the-basics"
-class="section level2">
-<h2>Lession 8.2 Probility - Beyond the Basics</h2>
+<div id="lession-8.2-advanced-probability" class="section level2">
+<h2>Lession 8.2 Advanced Probability</h2>
+<div id="conditional-probability" class="section level3">
+<h3>Conditional probability</h3>
+<p>In the probability examples we considered above, when we calculated
+the probability of multiple events, we assumed those events were
+independent - the outcome of one event did not influence the probability
+of the other outcome(s). However, often this is not true. In many cases,
+a particular event or condition does affect the probability of another
+event. We refer to this as conditional probability: the probability of
+one event is conditioned on another.</p>
+<p>We actually worked with conditional probability when we discussed
+hypothesis testing. When we looked at the probabilities of observing a
+particular outcome in our data, we calculated those probabilities based
+on a particular hypothesis, or condition.</p>
+<p>In this section, we will learn how to calculate conditional
+probabilities.</p>
+<p>We’ll start with an example (you might remember this from the
+probability questions we went through on the first day of class):</p>
+<p>Approximately 1% of women aged 40-50 have breast cancer. A woman with
+breast cancer has a 90% chance of a positive test from a mammogram,
+while a woman without has a 10% chance of a false positive result. What
+is the probability a woman in the 40-50 age range has breast cancer
+given that she just had a positive test?</p>
+<p>This is a conditional probability question because we want to know
+the probability that a woman has breast cancer, based on a particular
+set of conditions: she is in the 40-50 age range and she just had a
+positive test result.</p>
+<p>We’ll go through three methods for solving this. All of them with
+lead to the same answer, so when you solve problems like this you can
+work with the method that makes the most sense to you.</p>
+<div id="option-1-diagram" class="section level4">
+<h4>Option 1: Diagram</h4>
+<p>Let’s start out with a visual that shows the possible scenarios and
+their probabilities:</p>
+<p><img src="conditionalprob.png" style="width:60.0%"
+alt="A diagram showing the percent of 40-50-year-old women who do and do not have breast cancer (1% and 99%, respectively) and the percent of positive and negative test results for each group (10% positive and 90% negative for women without cancer, and 90% positive and 10% negative for women with cancer.)" />
+<br></p>
+<p>This diagram summarizes the information in the question regarding the
+percent of women with and without cancer and their respective percent
+chances of getting a positive and negative mammogram result. We could
+solve the problem with just these percentages, but is easier to work
+with number of individuals than percentages.</p>
+<p>Let’s assume we start with a group of 1000 women (we could choose any
+number of women, but 1000 is a nice round number that will allow us to
+work with whole numbers instead of fractions.) If we have 1000 women in
+this group, and 1% are expected to have cancer, we would expect 990 of
+those women not to have cancer and 10 of those women to not have cancer.
+Each of those groups now have a different probability of a positive test
+result. Women without cancer have a 10% chance of a false positive, so
+we would expect 99 of the cancer-free women to get a positive result,
+while 891 would get a negative result. Women with cancer have a 90%
+chance of a true positive, so we would expect 9 of the 10 to get a
+positive result and 1 to get a negative result. These numbers are
+summarized in the diagram below.</p>
+<div class="float">
+<img src="conditionalnum.png" style="width:60.0%"
+alt="A diagram showing the number out of 1000 40-50-year-old women who do and do not have breast cancer (10 and 990, respectively) and the number of positive and negative test results for each group (99 positive and 891 negative for women without cancer, and 9 positive and 1 negative for women with cancer.)" />
+<div class="figcaption">A diagram showing the number out of 1000
+40-50-year-old women who do and do not have breast cancer (10 and 990,
+respectively) and the number of positive and negative test results for
+each group (99 positive and 891 negative for women without cancer, and 9
+positive and 1 negative for women with cancer.)</div>
+</div>
+<p><br></p>
+<p>Now that we have the number of women in each group who would get
+positive and negative test results, it is easier to calculate the
+probability that a woman has cancer if she got a positive result. We
+just have to identify the number of women who got a positive test result
+and actually have cancer (9) and the total number of women who got a
+positive result (9 women who have cancer and got a positive result + 99
+women who do not have cancer and have a positive test result = 108 total
+positive tests). Now we can calculate our probability:</p>
+<p><span class="math display">\[
+P(\text{Cancer|Positive}) = \frac{9}{108} = 0.083,
+\]</span> where <span
+class="math inline">\(P(\text{Cancer|Positive})\)</span> is the
+probability of cancer given a positive test result.</p>
+</div>
+<div id="option-2-table" class="section level4">
+<h4>Option 2: Table</h4>
+<p>For our second strategy, we will put together a table representing
+all of the probabilities for our scenario: cancer or no cancer and
+positive test or negative test. We will fill in the table with the
+probabilities for each of those combinations (using the multiplication
+rule!). For example, in the upper left hand corner in the table below,
+we calculate the probability of a woman having cancer and getting a
+positive test result, so we multiply together the probability of having
+cancer and the probability of a positive test results if a woman does
+have cancer.</p>
+<style type="text/css">
+.table {
+  width: 80%;
+}
+</style>
+<table>
+<colgroup>
+<col width="30%" />
+<col width="38%" />
+<col width="30%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="center">Cancer (1%)</th>
+<th align="right">No cancer (99%)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Positive</td>
+<td align="center">True positive: 0.01 x 0.9 = 0.009</td>
+<td align="right">False positive: 0.99 x 0.1 = 0.099</td>
+</tr>
+<tr class="even">
+<td align="left">Negative</td>
+<td align="center">False negative: 0.01 x 0.1 = 0.001</td>
+<td align="right">True negative: 0.99 x 0.9 = 0.891</td>
+</tr>
+</tbody>
+</table>
+<p>Once we have calculated the probability for each combination, we can
+use the probability values to calculate the probability we want: the
+probability of having cancer given a positive test result. We can do
+this by dividing the probability of a true positive result (probability
+of having cancer and getting a positive result = 0.009) by the total
+probability of getting a positive result (0.009 probability of a true
+positive plus 0.099 probability of a false positive):</p>
+<p><span class="math display">\[
+P(\text{Cancer|Positive}) = \frac{0.009}{0.009+0.099} = 0.083,
+\]</span> This method gives us the same probability that we got using
+the method above.</p>
+</div>
+<div id="option-3-bayes-theorem" class="section level4">
+<h4>Option 3: Bayes Theorem</h4>
+<p>The final method is the most formal method. It uses a formula known
+as Bayes Theorem for calculating conditional probability. The theorem is
+as follows:</p>
+<p><span class="math display">\[
+P(A|B) = \frac{P(B|A) \times P(A)}{P(B)}
+\]</span> In this formula, <span class="math inline">\(P(A|B)\)</span>
+is the probability that event A occurs given that event B has occurred,
+<span class="math inline">\(P(B|A)\)</span> is the probability that
+event B occurs given that event A has occurred, and <span
+class="math inline">\(P(A)\)</span> and <span
+class="math inline">\(P(B)\)</span> are the total probabilities that
+events A and B occur, respectively.</p>
+<p>Putting these terms in the context of our question, <span
+class="math inline">\(P(A|B)\)</span> is the probability of having
+cancer given a positive test result, <span
+class="math inline">\(P(B|A)\)</span> is the probability of a positive
+test result given a woman has cancer, <span
+class="math inline">\(P(A)\)</span> is probability of having cancer, and
+<span class="math inline">\(P(B)\)</span> is the total probability of a
+positive test result.</p>
+<p>Filling in the values for <span class="math inline">\(P(B|A)\)</span>
+and <span class="math inline">\(P(A)\)</span> is easy because we are
+given that information in the question. If a woman has cancer, there is
+a 90% chance (0.9 probability) of getting a positive test result, so
+that is the value of <span class="math inline">\(P(B|A)\)</span>. The
+chance that a woman in this age group has cancer is 1% (0.01
+probability), so that is the values of <span
+class="math inline">\(P(A)\)</span>.</p>
+<p>Calculating the value of <span class="math inline">\(P(B)\)</span> is
+more involved because we have to account for two ways of getting
+positive test result: having cancer and getting a positive result or not
+having cancer and getting a positive result. We can use the
+multiplication rule to get both of those values and then add the results
+together. The probability of having cancer and getting a positive result
+is the probability of having cancer multiplied by the probability of
+getting a positive result if you have cancer:</p>
+<p><span class="math display">\[
+P(\text{Cancer and Positive} = 0.01 \times 0.9) = 0.009
+\]</span> The probability of not having cancer and getting a positive
+result is the probability of not having cancer multiplied by the
+probability of getting a positive result if you do not have cancer:</p>
+<p><span class="math display">\[
+P(\text{No cancer and Positive} = 0.99 \times 0.1) = 0.099
+\]</span> If we add those two values together, we get 0.108.</p>
+<p>We can now fill all of our values into Bayes Theorem:</p>
+<p><span class="math display">\[
+P(Cancer|Positive) = \frac{0.9 \times 0.01}{0.108} = 0.083
+\]</span> Once again, we get the same probability, showing that all of
+these methods get us to the same result. You are welcome to choose
+whichever strategy that you prefer for solving problems like this.
+Personally, I often use two of the methods to double-check my work.</p>
+</div>
+<div id="applications-of-conditional-probability-in-statistics"
+class="section level4">
+<h4>Applications of conditional probability in statistics</h4>
+<p>Aside from its uses in calculating probability questions like the
+example above, conditional probability plays an important role in the
+approaches we use for hypothesis testing. As I mentioned at the start,
+when we looked at the probabilities in our hypothesis testing examples,
+those were conditional probabilities. They were the probabilities of
+observing a particular outcome in our data, given a particular
+hypothesis. In classical frequentist statistics, we calculate the
+probability of our observed outcome or a more extreme outcome, given the
+null hypothesis being true. If that probability is low, we reject the
+null hypothesis. In information criterion approaches, we calculate the
+likelihood values for every hypothesis we are considering, which the the
+probability of observed the exact outcome in our data, assuming a
+particular hypothesis is true. In both of these approaches, in one way
+or another, we are calculating the probability of our data given a
+hypothesis: <span class="math inline">\(P(Data|Hypothesis)\)</span>.</p>
+<p>In Bayesian statistics, the third approach for drawing conclusions
+about our hypothesis, we calculate the probability the other way around,
+the probability of a hypothesis given our data: <span
+class="math inline">\(P(Hypothesis|Data)\)</span>. This is more
+intuitive in terms of the conclusions we want to draw, but more
+computationally challenging. The premise behind the computation, though,
+is the conditional probability formula, Bayes Theorem, that is described
+above. It uses the same likelihood values used in information criterion
+approaches (<span class="math inline">\(P(Data|Hypothesis)\)</span>),
+the probability of a hypothesis, and the probability of the data to
+calculate the probability of the hypothesis given a particular data
+set.</p>
+</div>
+</div>
+<div id="binomial-theorem" class="section level3">
+<h3>Binomial Theorem</h3>
+<p>When we discussed hypothesis testing, we worked with some probability
+tables that showed the probability of a particular number of outcomes in
+our data (number of ducks that chose green bread or number of offspring
+that had the dominant trait). These probabilities were calculated with a
+formula known at the binomial theorem.</p>
+<p>The binomial theorem works when you are working with an experiment
+that has two possible outcomes. A classic example in probability is
+flipping a coin. There are two possible outcomes you can get when you
+flip a coin: heads or tails. However, in ecology we work with a lot of
+data like this, including but not limited to:</p>
+<ul>
+<li>Survival: individuals can survive or die</li>
+<li>Reproduction: individuals can reproduce or not</li>
+<li>Species occurrence: a species can be present or absence</li>
+</ul>
+<p>When we are working with data like these, we can label one outcome as
+a success (e.g., surviving) and one outcome as a failure (e.g., dying).
+The binomial theorem then allows us to calculate the probability of a
+specific number of successes in a given number of trials, based on the
+probability of success. For example we could calculate that 70 out of
+100 individuals in a population survive. The number of successes in this
+example would be 70 and the number of trails would be the total number
+of individuals in the population: 100.</p>
+<p>We’ll walk through the process of calculating this probability for a
+specific example, and then I will present the full formula for the
+binomial theorem. Here is the question we will work with for our
+example: The probability of survival for a species is 0.6. If we have 3
+individuals of that species, what is the probability that exactly 2 will
+survive. In this example, we have 3 trials (the total number of
+individuals), we want to know the probability of exactly 2 successes
+(survival), and the probability of success is 0.6.</p>
+<p>To start, let’s calculate the probability that the first two
+individuals survive and the third individual dies. We can do this using
+the multiplication rule because we want to know the probability that
+individual 1 survives AND individual 2 survives AND individuals 3 dies.
+We can calculate that by multiplying together those three probabilities,
+remember that the probability of survival is 0.6, so the probability of
+dying is 0.4:</p>
+<p><span class="math display">\[
+P(\text{2 survive, 1 dies}) = 0.6 \times 0.6 \times 0.4 = 0.144
+\]</span> This gives us a probability of 0.144 for one way that we could
+get 2 survivors out of our three individuals. This is not our final
+answer, though, because there are other ways that exactly 2 of the three
+individuals survive: individuals two and three could survive while
+individual one dies, or individuals 1 and 3 could survive while
+individual two dies. In total, there are three possible ways that two
+individuals survive and the other dies, so what we ultimately want to
+calculate is the probability that we get any one of these three
+outcomes. We can use the addition rule to get that probability:</p>
+<p><span class="math display">\[
+P(\text{2 survive, 1 dies}) = 0.144 + 0.144 + 0.144 = 3 \times 0.144 =
+0.432
+\]</span> Therefore our total probability that exactly 2 of the three
+individuals survive is 0.432.</p>
+<p>This also leads us to an overall framework for approaching problems
+like these. To calculate the probability of a specific number of
+successes, we start by multiplying the probability of that number of
+successes by the probability that the remaining trials are failures.
+Then we multiply that probability by the number of combinations that
+will give us the correct number of successes and failures. We have
+general formulas we can use for each of these terms.</p>
+<div id="probability-of-x-number-of-successes" class="section level4">
+<h4>Probability of <span class="math inline">\(x\)</span> number of
+successes:</h4>
+<p>If we want to know the probability of <span
+class="math inline">\(x\)</span> number of successes (assuming the
+probability of success is the same for all trials), we calculate that as
+follows:</p>
+<p><span class="math display">\[
+P(\text {x successes}) = p^x ,
+\]</span> where <span class="math inline">\(p\)</span> is the
+probability of success. In our example, <span
+class="math inline">\(p\)</span> was 0.6 and <span
+class="math inline">\(x\)</span> was two, so the probability of two
+successes was</p>
+<p><span class="math display">\[
+0.6^2 = 0.6 \times 0.6 = 0.36
+\]</span></p>
+</div>
+<div id="probability-of-failures" class="section level4">
+<h4>Probability of failures:</h4>
+<p>If we want to know the probability of exactly <span
+class="math inline">\(x\)</span> successes in a certain number of trials
+(we’ll call the number of trials <span
+class="math inline">\(n\)</span>), that assumes the remaining trials
+must result in failures, so we want the know the probability of <span
+class="math inline">\(n-x\)</span> failures. We calculate that as:</p>
+<p><span class="math display">\[
+P(n-x \text { failures}) = q^{n-x} ,
+\]</span> where <span class="math inline">\(q\)</span> is the
+probability of failure In our example, <span
+class="math inline">\(q\)</span> was 0.4 and <span
+class="math inline">\(n-x\)</span> was one, so the probability of two
+successes was</p>
+<p><span class="math display">\[
+0.4^1 = 0.4
+\]</span></p>
+</div>
+<div id="number-of-combinations" class="section level4">
+<h4>Number of combinations:</h4>
+<p>When we worked through the number of combinations that would give us
+2 survivors in 3 individuals, we just manually listed the number of
+combinations. That is doable when we only have a few trials, but it
+quickly become unwieldy as we increase the number of trials. Luckily
+there is a formula we can use as a shortcut for calculating the number
+of ways to get <span class="math inline">\(x\)</span> successes in <span
+class="math inline">\(n\)</span> trials:</p>
+<p><span class="math display">\[
+\frac{n!}{x!(n-x)!}
+\]</span> If you fill in the values of <span
+class="math inline">\(n\)</span> and <span
+class="math inline">\(x\)</span> in the formula, you will get the
+correct number of combinations. If you are unfamiliar with the ! symbol,
+that is the factorial symbol. You calculate <span
+class="math inline">\(n!\)</span> as follows:</p>
+<p><span class="math display">\[
+𝑛!=𝑛\times(𝑛−1) \times (𝑛−2) \times ⋯ \times 1
+\]</span> Scientific calculators (and R!) have built-in functions for
+calculating factorials.</p>
+<p>For the purposes of this class, I won’t go into the math behind this
+shortcut, but if you would like to learn more, Khan Academy has a series
+on calculating combinations:
+<a href="https://www.khanacademy.org/math/precalculus/x9e81a4f98389efdf:prob-comb/x9e81a4f98389efdf:combinations/v/introduction-to-combinations" target="_blank" rel="noopener noreferrer">Khan
+Academy Combinations series</a></p>
+</div>
+<div id="putting-it-all-together" class="section level4">
+<h4>Putting it all together</h4>
+<p>We now have all of the pieces we need for our full binomial
+formula:</p>
+<p><span class="math display">\[
+P(x,n) = \frac{n!}{x!(n-x)!}p^{x}q^{n-x},
+\]</span> where <span class="math inline">\(P(x,n)\)</span> is the
+probability of x successes in n trials. The first term calculates the
+number of combinations, the second calculates the probability of the
+correct number of successes, and the last calculates the probability of
+the correct number of failures.</p>
+<p>If we fill in the formula for our example of 2 survivors in 3
+individuals, with a survival probability of 0.6, it would look like
+this:</p>
+<p><span class="math display">\[
+P(2,3) = \frac{3!}{2!(3-2)!}0.6^{2}0.4^{3-x2} = 0.432
+\]</span> The trick to using this formula is correctly identifying the
+values of <span class="math inline">\(n\)</span>, <span
+class="math inline">\(x\)</span>, <span
+class="math inline">\(p\)</span>, and <span
+class="math inline">\(q\)</span>. Once we identify those values, it is
+easy to fill them into the formula. Programs like R even have built-in
+functions for calculating the binomial theorem, which we will work with
+in class.</p>
+<p>One of the most important applications of the binomial theorem in
+ecology and statistics is exactly the way we used it in our hypothesis
+testing examples. We can calculate the probability of a certain number
+of successes in our data, based on a particular hypothesis, and use
+those probabilities to draw conclusions about how well our hypotheses
+match the patterns in our data.</p>
 <script>
   iFrameResize({}, ".interactive");
 </script>
+</div>
+</div>
 </div>
 </div>
 
