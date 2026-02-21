@@ -147,7 +147,7 @@ Therefore, the probability of an individual being infected with at least one of 
 
 ### Exercises: Applications in ecology and evolution
 
-<!---LEARNR EX 1-7-->
+<!---LEARNR EX 1-3-->
    
 <iframe style="margin:0 auto; min-width: 100%;" id="myIframeL3" class="interactive" src="https://rby8g8-emily-schultz.shinyapps.io/RHandbookL8/
 " scrolling="no" frameborder="no"></iframe>
@@ -335,6 +335,15 @@ $$
 The trick to using this formula is correctly identifying the values of $n$, $x$, $p$, and $q$. Once we identify those values, it is easy to fill them into the formula. Programs like R even have built-in functions for calculating the binomial theorem, which we will work with in class.
 
 One of the most important applications of the binomial theorem in ecology and statistics is exactly the way we used it in our hypothesis testing examples. We can calculate the probability of a certain number of successes in our data, based on a particular hypothesis, and use those probabilities to draw conclusions about how well our hypotheses match the patterns in our data.
+
+### Exercises: Conditional Probability and Binomial Theorem in Ecology
+
+<!---LEARNR EX 4-6-->
+   
+<iframe style="margin:0 auto; min-width: 100%;" id="myIframeL3" class="interactive" src="https://rby8g8-emily-schultz.shinyapps.io/RHandbookL8_2/
+" scrolling="no" frameborder="no"></iframe>
+   
+<!---------------->
 
 <script>
   iFrameResize({}, ".interactive");
