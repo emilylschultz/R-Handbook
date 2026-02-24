@@ -11,6 +11,38 @@ output:
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+## LESSON 1: SETUP
+### 1.1 Installing R and RStudio
+
+For this course, there are two (free) associated programs you will need to install: R and RStudio. R is an opensource programming language designed for statistical computing. It is widely used by ecologists for quantitative analyses. RStudio is an environment for R that is more user-friendly than the standard R environment, so it is the environment we will use in this class. We will also install an addition set of tools, RTools, which is needed to run one of the packages that we will use in this class.
+
+#### Installing R
+To install R, first go to the [R website](https://www.r-project.org/). Under the “Getting Started” heading, you should see a link to download R. Click on this link, and it will take you to a page to select a CRAN mirror (a webserver that stores versions of R). You will want to select the CRAN mirror at the nearest location, so scroll down to the list of USA locations and click on the link for Iowa State University. On the new page, choose the correct R download for your system (Linux, Mac, or Windows) from the “Download and Install R” box at the top of the page. Details for each are below.
+
+##### Linux:
+Each of the Linux options (Debian, Fedora/Redhat, or Ubuntu) will provide you with the commands you need to run to install the latest version of R. If you have problems with the installation, please get in touch with me.
+
+##### Mac:
+On the new page, you should see a list of R packages, with the most up-to-date packages first. The package you will want depends on your operating system. The newest version is for macOS 11 and higher. If you are running an older version, select the appropriate package based on the system information provided for each package. When you click on the link for the package you need, it will prompt you to download the application setup file. Be sure to pay attention to where you save the file. Once you have downloaded the file, open the file and follow the installation instructions. You should not need to change any of the default installation settings. When you finish the installation process, you should by ready to run R on your computer.
+
+##### Windows:
+On the new page, select the “base” option from the list of subdirectories. At the very top of the next page, there will be a download link for the latest version of R. Select this link, and it will prompt you to download the application setup file. Be sure to pay attention to where you save the file. Once you have downloaded the file, open the file and follow the installation instructions. You should not need to change any of the default installation settings. When you finish the installation process, you should by ready to run R on your computer.
+
+#### Installing RStudio
+To install RStudio, first go to the [RStudio Website](https://posit.co/download/rstudio-desktop/). Scroll down to “Step 2: Install RStudio Desktop”. If you are running Windows on your computer, there is a button to “Download RStudio Desktop for Windows” just below this heading. For other operating systems or old versions of Windows, continue scrolling down until you see a list of downloads for all operating systems. Select the appropriate system for your computer and save the application setup file. Finally, open the setup file and follow the installation instructions. When you finish the installation, RStudio should be ready to run on your computer.
+
+#### Installing Rtools
+Some R packages, which provide additional useful functions for analysis, are only available as source code, and they have to be compiled before they can be used. There are some additional steps we will need to take to make sure your computers can compile the code. Before completing these steps, be sure that R and RStudio are closed on your computer.
+
+##### Mac:
+If you have a Mac, you do not actually need to download RTools. Instead, open a terminal window (click the spotlight search button on your computer, and search for "Terminal"). Then copy and paste the code below into the terminal and hit "return".
+
+xcode-select --install
+
+You might need to enter your computer password to allow the installation. Next, follow any onscreen instructions and allow the installation to finish. Once this is done, you should be good to go!
+
+##### Windows:
+If you have a PC, you will need to install RTools. Go to the [RTools download website](https://cran.r-project.org/bin/windows/Rtools/). Unless you are running an old version of R (you probably are not, unless you installed R years ago and have not updated), select the "RTools 4.4" link. On the new page, look for the Rtools44 installer link about halfway down the page, in the Installing Rtools 44 section. Click on this link to download the exe file. Run the file and follow the onscreen instructions to complete the installation. You may use the default settings. After the installation has finished, you should be set!
 
 <!---LEARNR Interactive-->
    

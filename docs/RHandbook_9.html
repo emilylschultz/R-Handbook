@@ -15,7 +15,7 @@
 
 <title>ESS 3500 R Handbook, Lesson 9</title>
 
-<script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
@@ -261,13 +261,13 @@ $(document).ready(function () {
       <a href="RHandbook_2.html">Lesson 2: Data management</a>
     </li>
     <li>
-      <a href="RHandbook_3.html">Lesson 3: Graphs</a>
+      <a href="RHandbook_3.html">Lesson 3: R basics</a>
     </li>
     <li>
-      <a href="RHandbook_4.html">Lesson 4: R basics</a>
+      <a href="RHandbook_4.html">Lesson 4: Data frames</a>
     </li>
     <li>
-      <a href="RHandbook_5.html">Lesson 5: Data frames</a>
+      <a href="RHandbook_5.html">Lesson 5: Data visualization</a>
     </li>
     <li>
       <a href="RHandbook_6.html">Lesson 6: Graphing in R</a>
@@ -328,103 +328,301 @@ $(document).ready(function () {
 id="toc-lesson-9-distributions-and-descriptive-statistics">Lesson 9:
 DISTRIBUTIONS AND DESCRIPTIVE STATISTICS</a>
 <ul>
-<li><a href="#graphing-distributions"
-id="toc-graphing-distributions">9.1 Graphing distributions</a></li>
+<li><a href="#the-use-of-probability-distributions-in-statistics"
+id="toc-the-use-of-probability-distributions-in-statistics">9.1 The use
+of probability distributions in statistics</a></li>
+<li><a href="#types-of-distributions"
+id="toc-types-of-distributions">9.2 Types of distributions</a>
+<ul>
+<li><a href="#discrete-distributions"
+id="toc-discrete-distributions">Discrete distributions</a></li>
+<li><a href="#continuous-distributions"
+id="toc-continuous-distributions">Continuous distributions</a></li>
+</ul></li>
+<li><a href="#graphing-data-distributions"
+id="toc-graphing-data-distributions">9.3 Graphing data
+distributions</a></li>
 <li><a href="#descriptive-statistics"
-id="toc-descriptive-statistics">9.2 Descriptive statistics</a></li>
+id="toc-descriptive-statistics">9.4 Descriptive statistics</a>
+<ul>
+<li><a href="#central-tendency" id="toc-central-tendency">Central
+tendency</a></li>
+<li><a href="#variation" id="toc-variation">Variation</a></li>
+<li><a href="#descriptive-statistics-in-r"
+id="toc-descriptive-statistics-in-r">Descriptive statistics in
+R</a></li>
+</ul></li>
 <li><a href="#adding-probability-distributions"
 id="toc-adding-probability-distributions">9.3 Adding probability
 distributions</a></li>
-<li><a href="#team-challenge" id="toc-team-challenge">Team
-challenge</a></li>
 </ul></li>
 </ul>
 </div>
 
 <div id="lesson-9-distributions-and-descriptive-statistics"
+class="section level1">
+<h1>Lesson 9: DISTRIBUTIONS AND DESCRIPTIVE STATISTICS</h1>
+<p>In this lesson, we will cover some of the basics of probability
+distributions and how they are used in statistics. Then we will practice
+graphing distributions in R and calculating descriptive statistics.</p>
+<div id="the-use-of-probability-distributions-in-statistics"
 class="section level2">
-<h2>Lesson 9: DISTRIBUTIONS AND DESCRIPTIVE STATISTICS</h2>
-<p>In this lesson, we will cover how to graph distributions in R and how
-to calculate descriptive statistics to describe those distributions. The
-good news is, you have already learned some of the descriptive
-statistics functions, so they will be a review. You will also get to
-make your first graphs using the ggplot2 package!</p>
+<h2>9.1 The use of probability distributions in statistics</h2>
+<p>Although we didn’t use the term “probability distributions”, we have
+already had a taste of working with distributions in our lessons on
+hypothesis testing and probability.</p>
+<p>Think back to the examples we worked through when we covered
+hypothesis testings. In those examples, we looked at the probability of
+observing specific outcomes (a specific number of ducks choosing green
+bread, or a specific number of offspring with a particular trait) based
+on a particular hypothesis. We then used those probabilities to draw
+conclusions about the hypotheses. The tables of probabilities that we
+worked with in those examples were probability distributions.
+Probability distributions are simply functions or tables that show the
+likelihood, or probability, of all possible outcomes in an experiment.
+In the duck experiment, for example, there were 11 possible outcomes:
+anywhere from 0 to 10 ducks could have chosen the green bread. The table
+of probabilities showed the probability of each of those outcomes,
+assuming the null hypothesis is true.</p>
+<p>In the type of statistics that we will work with in this class, the
+strategies that we used in our hypothesis testing lesson are exactly the
+strategies we will use when we work with probability distributions in
+statistical tests. The statistical test will use a probability
+distribution to calculate the probability of observing an outcome in our
+data, based on either the null hypothesis or an alternative hypothesis,
+and then we draw conclusions based on the probability that comes out of
+the test.</p>
+</div>
+<div id="types-of-distributions" class="section level2">
+<h2>9.2 Types of distributions</h2>
+<p>There are many different types of probability distributions that we
+can use in statistical testing, and to draw accurate conclusions about
+our data, it is important to use a distribution that is a good fit for
+the properties of our data, similar to choosing the right type of graph
+for visualizing our data, based on the type of data we are working
+with.</p>
+<p>In our duck and genetics examples, we were working with what is known
+as a binomial distribution. You also worked with this type of
+distribution using the snow forecast data. In fact, in the forecast
+example, you calculated the values for part of the binomial distribution
+yourself using the binomial theorem. The binomial distribution works
+well when your experiment has two possible outcomes (known as a
+Bernoulli trial) and you want to know the probability of a specific
+number of successes in a fixed number of trials. This fit the data we
+were working with in our duck, genetics, and forecasting example. It
+also works well when we are measuring variables like survival,
+reproduction, and presence/absence, which are common types of variables
+used in ecology.</p>
+<p>However, there are many other types of data that we work with as
+well, such a numeric data, including both count data and continuous
+variables like temperature, growth, and nutrient concentration. These
+variables have far more than two possible outcomes, so we have to use
+different types of distributions to represent those data and the
+probabilities of the outcomes. The tables below summarize some common
+distributions and their uses. They are divided into discrete
+distributions, which include distributions for both categorical and
+discrete variable, and continuous distributions for continuous data. Of
+these distributions, the one we will work with the most in this class is
+the normal distribution. Many of the test we will run, such a t-tests,
+ANOVAs and linear regressions are designed for data with a continuous
+independent variable and operate under the asssumption that the data are
+normally distributed.</p>
+<div id="discrete-distributions" class="section level3">
+<h3>Discrete distributions</h3>
+<table>
+<colgroup>
+<col width="14%" />
+<col width="23%" />
+<col width="23%" />
+<col width="38%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Distribution</th>
+<th align="center">Use</th>
+<th align="center">Example</th>
+<th align="center">Graph</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Bernoulli</td>
+<td align="center">Probability for a single Bernoulli trial with two
+possible outcomes</td>
+<td align="center">Modeling the probability of survival and reproduction
+at the individual level</td>
+<td align="center"><img src="Bernoulli.png"
+alt="Graph of a Bernoulli distribution for survival" /></td>
+</tr>
+<tr class="even">
+<td align="left">Binomial</td>
+<td align="center">Probability of number of successes in a specific
+number of Bernoulli trials</td>
+<td align="center">Modeling the probability of survival and reproduction
+at the population level</td>
+<td align="center"><img src="Binomial.png"
+alt="Graph of a Binomial distribution for survival" /></td>
+</tr>
+<tr class="odd">
+<td align="left">Poisson</td>
+<td align="center">Probability of observing a specific count in a given
+amount of space or time</td>
+<td align="center">Modeling the probability of the number of pollinator
+visits</td>
+<td align="center"><img src="Poisson.png"
+alt="Graph of a Poisson distribution for count data" /></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="continuous-distributions" class="section level3">
+<h3>Continuous distributions</h3>
+<table>
+<colgroup>
+<col width="14%" />
+<col width="23%" />
+<col width="23%" />
+<col width="38%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th align="left">Distribution</th>
+<th align="center">Use</th>
+<th align="center">Example</th>
+<th align="center">Graph</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Normal</td>
+<td align="center">Probability of outcomes for continuous data with a
+bell-shaped distribution</td>
+<td align="center">Modeling the probability of the mean annual
+temperature</td>
+<td align="center"><img src="Normal.png"
+alt="Graph of a normal distribution for continuous data" /></td>
+</tr>
+<tr class="even">
+<td align="left">Log-normal</td>
+<td align="center">Probability of outcomes for continuous data with a
+skewed distribution</td>
+<td align="center">Modeling the probability of habitat patch sizes</td>
+<td align="center"><img src="LogNormal.png"
+alt="Graph of a log-normal distribution for continuous data" /></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div id="graphing-data-distributions" class="section level2">
+<h2>9.3 Graphing data distributions</h2>
+<p>Now that we have an overview of probability distributions, we will
+practice graphing distributions and calculating descriptive statistics
+in R. We will focus on continuous distributions, particularly normal
+distributions, because we will work with these distributions the most in
+this class.</p>
+<p>Because we use formal probability distributions, like the ones
+described above, to represent the distribution of data we collect, we
+will start by using a historgram to show the distribution of observed
+data, and then we will overlay those data with a formal probability
+distribution to see how they compare.</p>
 <p>We will work with the <strong>BKSnow.csv</strong> file, which has
 monthly snowfall data for Breckenridge, dating back to the late 1940s.
 Download the data file and upload that file into R now (be sure to set
 your working directory first, and save your code in a script file):</p>
 <pre class="r"><code>snow &lt;- read.csv(&quot;BKSnow.csv&quot;)</code></pre>
-<div id="graphing-distributions" class="section level3">
-<h3>9.1 Graphing distributions</h3>
-<p>In this section, we will make our first foray into graphing! We will
-use the <strong>ggplot2</strong> package for making graphs because it is
-easier to make nice looking graphs in ggplot than in base R.</p>
-<p>Load the <strong>tidyverse</strong> package for this session:</p>
+<p>Load the <strong>ggplot2</strong> package for this session:</p>
 <pre class="r"><code>library(ggplot2)</code></pre>
-<p>In this section, you will learn to make histograms. Making this type
-of graph is often one of the first steps in exploratory data analysis,
-which gives us a feel for what our data look like before we start formal
-analysis.</p>
-<p>Histograms are useful for visualizing how our data are distributed.
-Are they close to a normal (bell-shaped) distribution? Are they skewed?
-Biomodal? Are there outliers? All of these questions can be answered
-with a histogram.</p>
 <p>We will start by making a histogram of our “JULJAN” variable, which
-is the total snowfall from July to January. When you use the
-<strong>ggplot2</strong> package to make graphs, you will start with one
-line of code that tells ggplot what data to use for your graph. Then you
-add additional lines of code to create and modify your graph. Here is
-the code to make a simple histogram, without changing any default
-settings:</p>
-<pre class="r"><code>ggplot(data = snow, aes(x = JULJAN)) +
-  geom_histogram() </code></pre>
-<p><img src="RHandbook_9_files/figure-html/histogram-1.png" width="672" /></p>
-<p>In the first line of code above, we start with the
-<code>ggplot</code> function. The first argument of the function (data)
-is the data frame that contains the data you want to graph (it needs to
-be a data frame object). We want to use our <code>snow</code> dataframe.
-Next is the aesthetics argument (aes), where you list the variables you
-want to graph. Notice that “aes” is followed by parentheses. This is
-because you can list multiple variable for this argument, so you put the
-list of variable inside the parentheses. For our histogram, we are only
-using one variable (JULJAN), and this is our x variable. We end the line
-with a + sign to indicate that we are adding additional code on the next
-line to create the graph. In the second line of code, we are telling
-ggplot that we want to use the data from the first line of code to
-create a histogram. We don’t need to add any arguments to the
-<code>geom_histogram</code> because we already told ggplot what data to
-use, and we aren’t changing any default settings.</p>
-<p>Now let’s take a look at a few ways we can modify our graph to make
-it look nicer. First, let’s change our axis labels. “JULJAN” is sensible
-for a column heading because it’s brief and it doesn’t have any spaces,
-but it looks a little odd on a graph, and it’s not descriptive enough
-for an axis label. I also like to start my axis titles with a capital
-letter. We will add another line to the code with the <code>labs</code>
-function to change the axis labels. Don’t forget to add a plus sign to
-the end of the geom_histogram line to indicate that you are adding more
-code for the graph below.</p>
+is the total snowfall from July to January.</p>
 <pre class="r"><code>ggplot(data = snow, aes(x = JULJAN)) +
   geom_histogram() +
-  labs(x = &quot;Snowfall from July to January&quot;, y = &quot;Frequency&quot;)</code></pre>
-<p><img src="RHandbook_9_files/figure-html/axis_labels-1.png" width="672" /></p>
-<p>I also find the grey background to be distracting, so we will change
-the theme to get rid of the background. Again, we will add another line
-of code, so add the plus sign to the end of the labs line.</p>
-<pre class="r"><code>ggplot(data = snow, aes(x = JULJAN)) +
-  geom_histogram() +
-  labs(x = &quot;Snowfall from July to January&quot;, y = &quot;Frequency&quot;) +
+  labs(x = &quot;Snowfall from July to January&quot;, y = &quot;Frequency&quot;)+
   theme_classic()</code></pre>
-<p><img src="RHandbook_9_files/figure-html/theme-1.png" width="672" /></p>
-<p>Now we have a histogram that both shows us the distribution of our
-data and looks pretty nice!</p>
+<p><img src="RHandbook_9_files/figure-html/histogram-1.png" alt="" width="672" /></p>
 </div>
-<div id="descriptive-statistics" class="section level3">
-<h3>9.2 Descriptive statistics</h3>
-<div id="central-tendency" class="section level4">
+<div id="descriptive-statistics" class="section level2">
+<h2>9.4 Descriptive statistics</h2>
+<p>Descriptive statistics are statistics that summarize the quantitative
+features of a data set, like the central tendency (where are most of the
+data centered) and the variation of the data. They are not the
+statistics that we get from statistical tests that are used to draw
+inferences about out data, but they can be used to help describe the
+distributions of our data. We will cover a few measures of central
+tendency and variation that are commonly used.</p>
+<div id="central-tendency" class="section level3">
+<h3>Central tendency</h3>
+<p>There are three main measures of central tendency that are commomly
+used: mean, median, and mode. Here are the definitions of each, along
+with information about when each measure is best used.</p>
+<div id="mean" class="section level4">
+<h4>Mean</h4>
+<p>The mean is calculated by summed up the data points and dividing by
+the number of data points. It provides a measure of where the center of
+the total value of your data points lie. Because the mean is sensitive
+to outliers in a data set, it is best used when you have a symmetrical
+distribution of your data, like a normal distribution. In fact, it is
+one of the parameters that is used to formally define a normal
+distribution.</p>
+</div>
+<div id="median" class="section level4">
+<h4>Median</h4>
+<p>The median is the value of the center data point in your data set. It
+is calculated by putting the data points in order from lowest to highest
+and taking the middle value. If there are an even number of data points,
+the two central values are averaged to get the median. The median is
+less sensitive to outlier values, so it is often the preferred measure
+of central tendency for skewed data, like data with a log-normal
+distribution.</p>
+</div>
+<div id="mode" class="section level4">
+<h4>Mode</h4>
+<p>The mode is the most frequent value in a data set. It is often a good
+measure to use when you have data with a bi-modal distribution (two
+values that are most frequent) because two peaks in a distribution are
+not captured well by the mean and median. When you have continuous data,
+there usually isn’t a single value that is repeating frequently in the
+data (because there are an infinite number of possible outcomes), but
+you can still think of the mode as the most frequently observed range of
+values. The mode is the measure of central tendency we will use the
+least in this class, and it is often enough to infer it visually from a
+frequency histogram in this class, so we won’t practice calculating it
+in R here, but you can always look up the function if you need it!</p>
+</div>
+</div>
+<div id="variation" class="section level3">
+<h3>Variation</h3>
+<p>Measures of variation measure the amount of spread in a data set. Two
+commonl measure of variation are the variance and standard
+deviation.</p>
+<p>The variance (<span class="math inline">\(\sigma^2\)</span>) is
+calculated by calculating the difference between each data point and the
+mean, squaring those values, and then adding them up and dividing by the
+number of data points:</p>
+<p><span class="math display">\[
+\sigma^2 = \frac{\sum(x_i - \mu)}{N},
+\]</span> where <span class="math inline">\(x_i\)</span> is the value of
+each individual data point, <span class="math inline">\(\mu\)</span> is
+the mean of the data set, and <span class="math inline">\(N\)</span> is
+the number of data points.</p>
+<p>In other words, the variance is the mean squared deviation of the
+data points from the mean. The standard deviation is simply the square
+root of the mean.</p>
+<p>An advantage of the standard deviation over the variance is that the
+standard deviation is in the same units as the original data points,
+whereas the variance is in the square of the original units. The
+standard deviation is used as the formal measure of variation for
+defining distributions like the normal distribution. However, the
+mathematical properties of variance can make it useful in some types of
+calculations, and it it often used in more advanced statistical tests
+that focus on the variation itself in data.</p>
+</div>
+<div id="descriptive-statistics-in-r" class="section level3">
+<h3>Descriptive statistics in R</h3>
+<p>Below, we will cover how to calculate the mean, median, standard
+devitaion, and variance of the “JULJAN” variable in the data frame.</p>
+<div id="central-tendency-1" class="section level4">
 <h4>Central tendency</h4>
-<p>In class, we discussed three measures of central tendency: mean,
-median, and mode. Below, we will cover how to calculate each for the
-“JULJAN” variable in the data frame.</p>
 <p>You have used the <code>mean</code> function before, but this time we
 will calculate the mean of a column in data frame instead of the mean of
 a vector. Notice the use of the optional <code>na.rm=T</code> argument
@@ -434,30 +632,6 @@ mean_JULJAN</code></pre>
 <pre><code>## [1] 84.30972</code></pre>
 <p>Calculating the median is similarly intuitive:</p>
 <pre class="r"><code>median_JULJAN &lt;- median(snow$JULJAN,na.rm=T)</code></pre>
-<p>Unfortunately, there is not a built-in function for calculating the
-mode in R, but there are a few options for determining the mode. Likely
-the easiest is to install <strong>DescTools</strong> package, which does
-have a mode function.</p>
-<pre class="r"><code>install.packages(&quot;DescTools&quot;)</code></pre>
-<p>You will only need to run the install packages command once, and then
-it will be installed on your computer.</p>
-<p>To load the package and calculate the mode, run</p>
-<pre class="r"><code>library(DescTools)
-mode_JULJAN &lt;- Mode(snow$JULJAN)
-mode_JULJAN</code></pre>
-<pre><code>## [1] NA
-## attr(,&quot;freq&quot;)
-## [1] NA</code></pre>
-<p>In the output, the top number you will see is the mode. If there are
-multiple modes, you will see a vector listing all of the modes instead
-of a single number. The number on the bottom is the frequency of the
-mode (how often that value appeared in the data set). Notice in this
-case, the values are both <code>NA</code>. Based on the variable type
-for the JULJAN variable and the definition of the mode, why do you think
-this is? What type of variable might be more likely to have a mode?</p>
-<p>The mode is the measure of central tendency we will use the least in
-this class, and it is often enough to infer it visually from a frequency
-histogram.</p>
 <p>Next, we will add lines representing the mean and median to the
 histogram we made above. This will allow us to visualize where these
 values fall relative to the distribution of our data. We can do this by
@@ -469,7 +643,7 @@ histogram:</p>
   geom_vline(aes(xintercept=median_JULJAN),color=&quot;orange&quot;,linewidth=1) +
   labs(x = &quot;Snowfall from July to January&quot;, y = &quot;Frequency&quot;) +
   theme_classic()</code></pre>
-<p><img src="RHandbook_9_files/figure-html/center_visual-1.png" width="672" /></p>
+<p><img src="RHandbook_9_files/figure-html/center_visual-1.png" alt="" width="672" /></p>
 <p>The two lines we added are the lines using the
 <code>geom_vline</code> function, which adds a vertical line to the
 graph. The first argument for this function is the aes argument, like we
@@ -483,42 +657,13 @@ You can use either the name of the color or the hex code. The linewidth
 function allows you to change the thickness of the line. Here, by
 setting the linewidth to 1, we are making the lines thicker than the
 default, so they are easier to see.</p>
-<p>Based on the mean and median, would you say the data are normally
-distributed or skewed (i.e., log normal)?</p>
-<p>Let’s see how this affects our interpretation of current snowfall and
-how it compares to what is “normal”. We will pull out the July to
-January snowfall from this year and see how it compares to the mean and
-median.</p>
-<p>First, we will extract and save this year’s snowfall. This will come
-from the “JULJAN” variable in our snow data frame, so we can extract
-that column using the $ symbol. Then we will want to take only the last
-value from that column. We can do that using [] to index the column. We
-could count the number of rows in the data frame and use that number to
-extract the last value, but there is a shortcut. The <code>nrow</code>
-function will count the number of rows in a data frame for use, so we
-can just use that function inside the brackets to calculate the correct
-index.</p>
-<p>The full code for this looks like this:</p>
-<pre class="r"><code>snow_2024 &lt;- snow$JULJAN[nrow(snow)]</code></pre>
-<p>Now that we have the value, we can add it to our histogram, again
-using the <code>geom_vline</code> function, to visually compare it to
-the mean and median:</p>
-<pre class="r"><code>ggplot(data = snow, aes(x = JULJAN)) +
-  geom_histogram() +
-  geom_vline(aes(xintercept=mean_JULJAN),color=&quot;blue&quot;,linewidth=1) +
-  geom_vline(aes(xintercept=median_JULJAN),color=&quot;orange&quot;,linewidth=1) +
-  geom_vline(aes(xintercept=snow_2024),color=&quot;black&quot;,linewidth=1) +
-  labs(x = &quot;Snowfall from July to January&quot;, y = &quot;Frequency&quot;) +
-  theme_classic()</code></pre>
-<p><img src="RHandbook_9_files/figure-html/compare-1.png" width="672" /></p>
-<p>Based on this new graph, is the 2023-2024 July to January snowfall
-lower than normal or higher than normal?</p>
+<p>Based on the mean and median, would you say the data are close to
+normally distributed or skewed (i.e., log normal)?</p>
 </div>
-<div id="variation" class="section level4">
+<div id="variation-1" class="section level4">
 <h4>Variation</h4>
 <p>In this section, you will practice calculating measures of
-variability in a data set: standard deviation (which you have already
-learned) and variance (which is just as easy).</p>
+variability in a data set: standard deviation and variance.</p>
 <p>We’ll continue working with the “JULJAN” and “LOG_JULJAN” variables
 in our data frame.</p>
 <p>Calculate the standard deviation and variance as follows:</p>
@@ -533,9 +678,10 @@ the square root of the variance, so we could also calculate one from the
 other.</p>
 </div>
 </div>
-<div id="adding-probability-distributions" class="section level3">
-<h3>9.3 Adding probability distributions</h3>
-<p>So far, we have been working with frequency distributions of our
+</div>
+<div id="adding-probability-distributions" class="section level2">
+<h2>9.3 Adding probability distributions</h2>
+<p>So far, we have been graphing the frequency distributions of our
 data, but we have been discussing using formal statistical distributions
 to represent our data. Now we will practice calculating a formal
 distribution (the normal distribution) and comparing it to our data.</p>
@@ -544,16 +690,17 @@ the probability density of a value for a particular outcome. We can use
 this function to graph the probability density function for snowfall in
 Breckenridge by using the function to calculate the probability density
 for a wide range a values and graphing the output.</p>
-<p>Based on the histogram we made, a good range of values to use is 1 to
-200 because that covers the full range of snowfall values that we
-observed. When we use the <code>dnorm</code> function, we will provide
-this range as the first argument. We can create this sequence of numbers
-using the <code>:</code> symbol. Then, to calculate the probability
-density of all of these snowfall values, we have to provide the mean and
-standard deviation of our distribution as the next two arguments. We
-will use the mean and standard deviation we calculated for our JULJAN
-variable above. We will save the probability densities values that we
-calculate in a vector called “pdens”.</p>
+<p>Based on the histogram we made, a good range of values to use for the
+possible outcomes in for our is 1 to 200 because that covers the full
+range of snowfall values that we observed. When we use the
+<code>dnorm</code> function, we will provide this range as the first
+argument. We can create this sequence of numbers using the
+<code>:</code> symbol. Then, to calculate the probability density of all
+of these snowfall values, we have to provide the mean and standard
+deviation of our distribution as the next two arguments. We will use the
+mean and standard deviation we calculated for our JULJAN variable above.
+We will save the probability densities values that we calculate in a
+vector called “pdens”.</p>
 <pre class="r"><code>pdens &lt;- dnorm(1:200,mean=mean_JULJAN,sd=sd_JULJAN)</code></pre>
 <p>In order to graph our data using ggplot, we have to put the data in a
 data frame. We will create a data frame with two variables: one with the
@@ -589,37 +736,13 @@ distribution.</p>
   geom_vline(aes(xintercept=median_JULJAN),color=&quot;orange&quot;,linewidth=1) +
   geom_density(data=pdens_data,aes(x=snow,y=pdens),stat=&quot;identity&quot;,linewidth=1)+
   theme_classic()</code></pre>
-<p><img src="RHandbook_9_files/figure-html/normal_graph-1.png" width="672" /></p>
-</div>
-<div id="team-challenge" class="section level3">
-<h3>Team challenge</h3>
-<p>Throughout this exercise, we worked the the JULJAN variable, which is
-the total snowfall from July to January. One thing we noticed is that
-there is a little bit of skew in this variable. In class, I mentioned
-that we can sometimes force a skewed distribution to be normal by taking
-the log of the variable. We will try that out here and see how it
-changes our exploratory analysis of historical snowfall and how this
-year’s snowfall compares, following the steps below.</p>
-<ol style="list-style-type: decimal">
-<li><p>Use the <code>mutate</code> function to calculate the log of the
-JULJAN variable and add it to the “snow” data frame.</p></li>
-<li><p>Calculate the mean and median of the log JULJAN
-variable.</p></li>
-<li><p>Extract the value of the log JULJAN variable for
-2023-2024.</p></li>
-<li><p>Use the <code>dnorm</code> function to calculate the probability
-densities of a range of values for the log JULJAN variable. I would
-recommend a range from 2.5 to 6. Because this is a small range, you will
-get a better-looking curve if your sequence of values uses increments of
-0.1 instead of 1. You can do this with the <code>seq</code> function as
-follows: <code>seq(2.5,6,0.1)</code>. Just use this in place of the
-<code>1:200</code> in the code you practiced above.</p></li>
-<li><p>Create a data frame with the range of snowfall values and the
-probability densities that you calculated above.</p></li>
-<li><p>Make a histogram showing the distribution of the log JULJAN data,
-the probability distribution, the mean and median of the log JULJAN
-data, and the 2023-2024 value of the log JULJAN data.</p></li>
-</ol>
+<p><img src="RHandbook_9_files/figure-html/normal_graph-1.png" alt="" width="672" /></p>
+<p>Based on this graph, we can see a fairly close match between the
+distribution of our data and a normal distribution with the same mean
+and standard deviation as our data. As we procede with formal
+statistical tests in the upcoming portion of the class, we will learn
+more details about how we use different types of distributions to draw
+conclusions about our data.</p>
 </div>
 </div>
 
