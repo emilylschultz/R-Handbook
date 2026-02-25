@@ -6,6 +6,8 @@ output:
   html_document:
     toc: true
     toc_depth: 3
+    includes:
+      in_header: header.html
 ---
 
 ```{r setup, include=FALSE}
@@ -188,3 +190,16 @@ ggplot(snow,aes(x=JULJAN)) +
 ```
 
 Based on this graph, we can see a fairly close match between the distribution of our data and a normal distribution with the same mean and standard deviation as our data. As we procede with formal statistical tests in the upcoming portion of the class, we will learn more details about how we use different types of distributions to draw conclusions about our data.
+
+## Exercises
+
+<!---LEARNR EXERCISES-->
+   
+<iframe style="margin:0 auto; min-width: 100%;" id="myIframeL3" class="interactive" src="https://rby8g8-emily-schultz.shinyapps.io/RHandbookL9/
+" scrolling="no" frameborder="no"></iframe>
+   
+<!---------------->
+
+<script>
+  iFrameResize({}, ".interactive");
+</script>
