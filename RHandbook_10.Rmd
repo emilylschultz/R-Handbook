@@ -6,6 +6,8 @@ output:
   html_document:
     toc: true
     toc_depth: 3
+    includes:
+      in_header: header.html
 ---
 
 ```{r setup, include=FALSE}
@@ -93,6 +95,15 @@ That values can be calculated from the Chi-square distribution by calculating th
 The value of the area shown (the p-value) is 0.2231, meaning that there is an approximately 22% chance of getting a Chi-square value of 3 or greater, assuming the null hypothesis is true. We interpret this the same way we interpreted the p-values in our hypothesis testing examples. If the p-value is <0.05, we reject the null hypothesis. In this case, we would not reject the null hypothesis.
 
 Moving forward, we will be using R to run Chi-square tests. You will not be expected to be doing all of these calculations by hand. However, understanding the conceptual underpinning of the tests is important for correctly implementing and interpreting the test results.
+
+### Exercises
+
+<!---LEARNR EXERCISES 1-->
+   
+<iframe style="margin:0 auto; min-width: 100%;" id="myIframeL3" class="interactive" src="https://rby8g8-emily-schultz.shinyapps.io/RHandbookL10/
+" scrolling="no" frameborder="no"></iframe>
+   
+<!---------------->
 
 ## 10.2 Chi-square tests in R 
 For this lesson, we will be working with data collected by Dr. Alan Garfinkel, who was researching methods for predicting the risk of heart attacks in older patients. Younger patients are often tested for heart attack risk by first exercising and then having their heart stress measured with an ECG. However, older patients are often unable to tolerate the exercise required for the test. Dr. Garfinkel was testing whether a medication called dobutamine, which mildly stresses the heart, can be used as an alternative. He gave patients a heart stress test after they took dobutamine, and then he followed the patients for a year to see if they had a heart attack within that time frame. This allowed him to test whether a positive result on the dobutamine stress test was a good predictor of heart attack risk.
@@ -185,3 +196,7 @@ myo_test$expected
 ```
 
 In this case, as expected from our p-value, the observed and expected frequencies match very closely.
+
+<script>
+  iFrameResize({}, ".interactive");
+</script>
