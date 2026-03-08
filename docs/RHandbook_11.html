@@ -15,7 +15,7 @@
 
 <title>ESS 3500 R Handbook, Lesson 11</title>
 
-<script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
@@ -261,13 +261,13 @@ $(document).ready(function () {
       <a href="RHandbook_2.html">Lesson 2: Data management</a>
     </li>
     <li>
-      <a href="RHandbook_3.html">Lesson 3: Graphs</a>
+      <a href="RHandbook_3.html">Lesson 3: R basics</a>
     </li>
     <li>
-      <a href="RHandbook_4.html">Lesson 4: R basics</a>
+      <a href="RHandbook_4.html">Lesson 4: Data frames</a>
     </li>
     <li>
-      <a href="RHandbook_5.html">Lesson 5: Data frames</a>
+      <a href="RHandbook_5.html">Lesson 5: Data visualization</a>
     </li>
     <li>
       <a href="RHandbook_6.html">Lesson 6: Graphing in R</a>
@@ -324,33 +324,251 @@ $(document).ready(function () {
 
 <div id="TOC">
 <ul>
-<li><a href="#lesson-11-two-sample-t-tests"
-id="toc-lesson-11-two-sample-t-tests">Lesson 11: Two-sample t-tests</a>
+<li><a href="#lesson-11-t-tests" id="toc-lesson-11-t-tests">Lesson 11:
+T-tests</a>
 <ul>
-<li><a href="#visualizing-the-data" id="toc-visualizing-the-data">11.1
-Visualizing the data</a></li>
+<li><a href="#conceptual-overview-of-t-tests"
+id="toc-conceptual-overview-of-t-tests">11.1 Conceptual overview of
+t-tests</a>
+<ul>
+<li><a href="#one-sample-t-test" id="toc-one-sample-t-test">One-sample
+t-test</a></li>
+<li><a href="#two-sample-t-test" id="toc-two-sample-t-test">Two-sample
+t-test</a></li>
+<li><a href="#paired-t-tests" id="toc-paired-t-tests">Paired
+t-tests</a></li>
+</ul></li>
+<li><a href="#running-the-tests-in-r"
+id="toc-running-the-tests-in-r">11.2 Running the tests in R</a>
+<ul>
+<li><a href="#two-sample-t-test-1"
+id="toc-two-sample-t-test-1">Two-sample t-test</a></li>
 <li><a href="#classical-frequentist-approach"
 id="toc-classical-frequentist-approach">11.2 Classical frequentist
 approach</a></li>
 <li><a href="#likelihood-based-approach"
 id="toc-likelihood-based-approach">11.3 Likelihood-based
 approach</a></li>
-<li><a href="#a-note-about-color-in-r"
-id="toc-a-note-about-color-in-r">11.4 A note about color in R</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="lesson-11-two-sample-t-tests" class="section level2">
-<h2>Lesson 11: Two-sample t-tests</h2>
-<p>In this lesson, you will practice running your first formal
-statistical test, a t-test! You will use both a classical frequentist
-and a likelihood-based approach to run the test.</p>
-<p>For this test, we will use the <em>civu.csv</em> data file. The civu
-data set contains data from an experiment designed to test the affects
-of native insect herbivory on a invasive bull thistles. We will use this
-data set to answer the following question: does insect herbivory affect
-the density of thistle plants?</p>
+<div id="lesson-11-t-tests" class="section level1">
+<h1>Lesson 11: T-tests</h1>
+<p>In this lesson, we will move on to a new statistical test: the
+t-test. T-tests are part of a broader class of models known as general
+linear models. We can use general linear models to analyze data when we
+have a continuous dependent variable that is normally distributed (or at
+least close to normally distributed). General linear models tests will
+then test whether the independent variable included in the model affects
+the mean of the normally-distributed dependent variable. The thing that
+distinguishing different types of general linear models (t-tests,
+ANOVAs, linear regressions) is the independent variable(s).</p>
+<p>In this lesson, we will work through three types of t-tests:
+one-sample, two-sample, and paired.</p>
+<div id="conceptual-overview-of-t-tests" class="section level2">
+<h2>11.1 Conceptual overview of t-tests</h2>
+<div id="one-sample-t-test" class="section level3">
+<h3>One-sample t-test</h3>
+<p>A one-sample t-test is used when you want to compare the mean of your
+sample data to a known or expected population mean. For example, say you
+know that the average historical population growth rate in a population
+of lizards is 1.05, and you want to test whether the population growth
+rate from the last 10 years differs from that population average.</p>
+<p>The overall process for running a one-sample t-test in the classic
+frequentist framework is similar to that used for a Chi-square test: you
+start identifying your hypothesis, then you use your data to calculate a
+test statistic, and finally you use a probability distribution to
+calculate the probability of a test statistical equal than or greater
+than yours, assuming the null hypothesis is true.</p>
+<div id="hypotheses" class="section level4">
+<h4>Hypotheses</h4>
+<p>As with our other tests, the null hypothesis is the hypothesis of no
+effect. In the context of a one-sample t-test, our null and alternative
+hypotheses would therefore be:</p>
+<ul>
+<li><p>Null: The sample mean equals the known/expected mean.</p></li>
+<li><p>Alternative: The sample mean does not equal the known/expected
+mean.</p></li>
+</ul>
+</div>
+<div id="the-t-statistic-for-one-sample-tests" class="section level4">
+<h4>The t-statistic for one-sample tests</h4>
+<p>The test statistic that we calculate for t-tests is called the
+t-statistic. It incorporates three main pieces of information, which
+should be familiar to you because earlier this semester, you identified
+them as being important for determining statistical significance.</p>
+<ol style="list-style-type: decimal">
+<li>The signal (the difference between the known mean and the sample
+mean)</li>
+<li>The noise (the variation in the data)</li>
+<li>The sample size</li>
+</ol>
+<p>The equation for the t-statistic for a one-sample t-test is below.
+You won’t be required to do this calculation by hand, but we will work
+through how it incorporates the pieces of information above.</p>
+<p><span class="math display">\[
+t = \frac{\bar{x} - \mu}{s/\sqrt{n}}
+\]</span></p>
+<p>In the numerator, <span class="math inline">\(\bar{x}\)</span> is the
+sample mean and <span class="math inline">\(\mu\)</span> is the
+known/expected population mean. Therefore, the number represents the
+signal: the magnitude of the difference between the sample mean and the
+population mean. The greater the difference, the higher the t-statistic
+will be. In the denominator, the <span class="math inline">\(s\)</span>
+is the standard deviation, so this is our measure of the noise. The
+greater the standard deviation, the lower the t-statistic will be. The
+<span class="math inline">\(n\)</span> in the denominator is the sample
+size. The higher the sample size, the higher the t-statistic. This
+matches our expectations about how the signal, noise, and sample size
+affect the likelihood of a statistically-significant result. If you have
+a larger signal and sample size, and lower noise, you will be more
+likely to get a statistically-significant result, and that corresponds
+to a higher t-statistic.</p>
+</div>
+<div id="calculating-the-p-value" class="section level4">
+<h4>Calculating the p-value</h4>
+<p>Like with the Chi-square test, once we have our test statistic we can
+use a probability distribution to calculate the probability of a
+t-statistic greater than or equal to ours. If our data are normally
+distributed and our null hypothesis is true, we would expect the
+probability of different values of the t-statistic to follow a t
+distribution, which is shown below. The t-distribution is similar to a
+normal distribution, and it is centered at zero, because if the null
+hypothesis is true, there should be a higher probability that the sample
+mean is close to the population mean. If the sample mean and population
+mean are equal, the t-statistic will be equal to zero.</p>
+<div class="float">
+<img src="tdist.png" style="width:60.0%"
+alt="t distributions with degrees of freedom of 3, 10, and 100. As the degrees of freedom increases, the distribution gets more narrow." />
+<div class="figcaption">t distributions with degrees of freedom of 3,
+10, and 100. As the degrees of freedom increases, the distribution gets
+more narrow.</div>
+</div>
+<p>Also like with the Chi-square distribution, the specific shape of the
+t-distribution depends on the degrees of freedom in our data. For a
+one-sample t-test, the degrees of freedom is equal to the sample size
+minus 1. The higher the degrees of freedom, the more narrow the
+t-distribution. This makes sense because if we have a larger sample
+size, our sample mean should be more accurate. If our sample population
+truly has the same mean as the known/expected population mean, then a
+larger sample size will make it more likely that the sample mean is
+close to the population mean, and the t-statistic is more likely to be
+close to zero.</p>
+<p>Once we have calculated the degrees of freedom, we can use the
+correct version of the t distribution to calculate the p-value. As
+always, if the p-value is &lt; 0.05, we reject our null hypothesis.</p>
+</div>
+</div>
+<div id="two-sample-t-test" class="section level3">
+<h3>Two-sample t-test</h3>
+<p>A two-sample t-test is used when you have a categorical independent
+variable with only two values, and you want to compare the means of your
+two categories. For example, if you want to test whether the
+photosynthesis rate differs between under-story and over-story plants,
+this can be done with a two-sample t-test. If your categorical variable
+has more than two possible values, you cannot use a two-sample t-test.
+Instead you would use an ANOVA, which will be the next type of test we
+cover.</p>
+<p>The process for running a two-sample t-test is similar to a
+one-sample t-test, but there are slight differences in how we state our
+hypotheses and calculate the t-statistic and degrees of freedom.</p>
+<div id="hypotheses-1" class="section level4">
+<h4>Hypotheses</h4>
+<p>In the context of a two-sample t-test, our null and alternative
+hypotheses are:</p>
+<ul>
+<li><p>Null: The means of the two groups are equal.</p></li>
+<li><p>Alternative: The means of the two groups are not equal.</p></li>
+</ul>
+</div>
+<div id="the-t-statistic-for-two-sample-tests" class="section level4">
+<h4>The t-statistic for two-sample tests</h4>
+<p>For two-sample t-test, we also calculate a t-statistic, but the
+calculation is slightly different because we now have two sample groups
+instead of one sample group and one known mean. However, it still
+contains measures of the signal, noise, and sample size.</p>
+<p><span class="math display">\[
+t = \frac{\bar{x}_1 -
+\bar{x}_2}{\sqrt{S_p^2(\frac{1}{n_1}-\frac{1}{n_2})}}
+\]</span></p>
+<p>In the numerator, we now have our two sample means, <span
+class="math inline">\(\bar{x}_1\)</span> and <span
+class="math inline">\(\bar{x}_2\)</span>. Therefore, the numerator still
+represents the signal, but this time it is the difference between the
+two sample means. In the denominator, <span
+class="math inline">\(S_p^2\)</span> is the pooled variance, which is
+essentially a weighted average of the variances of each sample group,
+with the weight determined by the sample size in each group (if they
+have equal sample sizes, they will be weighted equally). This is our new
+measure of the noise. Finally, we have the sample sizes of our two
+groups, <span class="math inline">\(n_1\)</span> and <span
+class="math inline">\(n_2\)</span>. As before, if you have a larger
+signal and sample size, and lower noise, you will be more likely to get
+a statistically-significant result, and that corresponds to a higher
+t-statistic.</p>
+<p>Once you have the t-statistic for a two-sample t-test, the process is
+the same for calculating the p-value and drawing your conclusions.
+Because you have two groups, though, when you calculate the degrees of
+freedom for the t-distribution, it is equal to <span
+class="math inline">\(n-2\)</span>, rather than <span
+class="math inline">\(n-1\)</span>.</p>
+</div>
+</div>
+<div id="paired-t-tests" class="section level3">
+<h3>Paired t-tests</h3>
+<p>Back when we discussed experimental design, we discussed blocked
+designs, which are a way of accounting for variation in our data caused
+by variables that we are not including in our analysis. They work by
+applying every treatment within a block, which could be the same
+individual, the same plot, etc. When you analyze the data, you then make
+comparisons between each treatment within each block. For example, if
+you are testing a new drug for blood pressure, you could measure the
+blood pressure of each patient before and after taking the drug, and see
+how the drug changes the blood pressure in each patient. This will
+account for any differences in the baseline blood pressure of the
+patients. When you have a blocked design with only two treatments, known
+as a paired design, you can analyze the data using a paired t-test.</p>
+<p>The null and alternative hypothesis can be phrased in the same way as
+they are for a two-sample t-test:</p>
+<ul>
+<li><p>Null: the two groups have equal means</p></li>
+<li><p>Alternative: The two groups have different means</p></li>
+</ul>
+<p>However, because the focus of a paried t-test is on the difference
+between the two treatment, you can also phrase your hypotheses in terms
+of that difference:</p>
+<ul>
+<li><p>Null: The average difference between the groups is 0</p></li>
+<li><p>Alternative: The average difference between the groups is not
+zero</p></li>
+</ul>
+<p>A paired t-test has similarities with both a one-sample and
+two-sample t-test. It is similar to a two-sample t-test in that there
+are two treatment groups, but the way it is run is more like a
+one-sample t-test.</p>
+<p>The first step in running a paired t-test is to calculate the
+differences between the treatments for each pair of samples in your
+study. In the example of the blood pressure drug above, that would mean
+calculating the difference in blood pressure for each patient before and
+after taking the drug. At that point, the test is run just like a
+one-sample t-test, but you run the test using the differences between
+the treatments for each each pair, rather than on the raw data for the
+two treatments. The “known” population mean for your null hypothesis
+would be zero because if the two treatments have equal mean, you would
+expect the average difference between each pair to be zero.</p>
+<p>Calculating the degrees of freedom for a two-sample t-test is also
+similar to calculating the degrees of freedom for a one-sample t-test,
+but keep in mind that you are running the t-test on the difference
+between the treatment for each pair. Therefore, your degrees of freedom
+is <span class="math inline">\(n-1\)</span>, where <span
+class="math inline">\(n\)</span> is the number of pairs, rather than the
+total number of data points.</p>
+</div>
+</div>
+<div id="running-the-tests-in-r" class="section level2">
+<h2>11.2 Running the tests in R</h2>
 <p>Start off by reading in the civu data set that we have worked with
 before. Be sure to first set your working directory to the folder with
 the civu dataset. Then use the <code>head</code> function to view the
@@ -372,16 +590,18 @@ Because the herbivory variable is categorical, we need to convert it to
 a factor variable, as we have done before:</p>
 <pre class="r"><code>civu$herbivory &lt;- as.factor(civu$herbivory)</code></pre>
 <p>Now we’re ready to get started on our analysis!</p>
-<div id="visualizing-the-data" class="section level3">
-<h3>11.1 Visualizing the data</h3>
+<div id="two-sample-t-test-1" class="section level3">
+<h3>Two-sample t-test</h3>
+<div id="visualizing-the-data" class="section level4">
+<h4>Visualizing the data</h4>
 <p>First, we are going to visualize the data. We will use two
 approaches: a standard boxplot and a density plot that shows the full
 distributions of our data.</p>
 <p>We will use the <strong>ggplot2</strong> package to make the graphs,
 so load that first:</p>
 <pre class="r"><code>library(ggplot2)</code></pre>
-<div id="boxplot" class="section level4">
-<h4>Boxplot</h4>
+<div id="boxplot" class="section level5">
+<h5>Boxplot</h5>
 <p>We’ll begin with a boxplot. The syntax is similar to what you used to
 make histograms, with a few modifications. Here is the full code, will
 explanations of the modification below:</p>
@@ -389,7 +609,7 @@ explanations of the modification below:</p>
   geom_boxplot() +
   labs(x = &quot;Herbivory treatment&quot;, y = &quot;Density in 2006&quot;) +
   theme_classic()</code></pre>
-<p><img src="RHandbook_11_files/figure-html/boxplot-1.png" width="672" /></p>
+<p><img src="RHandbook_11_files/figure-html/boxplot-1.png" alt="" width="672" /></p>
 <p>As will the histograms, we start with the <em>ggplot</em> function,
 where we tell R what data and variable we want to use in our graph. The
 data argument is where we input the name of our data frame, as before,
@@ -404,8 +624,8 @@ function.</p>
 histograms: they change the axis labels and some of the aesthetics of
 the graph.</p>
 </div>
-<div id="density-plot" class="section level4">
-<h4>Density plot</h4>
+<div id="density-plot" class="section level5">
+<h5>Density plot</h5>
 <p>Now we will make a density plot that compares the full distributions
 of thistle density for the two herbivory treatments. Again, the syntax
 will be similar, but I will walk through the differences below:</p>
@@ -414,39 +634,8 @@ will be similar, but I will walk through the differences below:</p>
   scale_fill_manual(values=c(&quot;#ce9642&quot;,&quot;#3b7c70&quot;))+
   labs(x=&quot;Thistles Density&quot;,y=&quot;Frequency&quot;)+
   theme_classic()</code></pre>
-<p><img src="RHandbook_11_files/figure-html/density-1.png" width="672" /></p>
-<p>In the first line, where we input the variables we want to graph, we
-do things a little differenly here. In this type of graph, instead of
-having our independent variable on the x-axis and our dependent variable
-on the y-axis, we are plotting the frequency of our thistle density
-variable, like we did for the histograms, but we will show two separate
-frequency distributions for our two herbivory treatments, and we will
-show those distribution in two different colors. Therefore, in our aes
-function, we use the density_2006 variable and our x variable, and then
-we include the fill argument to tell R that we want two different fill
-colors for our graph, based on the herbivory category. This will tell R
-both that we want two separate distributions and that we want them to be
-shown with two different fill colors.</p>
-<p>In this next line down, we use the geom_density function that we have
-used before to tell R to make a probability density plot. The first
-argument (y=after_stat(density))) tells R to calculate the probability
-density of each thistle density, based on the frequency of the values in
-our data set. The second argument (alpha=0.5), adjusts the transparency
-of the colors in the graph. The alpha values can range from 0 to 1, with
-0 being fully transparent and 1 being fully opaque.</p>
-<p>The final line that is different is the addition of the
-“scale_fill_manual” function. This line is not required, but it allows
-you to choose the colors in your graph. If you do not include this line,
-R will use ggplot’s default color palette (be aware: the default color
-palette is not colorblind-friendly). The values I input in to the
-function are the hex codes for the colors I wanted to use. You can use
-either hex codes or the names of the colors. I like to use hex codes
-because they are more universal. Note that if you manually select your
-colors, you need to choose one color for each category. Here, we only
-have two categories: herbivory and no herbivory.</p>
-<p>Playing around with colors in R can be fun! If you want to explore
-different color palettes, I included some information and resources in
-section 5.4 at the bottom of this lesson.</p>
+<p><img src="RHandbook_11_files/figure-html/density-1.png" alt="" width="672" /></p>
+</div>
 </div>
 </div>
 <div id="classical-frequentist-approach" class="section level3">
@@ -523,59 +712,6 @@ better?</p>
 <p>Does your conclusion from this approach match your conclusion from
 the classical frequentist approach?</p>
 </div>
-<div id="a-note-about-color-in-r" class="section level3">
-<h3>11.4 A note about color in R</h3>
-<p>When we made our density plot, we included the
-<code>scale_fill_manual</code> function to specify the colors we wanted
-to use in the graph. You are not required to include this function. If
-you leave it out, ggplot will automatically choose colors based on its
-default color package. However, the ggplot’s default color palette is
-not colorblind-friendly, so it is usually better to choose a different
-color palette. Below are some links to websites that can help you choose
-colors. When you list the colors you want to use, you can list the hex
-codes (as we do in our code in this lesson) or the name of the color
-(e.g., “blue”). If you use the <code>scale_fill_manual</code> function,
-or a similar function, to specify colors, be sure to include one color
-for every group in your variable. In our example, the variable displayed
-by the colors only had two groups (herbivory and no herbivory). If you
-have a variable with more than two groups, you need to list more than
-two colors.</p>
-<p>List of useful R color websites:</p>
-<ol style="list-style-type: decimal">
-<li><p><a
-href="https://sape.inf.usi.ch/quick-reference/ggplot2/colour">ggplot 2
-Quick reference: colors</a>. This website includes a chart will color
-names in R, along with additional information about using color in
-ggplot.</p></li>
-<li><p><a
-href="https://colorbrewer2.org/#type=sequential&amp;scheme=BuGn&amp;n=3">ColorBrewer</a>.
-The ColorBrewer website provides a set of color palettes that you can
-use in R. You can choose sequential, diverging, or qualitative palettes,
-and there is an option for colorblind-friendly palettes. The website
-will provide the hex codes for the colors in the palette.</p></li>
-<li><p><a
-href="https://github.com/BlakeRMills/MetBrewer?tab=readme-ov-file">MetBrewer</a>.
-MetBrewer, which also has an associated R package, provides a set of
-color palettes based on works of art at the Metropolitan Museum of Art.
-Not all of the palettes are colorblind-friendly, but you can find a list
-of colorblind-friendly palettes at the bottom of the webpage.</p></li>
-<li><p><a
-href="https://cran.r-project.org/web/packages/viridis/vignettes/intro-to-viridis.html">Introduction
-to the viridis color maps</a>. Viridis is an R package that has
-colorblind-friendly palettes. This website provides information on the
-use of the package. You can also see what some different R color
-palettes would look like to people with different forms of
-colorblindness.</p></li>
-<li><p><a
-href="https://www.simplifiedsciencepublishing.com/resources/best-color-palettes-for-scientific-figures-and-data-visualizations">Best
-Color Palettes for Scientific Figures and Data Visualizations</a> This
-website has some general guidelines for the use of color in scientific
-publishing, along with some specific colorblind-friendly palettes,
-including the hex codes.</p></li>
-<li><p><a href="https://github.com/jakelawlor/PNWColors">PNW colors</a>.
-This R package has a set of colorblind friendly palettes based on
-photographs of the Pacific Northwest.</p></li>
-</ol>
 </div>
 </div>
 
