@@ -6,6 +6,8 @@ output:
   html_document:
     toc: true
     toc_depth: 3
+    includes:
+      in_header: header.html
 ---
 
 ```{r setup, include=FALSE}
@@ -99,6 +101,13 @@ The first step in running a paired t-test is to calculate the differences betwee
 
 Calculating the degrees of freedom for a two-sample t-test is also similar to calculating the degrees of freedom for a one-sample t-test, but keep in mind that you are running the t-test on the difference between the treatment for each pair. Therefore, your degrees of freedom is $n-1$, where $n$ is the number of pairs, rather than the total number of data points.
 
+<!---LEARNR EXERCISES 1-->
+   
+<iframe style="margin:0 auto; min-width: 100%;" id="myIframeL3" class="interactive" src="https://rby8g8-emily-schultz.shinyapps.io/RHandbookL11/
+" scrolling="no" frameborder="no"></iframe>
+   
+<!---------------->
+
 ## 11.2 Running the tests in R
 
 Start off by reading in the civu data set that we have worked with before. Be sure to first set your working directory to the folder with the civu dataset. Then use the `head` function to view the top rows of the data set, as a reminder of what data we have in the data frame.
@@ -180,23 +189,6 @@ You should see the following pieces in your output:
 
 Based on this output, would you reject the null hypothesis and tentatively accept the alternative hypothesis?
 
-### 11.3 Likelihood-based approach
-Next we will use a likelihood-based approach to test the same question. For this, we will start by building our two linear models, just as we did in the Model Building lesson:
-
-```{r civu_lm}
-civu_null <- lm(density_2006 ~ 1, civu)
-civu_alt <- lm(density_2006 ~ herbivory, civu)
-```
-
-Now, we just need to calculate the Akaike's Information Criterion (AIC) values for the two models. We can do this using the `AIC` function. As the arguments, we just need to list the models we want to compare. We can compare more than two models at once, but for this question, we just have our null model and one alternative model.
-
-```{r aic}
-AIC(civu_null, civu_alt)
-```
-
-You should see the output automatically appear in a table. The first column lists the model. The second column (df) lists the number of parameters in each model (remember, AIC penalizes for adding parameters). The final column lists the AIC values for each model. The lower the AIC value, the better the model. A difference of 2 or more between the AIC values indicates that one model is significantly better than the other.
-
-Based on this output, which is the better model? Is it significantly better?
-
-Does your conclusion from this approach match your conclusion from the classical frequentist approach?
-
+<script>
+  iFrameResize({}, ".interactive");
+</script>
