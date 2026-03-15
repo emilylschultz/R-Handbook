@@ -101,6 +101,8 @@ The first step in running a paired t-test is to calculate the differences betwee
 
 Calculating the degrees of freedom for a two-sample t-test is also similar to calculating the degrees of freedom for a one-sample t-test, but keep in mind that you are running the t-test on the difference between the treatment for each pair. Therefore, your degrees of freedom is $n-1$, where $n$ is the number of pairs, rather than the total number of data points.
 
+### Exercises
+
 <!---LEARNR EXERCISES 1-->
    
 <iframe style="margin:0 auto; min-width: 100%;" id="myIframeL3" class="interactive" src="https://rby8g8-emily-schultz.shinyapps.io/RHandbookL11/
@@ -109,85 +111,158 @@ Calculating the degrees of freedom for a two-sample t-test is also similar to ca
 <!---------------->
 
 ## 11.2 Running the tests in R
+For this section, you will be working with three related data sets, all from the Konza Prairie Long-Term Ecological Research site. The data sets all have data related to the effects of burn frequency on prairie plant communities. You will be using the three data sets to practice each of the three types of t-tests covered in section 11.1.
 
-Start off by reading in the civu data set that we have worked with before. Be sure to first set your working directory to the folder with the civu dataset. Then use the `head` function to view the top rows of the data set, as a reminder of what data we have in the data frame.
+### One-sample t-test
+An interesting thing about prairie and woodland ecosystems is that there is overlap in the climate conditions that can support these two systems. In many areas, it is fire frequency that determine which is found in an area. More frequent fires lead to prairies while less frequent fires lead to woodlands. Once one of these systems establishes, they tend to be self-reinforcing because prairies build up quick fuel that can burn more frequently, while woodlands burn less frequency. One concern about fire suppression in prairie ecosystems like the Konza Prairie is that less frequent fires can lead to woody plant encroachment. Once woody plant cover gets high enough, it can reach a tipping point, where the system shifts from a prairie ecosystem to a self-reinforcing woodland system. Previous research has shown that this tipping point happens at 5-10% woody plant cover. 
 
-```{r civu_data}
-civu <- read.csv("civu.csv")
-head(civu)
-civu$herbivory <- as.factor(civu$herbivory)
+For your one-sample t-test example, you will use data on woody plant cover from unburned plots in the Konza Prairie to test whether these plot have reached the tipping point that will cause them to transition to a woodland. You will use the lower threshold of 5% cover as the "expected" population mean for your one-sample t-test. 
+
+The date file you will use for this test is the `BurnFull.csv` file. Download it from Canvas now if you haven't already. Once you have downloaded the file, set your working directory and load the data set into R, calling it `wood`.
+
+```{r load-one}
+wood <- read.csv("Unburned.csv")
 ```
 
-In this data set, the "herbivory" variable is our independent variable and the "density_2006" variable will be our dependent variable. Because the herbivory variable is categorical, we need to convert it to a factor variable, as we have done before:
+We will be using the `WoodyRelCov` variable as our sample data. This variable is a measure of the percent cover of woody plants in the unburned plots at the site.
 
-```{r factor}
-civu$herbivory <- as.factor(civu$herbivory)
+#### Visualizing the data
+For visualizing the data for a one-sample t-test, I like to use a density plot of the sample data, with a vertical line showing the "expected" mean. It is an easy way to compare the full distribution of the data to mean you are comparing your sample data to. 
+
+As usual, we will use the **ggplot2** package for graphing, so don't forget to load that package before trying to make the graph. To create the graph, you will start with the standard code for a density plot. Then you will add a line with the `geom_vline` function to add the vertical line with the expected value. The required argument for the `geom_vline` function is the `xintercept` argument, which will be the x value you want the line to show. In this case, our expected mean is 5, so that is the values we will use for the x intercept. Below, I also include the optional `linewidth` argument, with a value of 1 to make the line thicker. Feel free to play around with this value to see how it affects the aesthetics.
+
+```{r density-one}
+library(ggplot2)
+
+ggplot(data=wood,aes(x=WoodyRelCov))+
+  geom_density(fill="gray") +
+  geom_vline(xintercept=5,linewidth=1) +
+  labs(x="Woody Plant Percent Cover",y="Probability Density") +
+  theme_classic()
+
 ```
 
-Now we're ready to get started on our analysis!
+Based on the graph, it looks like all of the values in the sample data fall below the 5% cover threshold that represents the tipping point for a shrubland or woodland community. Next we will run the statistical test to see if it backs up this visual interpretation.
+
+#### Running the test
+To run any of the three types of t-tests, we can use the `t.test` function in R. There are different syntaxes you can use for the `t.test` function. We will use the formula syntax. Using this syntax, there are three arguments we will include for a one-sample t-test: the formula, which specifies the variables we will include in the analysis, the data, which is the data frame that contains the variables, and mu, which is the expected population mean that you are comparing your sample data to. For a one-sample t-test, the formula should include the variable that contains the sample data to the left of the tilde (~) symbol and a 1 to the right of the tilde. The 1 indicates that there is no independent variable being included in the analysis, which is case for a one-sample t-test.
+
+It can be helpful to save the test as an object, so you can later view the output and/or extract any statistics from the output that you might want to use later. To view the output, you then simply type in the name of the object.
+
+```{r test-one}
+OneSample <- t.test(WoodyRelCov~1,data=wood,mu=5)
+OneSample
+```
+
+The output will show several pieces of information. At the top, it will first show the name of the data frame and variable you used for the sample data (in case you forgot). Below that, it will show the t-statistic, the degrees of freedom, and the p-value. Underneath those statistics, you will see two values representing the 95% confidence interval. What this means is that if you repeated your experiment over and over again and calculated the mean of your sample data each time, you would expect that 95% of the time, the mean would fall between these two values. Finally, at the bottom, you can see the mean of your sample data, in this case 0.877. Based on the output, in particular the p-value that is far less than 0.05, we would reject our null hypothesis and conclude that our sample data has a mean that is significantly lower than the 5% tipping point, supporting what we saw in the graph.
 
 ### Two-sample t-test
+For the two-sample t-test, you will be working with data that you have already encountered from the Konza Prairie. In the probability distributions assignment, you graphed the distribution of plant diversity in burned and unburned plots at Konza. You made two graph: one that showed a single distribution of plant diversity across both treatments and one that showed two separate distributions for the burned and unburned plots. You then visually compared the two to determine which was a better representation of the data. This is the essence of a two-sample t-test: does the independent variable (burn treatment, in this case) influence the mean of the dependent variable (plant diversity) or are the means the same across the two groups. Here you will run a the formal test of the null hypothesis.
+
+If you don't already have a copy of the `BurnSummary.csv` file saved on your computer, download it now, and then load the data into R. Call it `diversity`.
+
+```{r load-two}
+diversity <- read.csv("BurnSummary.csv")
+```
+
+You will be using the `BurnTrt` variable as your independent variable and the `Shannon` variable as your dependent variable.
 
 #### Visualizing the data
 First, we are going to visualize the data. We will use two approaches: a standard boxplot and a density plot that shows the full distributions of our data.
 
-We will use the **ggplot2** package to make the graphs, so load that first:
-
-```{r ggplot}
-library(ggplot2)
-```
-
-##### Boxplot
-We'll begin with a boxplot. The syntax is similar to what you used to make histograms, with a few modifications. Here is the full code, will explanations of the modification below:
+We'll begin with the boxplot:
 
 ```{r boxplot}
-ggplot(data = civu, aes(x = herbivory, y = density_2006)) +
+ggplot(data = diversity, aes(x = BurnTrt, y = Shannon)) +
   geom_boxplot() +
-  labs(x = "Herbivory treatment", y = "Density in 2006") +
+  labs(x = "Burn treatment", y = "Shannon diversity index") +
   theme_classic()
 ```
 
-As will the histograms, we start with the *ggplot* function, where we tell R what data and variable we want to use in our graph. The data argument is where we input the name of our data frame, as before, and the variables in the aes function With a boxplot, we are graphing two variables (our independent and dependent variables) because we want to visualize the effect of one variable on another. Therefore, we need to include both an x and y variable in the aes function.
-
-In the next row down, we tell R what type of graph we want to make. Here, we want to make a box plot, so we use the *geom_boxplot* function.
-
-The other two lines are similar to the lines we used when we made histograms: they change the axis labels and some of the aesthetics of the graph.
-
-##### Density plot
-Now we will make a density plot that compares the full distributions of thistle density for the two herbivory treatments. Again, the syntax will be similar, but I will walk through the differences below:
+Now we will make the density plot:
 
 ```{r density}
-ggplot(data=civu, aes(x=density_2006,fill=herbivory))+
+ggplot(data=diversity, aes(x=Shannon,fill=BurnTrt))+
   geom_density(aes(y=after_stat(density)),alpha=0.5)+
   scale_fill_manual(values=c("#ce9642","#3b7c70"))+
-  labs(x="Thistles Density",y="Frequency")+
+  labs(x="Shannon diversity index",y="Probability density")+
   theme_classic()
 ```
 
-### 11.2 Classical frequentist approach
-Now that we have visualized the data, let's run the t-test itself. We will set up the model using the t-test function: `t.test`. The first argument for this function is the formula for our model, where we tell R our independent and dependent variables. The dependent variable goes on the left and the independent variable goes on the right. The second argument is the name of the data set. Then then final argument "var.equal = TRUE" tells R that we are assuming our two treatments have equal variance.
+Based on both of the graphs, it appears that the plant diversity is higher in the unburned plots. We will now run the test to see if that holds up.
 
-```{r civu_ttest}
-civu_ttest <- t.test(density_2006 ~ herbivory, data = civu, var.equal = TRUE)
+#### Running the test
+Now that we have visualized the data, let's run the t-test itself. We will again use the `t.test` function. The syntax is similar to what we used for a one-sample t-test. However, in this case, we have both an independent and dependent variable that we need to include in our formula. the dependent variable (`Shannon` in this example) goes to the left of the tilde, and the independent variable (`BurnTrt`) goes to the right. We do not need to include the mu argument that we used in the one-sample t-test because we are looking for an effect of one variable on the mean of another, rather than comparing our sample mean to an expected population mean. Finally, we will include the `var.equal = TRUE` argument, indicating that we are assuming that the sample variance is equal for the two treatments we are comparing.
+
+```{r test-two}
+TwoSample <- t.test(Shannon~BurnTrt, data=diversity, var.equal = TRUE)
+TwoSample
 ```
 
-To view the output, just type the name you gave to your t-test object:
+To view the output, you again type the name of the object you saved your test under. The output is similar to what you saw for the one-sample t-test. However, you will also see a line that explicity states the alternative hypothesis for your test, and you will see two sample means at the bottom, one for each of your groups.
 
-```{r ttest_out}
-civu_ttest
+Based on this output, we would reject the null hypothesis because our p-value is less than 0.05. From sample means shown at the bottom, we can see that the unburned treatment resulted in the higher plant diversity, but the difference in the means is small, despite being statistically significant.
+
+### Paired t-test
+For the final t-test, the paired t-test, you will work with light transmittance data from the Konza Prairie burn study. These data measure the percentage of light trasmitted through the canopy to the soil below. You would expect this values to lower with a denser canopy. This data were collected in the same plots in the early and late season, so we can use a paired t-test to test for changes in the canopy effect between the two seasons. We will use the pairing to look for changes in each individual plot from the early to the late season.  
+
+Download the `BurnLight.csv` file, and then load the data into R. Call it `light`.
+
+```{r load-paired}
+light <- read.csv("BurnLight.csv")
 ```
 
-You should see the following pieces in your output:
+You will be using the `Season` variable as your independent variable and the `CanopyEffect` variable as your dependent variable. The `CanopyEffect` variable is a measure of the percent of light transmitted through the canopy to the soil.
 
-1. data: This just tells you what variables went into your model
-2. t: This is the value of your test statistic (t)
-3. df: This is your degrees of freedom. We will discuss this in more detail later, but it is related to your sample size.
-4. p-value: This is the probability of observing your test statistic or a more extreme test statistic, assuming your null model is true.
-5. alternative hypothesis: This is a verbal statement of the alternative hypothesis being tested.
-6. 95 percent confidence interval: If you repeated this experiment over and over, you would expect that 95% of the time, the difference in the sample means of the two treatment would fall between these two values.
-7. sample estimates:  These are the means calculated for your two treatment groups.
+#### Visualizing the data
+Let's again start by visualizing the data. To visualize the data for a paired t-test, you can use the same approaches that you do for a two-sample t-test, either a boxplot or a density plot. However, using those approaches, you are not able to visualize the pairing between your samples. Therefore, as an alternative, I will introduce a different type of plot, known as a reaction norm plot. This type of graph will have the treatment group on the x-axis and the dependent variable on the y-axis. It will then show a point for each data point for the two treatment groups. It will then connect the points for each paired sample with a line segment. 
 
-Based on this output, would you reject the null hypothesis and tentatively accept the alternative hypothesis?
+To code to create a graph like this is shown below. It is very similar to the syntax we have used for other ggplots. In the opening line, you still specify the data frame and x and y variables, which are the independent and dependent variables as usual. In the `aes` function, you also add an additional `group` argument, which will tell R what variable to use for pairing together the samples. In our data set, the `ID` variable provides the identifier for each pair of samples, so that is what we will use as the grouping variable. We will then graph both points and lines, using the `geom_point` and `geom_line` functions, respectively. I have also added arguments to those functions to change the color from black to gray.
+
+```{r reaction}
+ggplot(light, aes(x=Season, y=CanopyEffect, group=ID)) +
+  geom_point(color="gray") +
+  geom_line(color="gray") +
+  labs(y="Canopy Effect (percent)") +
+  theme_classic()
+```
+
+The points and lines on the graph show the change in canopy effect for each pair of samples. However, it can also be helpful to visualize the average effect. We can add two layers to our graph the show the points and line for the average change in canopy effect between the seasons. We can do this using the `stat_summary` function, which allows us to graph summary statistics for our data. In the `stat_summary` function, the first argument we will include is the grouping variable for calculating the summary statistic. This is the `group` argument inside the `aes` function. Because we want to calculate a single overall mean for the early season group and the late season group, we set this to 1. The next argument we include (`fun`) is the summary function we want to calculate, which in this case in the mean. Then we use the `geom` argument to specify the type of graph we want to make. We are graphing both points and a line, so in the first `stat_summary` function, we set this to "point" and in the second, we set this to "line". Finally, we can change other aesthetics about the graph. In the code below, I increase the size of the points by setting `size=2.5` and increase the width of the line by setting `linewidth=1`. This creates our final reaction norm graph.
+
+```{r reaction-avg}
+ggplot(light, aes(x=Season, y=CanopyEffect,group=ID)) +
+  geom_point(color="gray") +
+  geom_line(color="gray") +
+  stat_summary(aes(group = 1), fun = mean, geom = "point",size=2.5) +
+  stat_summary(aes(group = 1), fun = mean, geom = "line",linewidth=1) +
+  labs(y="Canopy Effect (percent)") +
+  theme_classic()
+```
+
+In the graph we can see that for most pairs, there is a decrease in the light transmitted through the canopy from the early to the late season for most of the pairs, which is reflected in the overall average change from early to late season.
+
+#### Running the test
+Now that we have visualized the data, let's run the paried t-test. We will again use the `t.test` function. 
+
+However, we first need to reformat our data, so we have separate variables for the early and late season canopy effect. We can do this using the `reshape` function:
+
+```{r reshape}
+light2 <- reshape(light, direction = "wide",
+                  idvar = "ID", timevar = "Season")
+```
+
+In this function, the first argument is the data frame that we want to reshape. The second tells R that we want to change from a long format, with separate rows for the early and late season values, to a wide format, with separate columns for the early and late season values. Then we stat the `idvar`, which is the variable that identifies the pairs for the samples, which is the `ID` variable in our data set. The final argument, `timevar` is our independent variable. 
+
+Once we have reformated our data, we can use the `t.test` function to run the test. The syntax is slightly different than what we have used before. Now, the first two arguments in our function will be the variable names for our early and late season canopy effects. When we used the `reshape` function, these variable names were automatically assigned to be `CanopyEffect.Early` and `CanopyEffect.Late` (you can see this if you use the `names` function to view the variable names in your data set). When we specify these variable names in our `t.test` function, we also have to be sure to start with the name of the data frame that includes those variables. The final argument to include for a paired t-test is the `paired = TRUE` argument, which tells R that you want to run a paired t-test.
+
+```{r test-paired}
+Paired <- t.test(x=light2$CanopyEffect.Early, y=light2$CanopyEffect.Late, paired = TRUE)
+Paired
+```
+
+The output here is almost identical to the output for a two-sample t-test. The only difference is that, because a paired t-test is specifically testing the difference in values for each pair, the final statistic reported is the mean difference between the two groups, rather that the two group means.
+
+Based on this output, we would again reject the null hypothesis because our p-value is less than 0.05. The canopy effect (percent of light transmitted through the canopy) decreases from the early season to the late season.
 
 <script>
   iFrameResize({}, ".interactive");
