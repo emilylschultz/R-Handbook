@@ -73,7 +73,7 @@ In the context of a two-sample t-test, our null and alternative hypotheses are:
 For two-sample t-test, we also calculate a t-statistic, but the calculation is slightly different because we now have two sample groups instead of one sample group and one known mean. However, it still contains measures of the signal, noise, and sample size.
 
 $$
-t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{S_p^2(\frac{1}{n_1}-\frac{1}{n_2})}}
+t = \frac{\bar{x}_1 - \bar{x}_2}{\sqrt{S_p^2(\frac{1}{n_1}+\frac{1}{n_2})}}
 $$
 
 In the numerator, we now have our two sample means, $\bar{x}_1$ and $\bar{x}_2$. Therefore, the numerator still represents the signal, but this time it is the difference between the two sample means. In the denominator, $S_p^2$ is the pooled variance, which is essentially a weighted average of the variances of each sample group, with the weight determined by the sample size in each group (if they have equal sample sizes, they will be weighted equally). This is our new measure of the noise. Finally, we have the sample sizes of our two groups, $n_1$ and $n_2$. As before, if you have a larger signal and sample size, and lower noise, you will be more likely to get a statistically-significant result, and that corresponds to a higher t-statistic.
