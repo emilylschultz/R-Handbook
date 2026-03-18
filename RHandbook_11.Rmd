@@ -264,6 +264,15 @@ The output here is almost identical to the output for a two-sample t-test. The o
 
 Based on this output, we would again reject the null hypothesis because our p-value is less than 0.05. The canopy effect (percent of light transmitted through the canopy) decreases from the early season to the late season.
 
+### Exercises
+
+<!---LEARNR EXERCISES 2-->
+   
+<iframe style="margin:0 auto; min-width: 100%;" id="myIframeL3" class="interactive" src="https://rby8g8-emily-schultz.shinyapps.io/RHandbookL11_2/
+" scrolling="no" frameborder="no"></iframe>
+   
+<!---------------->
+
 <script>
   iFrameResize({}, ".interactive");
 </script>
