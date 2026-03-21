@@ -15,7 +15,7 @@
 
 <title>ESS 3500 R Handbook, Lesson 12</title>
 
-<script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
@@ -261,13 +261,13 @@ $(document).ready(function () {
       <a href="RHandbook_2.html">Lesson 2: Data management</a>
     </li>
     <li>
-      <a href="RHandbook_3.html">Lesson 3: Graphs</a>
+      <a href="RHandbook_3.html">Lesson 3: R basics</a>
     </li>
     <li>
-      <a href="RHandbook_4.html">Lesson 4: R basics</a>
+      <a href="RHandbook_4.html">Lesson 4: Data frames</a>
     </li>
     <li>
-      <a href="RHandbook_5.html">Lesson 5: Data frames</a>
+      <a href="RHandbook_5.html">Lesson 5: Data visualization</a>
     </li>
     <li>
       <a href="RHandbook_6.html">Lesson 6: Graphing in R</a>
@@ -328,6 +328,24 @@ $(document).ready(function () {
 id="toc-lesson-12-assumptions-and-transformations">Lesson 12:
 Assumptions and Transformations</a>
 <ul>
+<li><a href="#conceptual-background" id="toc-conceptual-background">12.1
+Conceptual background</a>
+<ul>
+<li><a href="#assumptions-about-data-collection"
+id="toc-assumptions-about-data-collection">Assumptions about data
+collection</a></li>
+<li><a href="#assumptions-about-data-properties"
+id="toc-assumptions-about-data-properties">Assumptions about data
+properties</a></li>
+<li><a href="#normally-distributed-residuals"
+id="toc-normally-distributed-residuals">Normally-distributed
+residuals</a></li>
+<li><a href="#equal-variances" id="toc-equal-variances">Equal
+variances</a></li>
+</ul></li>
+<li><a href="#testing-assumptions-in-r"
+id="toc-testing-assumptions-in-r">12.2 Testing assumptions in R</a>
+<ul>
 <li><a href="#testing-for-normality" id="toc-testing-for-normality">12.1
 Testing for normality</a></li>
 <li><a href="#the-log-transform" id="toc-the-log-transform">12.2 The log
@@ -345,18 +363,267 @@ tests</a></li>
 <li><a href="#practice-problems" id="toc-practice-problems">Practice
 problems</a></li>
 </ul></li>
+</ul></li>
 </ul>
 </div>
 
 <div id="lesson-12-assumptions-and-transformations"
-class="section level2">
-<h2>Lesson 12: Assumptions and Transformations</h2>
-<p>In this lesson, we will cover how to test two assumptions (normality
-and equal variances) of t-tests and other similar models and what to do
-when the assumptions are violated. Note that these assumptions apply
-whether we are using a classical frequentist approach or a maximum
-likelihood approach, and the methods we use for testing and addressing
-violations of assumptions is the same for both.</p>
+class="section level1">
+<h1>Lesson 12: Assumptions and Transformations</h1>
+<p>In this lesson, we will cover the assumptions of t-tests and other
+similar models, how to test those assumptions in R, and what to do when
+the assumptions are violated.</p>
+<div id="conceptual-background" class="section level2">
+<h2>12.1 Conceptual background</h2>
+<p>When ever we use models, whether they are statistical models,
+mathematical models, or conceptual models, we make assumptions about the
+system we are trying to represent with those models. For statistical
+models, the assumptions we make are generally related to how our data
+were collected and the properties of the data (e.g., what type of
+variable: categorical, discrete, or continuous, the distribution of the
+variable, etc.). In this lesson, we will learn about the assumptions for
+t-test (and related models that we will learn later in the class), how
+to test whether our assumptions are met, and what to do if they are not.
+We will focus primarily on the assumption related to the properties of
+the data because the assumptions about data collection are related to
+topics we already covered when we discussed experimental design.</p>
+<div id="assumptions-about-data-collection" class="section level3">
+<h3>Assumptions about data collection</h3>
+<p>T-test and similar models have two main assumptions related to data
+collection:</p>
+<ol style="list-style-type: decimal">
+<li>Samples are random</li>
+<li>Samples are independent</li>
+</ol>
+<p>These assumptions are related to some of the concepts that we covered
+when we discussed experimental design. If you follow guidance for
+randomly (or at least haphazardly) selecting samples and correctly
+identify the number of independent samples based on your experimental
+design, you should be good to go here. Sometimes, though, we
+intentionally incorporate non-independent samples into our experimental
+design, such as when we use random block designs or paired designs. In
+this case, we have to adjust for that design in our statistical
+analysis. That is exactly what we do when we run a paired t-test for a
+paired experimental design. We account for the non-independence by
+running the test on the difference in the non-independent pairs, rather
+than the raw data. When we do this, it also reduces the degrees of
+freedom in the analysis (recall that the degrees of freedom for a paired
+t-test is based on the number of pairs rather than the total number of
+data points). This adjusts for the fact that our samples are not
+independent, and we do not have as much independent information in our
+data set.</p>
+</div>
+<div id="assumptions-about-data-properties" class="section level3">
+<h3>Assumptions about data properties</h3>
+<p>There are two additional assumptions of t-tests that are related to
+the properties of the data themselves. To understand these assumptions,
+let’s look back at the distribution graphs that represent out null and
+alternative hypotheses for a two-sample t-test, shown below. In these
+models, we specifically fit normal distributions to the data and test
+whether the data are best represented by a single normal distribution or
+two distributions with different means for each treatment group.</p>
+<div class="float">
+<img src="DistributionAssumptions.png" style="width:80.0%"
+alt="Distributions representing the null and alternative models for a t-test." />
+<div class="figcaption">Distributions representing the null and
+alternative models for a t-test.</div>
+</div>
+<p><br></p>
+<p>The the math behind the t-distribution we use to determine the
+p-value (the probability of a t-statistic greater than or equal to ours
+assuming the null hypothesis is true) is based on the expectation that a
+normal distribution is a good fit for our sample distribution.
+Furthermore, in a standard t-test, we allow the means to vary in the
+alternative model, but the variances are the same between the two
+distributions, which we can see in the figure. This is reflected in the
+calculation of the t-statistic itself. The variation term in the
+denominator of the t-statistic is the pooled variance across both
+groups. You don’t calculate separate variance terms for each group.
+These mathematical calculations of the t-statistic and t-distribution
+lead to our two assumptions related to the properties of the data:</p>
+<ol style="list-style-type: decimal">
+<li>The data (specifically the residuals of the data, which we will
+discuss in the next section) are normally-distributed.</li>
+<li>The variances are equal between the two sample groups.</li>
+</ol>
+<p>If you try to run a test if your data do not match these assumptions,
+the conclusion from the test might not be valid. We will dig into each
+of these assumptions in the sections below, focusing on how we test
+these assumptions and what we can do when the assumptions are not
+met.</p>
+</div>
+<div id="normally-distributed-residuals" class="section level3">
+<h3>Normally-distributed residuals</h3>
+<div id="what-are-residuals" class="section level4">
+<h4>What are residuals?</h4>
+<p>The residuals are the leftover variation in our dependent variable,
+after we have accounted for the variation explained by our independent
+variable. What this means in the context of a two-sample t-test is that
+we calculate the average value for each of our treatment groups, and
+then calculate the difference between the mean of the group and each
+individual data point in each group. The difference between the means of
+the groups is the effect of the independent variable, and the different
+between the means and each data point is the leftover variation, or the
+residuals.</p>
+<p>The graph below shows a visual representation of residuals. The
+points in the graph show the individual data points, the horizontal blue
+bars show the mean for each group, and the arrow showing the difference
+between the mean and each point represent the values of the residuals.
+When we run a statistical test, we can save the residuals from the
+output of the test to determine if they are normally-distributed.</p>
+<div class="float">
+<img src="Residuals.png" style="width:60.0%"
+alt="The residuals for two sample groups. For each group, the value of the residuals is the difference between each data point and the mean of the group." />
+<div class="figcaption">The residuals for two sample groups. For each
+group, the value of the residuals is the difference between each data
+point and the mean of the group.</div>
+</div>
+<p><br></p>
+</div>
+<div id="visualizing-residuals" class="section level4">
+<h4>Visualizing residuals</h4>
+<p>One of the best ways to determine whether our residuals are normally
+distributed is to make graphs of the residuals saved from a test and do
+a visual check of the distribution. We will look at two types of graphs
+to assess the distribution.</p>
+<p>The first type of graph you can make is one that you are already
+familiar with: a histogram. If you histogram your residuals, you can
+visual determine if the histogram looks like the bell-curve we would
+expect for a normal-distribution.</p>
+<p>The second type of graph is called a q-q plot, or quantile-quantile
+plot. Quantiles are the boundary points when a set of data points is put
+in order and then divided into equal-sized subsets. A q-q plot graphs
+the quantiles that would be expected for a data set (such as the
+residuals from a statistical test) if it followed a normal distribution
+(or another type of distribution that you can specify) in comparison to
+the observed quantiles from the actual data set. If the values match,
+that indicates the actual data set does follow a normal distribution.
+Graphically speaking, this means that if you graph the theoretical
+residuals on the x-axis and the obersved residuals on the y-axis, the
+points will fall along the 1:1 line on the graph. If the points do not
+fall along the line, the residuals are not normally distributed.</p>
+<p>Below are three sets of graphs that show a histogram of a data set
+along with a q-q plot for the same data set, so you can see what a q-q
+plot would look like for differently-shaped distributions. In the first
+set of graphs, the residuals are close to a normal distribution, and the
+points in the q-q plot fall close to the 1:1 line that is shown in the
+graph. In the second set of graphs, the distribution is skewed. In the
+q-q plots, the points fall close to the line in the middle, but at
+either end, they fall above the line. When the points fall above the
+line at both ends or below the line at both ends, that is what indicates
+a skewed distribution. Finally, in the last set of graphs, the ends
+(tails) of the distribution are thicker (have higher frequencies) than
+would be expected for a normal distribution. This results in a q-q plot
+with points that are above the line at the low end and below the line at
+the high end.</p>
+<div class="float">
+<img src="NormalResiduals.png" style="width:80.0%"
+alt="Histogram and q-q plot of normally-distributed data." />
+<div class="figcaption">Histogram and q-q plot of normally-distributed
+data.</div>
+</div>
+<p><br></p>
+<div class="float">
+<img src="SkewedResiduals.png" style="width:80.0%"
+alt="Histogram and q-q plot of skewed data." />
+<div class="figcaption">Histogram and q-q plot of skewed data.</div>
+</div>
+<p><br></p>
+<div class="float">
+<img src="UniformResiduals.png" style="width:80.0%"
+alt="Histogram and q-q plot of a distribution with thick tails." />
+<div class="figcaption">Histogram and q-q plot of a distribution with
+thick tails.</div>
+</div>
+<p><br></p>
+</div>
+<div id="formal-test-for-normally-distributed-residuals."
+class="section level4">
+<h4>Formal test for normally-distributed residuals.</h4>
+<p>In addition to visually assessing the distribution of your residuals,
+there are statistical tests that can be used to test whether residuals
+follow a normal distribution. In this class, the test we will learn for
+this is called a Shapiro-Wilks test. Like with most of the other tests
+we work with in this class, when we run this test, we start with our
+null and alternative hypotheses for the test. In this test, we are not
+making comparisons between variable, but instead we are comparing the
+distribution of a data set to a normal distribution. Therefore our
+hypotheses would be:</p>
+<ol style="list-style-type: decimal">
+<li>Null hypothesis: the data are normally-distributed.</li>
+<li>Alternative hypothesis: the data are not normally-distributed.</li>
+</ol>
+<p>We can then run the test, using the residuals saved after running a
+statistical test, which will give us a p-value. If the p &lt; 0.05, we
+would reject the null hypothesis and conclude that the residuals are not
+normally-distributed.</p>
+<p>While it might seem like a formal statistical test like this is the
+best approach for ensuring that our residuals are normally-distributed,
+I urge you to use and interpret this test with caution. Like other
+statistical tests, it is sensitive to the sample size of the data set.
+If you have a large data set, the test will have a lot of power to
+detect even small deviations from a normal distribution, even if the
+deviations are small enough that they aren’t a problem for running the
+test. In other words, the test is overly-sensitive. On the flip side, if
+you have a very small sample size, the test will not have a lot of power
+to detect deviations from a normal distribution, and you might fail to
+reject the null hypothesis, even if the residuals of your data are a
+problem.</p>
+<p>In this class, if you want to use visual assessments and not run the
+Shapiro-Wilks test to check the assumption of normally-distributed
+residuals, that is fine (that is usually my approach). If you do run a
+Shapiro-Wilks test, however, you should not rely on that approach on its
+own. You should also use a histogram or q-q plot to do a visual
+check.</p>
+</div>
+</div>
+<div id="equal-variances" class="section level3">
+<h3>Equal variances</h3>
+<div id="visualizing-variances" class="section level4">
+<h4>Visualizing variances</h4>
+<p>Like with the assumption of normally-distributed variables, one of
+the best ways to check for equal variances is to graph the data and do a
+visual check. Good news: you already know a useful graph for this check!
+Boxplots are great for comparing the variation between sample groups. If
+you make a simple boxplot, you can compare the height of the boxes and
+whiskers between your groups to make sure they are roughly equal. The
+graphs below show an example of what a boxplot would look like for
+groups with equal variances compared to groups with unequal
+variances.</p>
+<div class="float">
+<img src="Variances.png" style="width:80.0%"
+alt="Examples of boxplots showing groups with equal variances and unequal variances" />
+<div class="figcaption">Examples of boxplots showing groups with equal
+variances and unequal variances</div>
+</div>
+<p><br></p>
+</div>
+<div id="formal-tests-for-equal-variances" class="section level4">
+<h4>Formal tests for equal variances</h4>
+<p>There is also a formal statistical test for comparing the variances
+across groups. It is called the Levene’s test. The null and alternative
+hypotheses for a Levene’s test are:</p>
+<ol style="list-style-type: decimal">
+<li>Null hypothesis: The variances are equal across the groups.</li>
+<li>Alternative hypothesis: The variances are not equal across the
+groups.</li>
+</ol>
+<p>For this test, we use our original data set (rather than the
+residuals saved after running a statistical test) because we are
+specifically comparing between groups, rather than looking at the total
+leftover variation after accounting for differences between the groups.
+If the test gives us a p-value less than 0.05, we would reject the null
+hypothesis and conclude that the variances are not equal.</p>
+<p>This test comes with the same caution as the Shapiro-Wilks test. It
+can be overly-sensitive if you have a large sample size and not
+sensitive enough if you have a small sample size. Therefore, I am again
+fine with you only using a visual check (with a boxplot), but if you do
+run the test, you should be sure to do a visual check as well.</p>
+</div>
+</div>
+</div>
+<div id="testing-assumptions-in-r" class="section level2">
+<h2>12.2 Testing assumptions in R</h2>
 <p>For this lesson, we will work with a new data set that contains data
 from an experiment that was done to test for the effect of invasive
 grass removal on the plant community. As a first pass, the researchers
@@ -384,14 +651,17 @@ lesson, so load that package now as well:</p>
 leftover variation that is not explained by our model) are normally
 distributed. Therefore, in order to test this assumption, we need to
 first run our model and save the residuals to test.</p>
-<p>We will run a t-test using the ‘lm’ function, just like we did in the
-t-test lesson when we used the maximum likelihood approach, and we will
-store the test output in an object called “grass_ttest”. We use the ‘lm’
-function instead of the ‘t.test’ function because the ‘t.test’ function
-doesn’t save the residuals from the test. However, the models built by
-the two functions are exactly the same, so the residuals are the same
-regardless of the approach we use to test the models. We can still
-choose to use either approach after checking our assumptions.</p>
+<p>When we run the t-test this time, we will use a different function
+(the <code>lm</code> function) than we practiced in the previous lesson.
+We use the ‘lm’ function instead of the ‘t.test’ function because the
+‘t.test’ function doesn’t save the residuals from the test. However, the
+models built by the two functions are exactly the same, so the residuals
+are the same regardless of the approach we use to test the models. We
+can choose to use either function after checking our assumptions. We
+will store the test output in an object called “grass_ttest”.
+Conveniently, the required arguments for running a t-test using the
+<code>lm</code> function are the same, and can use exactly the same
+format, as the <code>t.test</code> function we learned before.</p>
 <pre class="r"><code>grass_ttest &lt;- lm(Grass_cover ~ Weed, data = grass)</code></pre>
 <p>We will now save the residuals from the model using the
 <code>resid</code> function. Then we will store the residuals in a data
@@ -415,8 +685,8 @@ residuals that we saved from our model in the previous section.</p>
   geom_histogram() +
   labs(x=&quot;Grass cover&quot;, y=&quot;Frequency&quot;) +
   theme_classic()</code></pre>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="RHandbook_12_files/figure-html/residalt_hist-1.png" width="672" /></p>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.</code></pre>
+<p><img src="RHandbook_12_files/figure-html/residalt_hist-1.png" alt="" width="672" /></p>
 <p>Do the residuals look normally distributed?</p>
 </div>
 <div id="qqplot" class="section level4">
@@ -436,7 +706,7 @@ for both of these functions in the object with our saved residuals
 (grass_resid).</p>
 <pre class="r"><code>qqnorm(grass_resid)
 qqline(grass_resid)</code></pre>
-<p><img src="RHandbook_12_files/figure-html/qqplots-1.png" width="672" /></p>
+<p><img src="RHandbook_12_files/figure-html/qqplots-1.png" alt="" width="672" /></p>
 <p>When the points fall close to the line like this, that means that the
 distribution of our residuals is close to normal. Based on both types of
 graphs, it looks like our data are normally distributed, but we’ll cover
@@ -512,12 +782,12 @@ histograms:</p>
   geom_histogram() +
   labs(x=&quot;log Grass Cover&quot;, y=&quot;Frequency&quot;) +
   theme_classic()</code></pre>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="RHandbook_12_files/figure-html/residlog_hist-1.png" width="672" /></p>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.</code></pre>
+<p><img src="RHandbook_12_files/figure-html/residlog_hist-1.png" alt="" width="672" /></p>
 <p>Next, make the qqplots:</p>
 <pre class="r"><code>qqnorm(resid_log)
 qqline(resid_log)</code></pre>
-<p><img src="RHandbook_12_files/figure-html/qqplots_log-1.png" width="672" /></p>
+<p><img src="RHandbook_12_files/figure-html/qqplots_log-1.png" alt="" width="672" /></p>
 <p>And finally, we’ll run the Shapiro-Wilks test on the new
 residuals:</p>
 <pre class="r"><code>shapiro.test(resid_log)</code></pre>
@@ -545,7 +815,7 @@ the variation between the different categories.</p>
 <pre class="r"><code>ggplot(grass, aes(x=Weed, y=Grass_cover)) +
   geom_boxplot() +
   theme_classic()</code></pre>
-<p><img src="RHandbook_12_files/figure-html/cone_boxplot-1.png" width="672" /></p>
+<p><img src="RHandbook_12_files/figure-html/cone_boxplot-1.png" alt="" width="672" /></p>
 <p>It looks like the variances are pretty different between the two
 groups, so we seem to have a problem here, but we will look at the
 results of a formal test for equal variances too.</p>
@@ -564,7 +834,6 @@ package, so install (<code>install.packages("car")</code>) and load that
 package first.</p>
 <pre class="r"><code>library(car)</code></pre>
 <pre><code>## Loading required package: carData</code></pre>
-<pre><code>## Warning: package &#39;carData&#39; was built under R version 4.2.3</code></pre>
 <p>Now we can run the test:</p>
 <pre class="r"><code>leveneTest(Grass_cover ~ Weed, data = grass)</code></pre>
 <pre><code>## Warning in leveneTest.default(y = y, group = group, ...): group coerced to
@@ -599,7 +868,7 @@ variable.</p>
 <pre class="r"><code>ggplot(grass, aes(x=Weed, y= sqrt_Grass_cover)) +
   geom_boxplot() +
   theme_classic()</code></pre>
-<p><img src="RHandbook_12_files/figure-html/sqrt_boxplot-1.png" width="672" /></p>
+<p><img src="RHandbook_12_files/figure-html/sqrt_boxplot-1.png" alt="" width="672" /></p>
 <p>It looks a lot better now, but we will check our Levene’s test
 too.</p>
 <pre class="r"><code>leveneTest(sqrt_Grass_cover ~ Weed, data = grass)</code></pre>
@@ -722,6 +991,7 @@ maximum likelihood when you run this test.</li>
 them up.</li>
 </ol>
 <p>I will post an answer key to these questions next week.</p>
+</div>
 </div>
 </div>
 
