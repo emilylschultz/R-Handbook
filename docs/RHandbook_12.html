@@ -342,24 +342,27 @@ id="toc-normally-distributed-residuals">Normally-distributed
 residuals</a></li>
 <li><a href="#equal-variances" id="toc-equal-variances">Equal
 variances</a></li>
+<li><a href="#addressing-violations-of-assumptions"
+id="toc-addressing-violations-of-assumptions">Addressing violations of
+assumptions</a></li>
 </ul></li>
 <li><a href="#testing-assumptions-in-r"
 id="toc-testing-assumptions-in-r">12.2 Testing assumptions in R</a>
 <ul>
-<li><a href="#testing-for-normality" id="toc-testing-for-normality">12.1
-Testing for normality</a></li>
-<li><a href="#the-log-transform" id="toc-the-log-transform">12.2 The log
+<li><a href="#testing-for-normality"
+id="toc-testing-for-normality">Testing for normality</a></li>
+<li><a href="#the-log-transform" id="toc-the-log-transform">The log
 transform</a></li>
 <li><a href="#testing-for-equal-variances"
-id="toc-testing-for-equal-variances">12.3 Testing for equal
+id="toc-testing-for-equal-variances">Testing for equal
 variances</a></li>
 <li><a href="#the-square-root-transform"
-id="toc-the-square-root-transform">12.4 The square root
-transform</a></li>
-<li><a href="#running-the-test" id="toc-running-the-test">12.5 Running
-the test</a></li>
-<li><a href="#welchs-tests" id="toc-welchs-tests">12.6 Welch’s
-tests</a></li>
+id="toc-the-square-root-transform">The square root transform</a></li>
+<li><a href="#running-the-test" id="toc-running-the-test">Running the
+test</a></li>
+<li><a href="#mann-whitney-u-test-1"
+id="toc-mann-whitney-u-test-1">Mann-Whitney U test</a></li>
+<li><a href="#welchs-tests" id="toc-welchs-tests">Welch’s tests</a></li>
 <li><a href="#practice-problems" id="toc-practice-problems">Practice
 problems</a></li>
 </ul></li>
@@ -515,7 +518,10 @@ a skewed distribution. Finally, in the last set of graphs, the ends
 (tails) of the distribution are thicker (have higher frequencies) than
 would be expected for a normal distribution. This results in a q-q plot
 with points that are above the line at the low end and below the line at
-the high end.</p>
+the high end. Of the distributions shown, it is the skewed distribution
+that is the biggest problem. If the residuals are not
+normally-distributed, but the shape of the distribution is symmetrical,
+such as in the third set of graphs, it is usually not a big problem.</p>
 <div class="float">
 <img src="NormalResiduals.png" style="width:80.0%"
 alt="Histogram and q-q plot of normally-distributed data." />
@@ -621,6 +627,223 @@ fine with you only using a visual check (with a boxplot), but if you do
 run the test, you should be sure to do a visual check as well.</p>
 </div>
 </div>
+<div id="addressing-violations-of-assumptions" class="section level3">
+<h3>Addressing violations of assumptions</h3>
+<p>Tests like t-test, as well as the other tests we will cover in the
+rest of this class, are fairly robust to violations of the assumptions.
+If there are small deviations from normality or small differences in the
+variances of the groups, it is usually not a problem. However, if our
+data have residuals that deviate strongly from a normal distribution or
+if the variances are very different between groups are not equal, the
+results of a t-test might not be valid, so it is best to try to address
+the problem in some way.</p>
+<p>If you do decide the violations of the assumptions are strong enough,
+there are a few strategies we can try to address the problem:</p>
+<ol style="list-style-type: decimal">
+<li>Data transformations</li>
+<li>Remove outliers</li>
+<li>Use a different test</li>
+</ol>
+<p>We will go through each of these options below.</p>
+<div id="data-transformations" class="section level4">
+<h4>Data transformations</h4>
+<p>Sometimes if our residuals are not normally-distributed or if our
+variances are unequal, we can fix the problem by transforming our data.
+In other words, we can apply a function to the data that will change the
+shape of the distribution so that it is normal or equalize the variance.
+If I think I have a problem with my assumptions, data transformations
+are usually the first approach I try to deal with the problem because
+they are easy and you do lot lose any power in your test with this
+approach.</p>
+<p>Probably the most common type of transformation that we use in
+ecology is a log transform. This can be effective if our data are skewed
+(have a log-normal distribution), which is common for many types of
+ecological data. This can be effective because of the relationship
+between normal and log-normal distributions. By definition, if you have
+a data that follow a log-normal distribution, the logarithm of those
+data are normally distributed. To run a log-transform, you simply take
+the natural logarithm of your dependent variable, and then you run the
+statistical test on the log-transformed data instead of the raw data.
+You should then save the residuals of the new test, and double-check
+that they are normally distributed. If they are, the transformation
+worked, and you can legitimately interpret the results of the test using
+the log-transformed data. If the new residuals are still not
+normally-distributed, then you should try a different approach.</p>
+<p>For correcting the problem of unequal variance, you can try a
+square-root transform. It is a similar idea to a log-transform, but you
+instead that the square root of your data. You can then just the
+variances again. If they are equal for the square-root-transformed data,
+you can then proceed with a t-test using the square root transformed
+data.</p>
+<p>Although a log transform usually works best for skewed residuals and
+a square-root transform usually works best for unequal variances, if the
+first transform you try doesn’t work, I would recommend trying the other
+transform. Sometimes you get surprised!</p>
+<p>One downside of log transforms and square-root transforms is that you
+cannot take the log or square root of negative numbers, and you cannot
+take the log of zeros. Therefore, these approaches do not work if you
+have those values. Sometimes if you have a few zeroes (and no negative
+values) and you want to try a log transform, you can add a small value
+(such as 0.01) to those zeros and then do the log transform. This can
+sometimes do weird things to the distribution, though, depending on how
+the log of the small values compares to the rest of the values in your
+data set. I would also not recommend this approach if you have a lot of
+zeros in your data set.</p>
+<p>If a data transformation does not work or cannot be done with the
+type of data you are working with, you can move on to a different
+approach.</p>
+</div>
+<div id="remove-outliers" class="section level4">
+<h4>Remove outliers</h4>
+<p>Another strategy you can use is to remove outliers - data points that
+fall far outside the range of the rest of your data set. This can
+address violations of your assumptions if the residuals are not
+normally-distributed due to a few unusual data points or if the unequal
+variances are due to outlier points in one of the groups. To use this
+approach, you would remove the data points from the data set and run the
+test without those values.</p>
+<p>While this approach can solve some types of problems, think hard
+before trying this approach. Removing data is not something that should
+be done lightly. Some sources might recommend removing outliers if they
+are more than two standards deviations away from the mean. I, however,
+do not like a blanket approach like that because outliers can by
+important data. I usually only remove outliers from my data set if I
+have additional information (aside from simply the fact that the point
+is an outlier) that tells me something is unusual about the data point.
+For example, when I was measuring the movement of ants on different
+surfaces for my senior thesis project, I made a note that I accidentally
+got glue on the the leg of one of my ants. When the movement of that ant
+turned out to be very different from the other individuals, I felt
+comfortable removing that data point because I knew something had
+happened during the experiment that would reasonably cause it to be
+unusual. (This is one reason it is important to take good notes when you
+collect data!)</p>
+<p>If you do decide to use this approach, you should be clear about your
+reasoning for removing the points you choose to remove. You should also
+not remove the points from your original data set (you want to preserve
+all of the data you collected, even if you don’t use it in a particular
+analysis). Use R to create a new data frame with the points removed, but
+don’t change the spreadsheet where the data are stored.</p>
+</div>
+<div id="run-a-different-test" class="section level4">
+<h4>Run a different test</h4>
+<p>Not all statistical tests have the same assumptions. The assumptions
+of a test depend on the math underlying that test. If something like a
+data transformation does not work to address violations of assumptions,
+and you think the problem is big enough that you are not comfortable
+running a standard t-test, you can use a different type of test for your
+analysis. We will cover two such tests below, one for residuals that are
+not normally-distributed and one for unequal variances. Note, though,
+that these are not the only alternative tests out there. For residuals
+with non-normal distributions, in particular, there are tests that
+assume other types of distributions. In fact, many of the types of tests
+we will learn in this class can, with tweaks, be extended to use
+different distributions that might be better matches for the types of
+data we are working with.</p>
+<div id="mann-whitney-u-test" class="section level5">
+<h5>Mann-Whitney U Test</h5>
+<p>The Mann-Whitney U test is similar to a t-test, but it can be used
+when the residuals are not normally-distributed (and often when
+variances are unequal because sometimes skewed distributions can lead to
+unequal variances). In fact, the Mann-Whitney U test is a type of
+non-parametric test, meaning it does not assume a particular
+distribution.</p>
+<p>The way the test works is that instead of using the specific values
+from your data set, it ranks all of the values from your full data set
+(both groups lumped together) and then it compares the mean rank of the
+data points between your two groups. The way I think of it is that the
+Mann-Whitney U test is to the t-test the way the median is to the mean.
+Just like the median is a better measure of central tendency when you
+have skewed data, the Mann-Whitney U test is a better statistical test
+if you have skewed data.</p>
+<p>For a Mann-Whitney U test, the null and alternative hypotheses are
+then:</p>
+<ol style="list-style-type: decimal">
+<li>Null: there is no difference in the mean rank of data points between
+the two groups.</li>
+<li>Alternative: there is a difference in the mean rank of data points
+between the two groups.</li>
+</ol>
+<p>From there, it is similar to running a t-test. You will get a p-value
+that you can use to draw your conclusion. As always, if the p-values is
+&lt; 0.05, you reject the null hypothesis.</p>
+<p>A couple words of caution about Mann-Whitney U tests:</p>
+<ol style="list-style-type: decimal">
+<li>While these tests can work better than a t-test if your residuals
+are not normally-distributed, extreme skew in your residuals is still a
+problem for a Mann-Whitney U test.</li>
+<li>Because this test is based entirely on the rank of the data points,
+and not the values themselves, you lose a lot of information, and often
+power, from your data when you use this type of test. Therefore, while
+it may seem easier to just run this type of test as the default and not
+bother with the annoying assumptions testing and trying out
+transformations, that is not a good approach. Only choose this option if
+you have to. If your original data do not match the assumptions, you
+should first try a transformation before resorting to a Mann-Whitney U
+test.</li>
+</ol>
+</div>
+<div id="welchs-test" class="section level5">
+<h5>Welch’s test</h5>
+<p>A Welch’s test can be used in place of a t-test when the residuals
+are normally-distributed but the variances are not equal. It is almost
+identical to a t-test, but when the variance is incorporated into the
+t-statistic, instead of calculating a pooled variance, the variance is
+calculated separately for each group. Otherwise, the hypotheses,
+implementation and interpretation are the same as for a regular
+t-test.</p>
+<p>Unlike with a Mann-Whitney U test, you do not lose information when
+you run a Welch’s test. The degrees of freedom will take a small hit on
+account of calculating separate variances for each group instead of a
+single variance. However, the loss of power is minimal, so it is less
+problematic to use this approach as your default (in fact, the default
+in R when you run the t-test function is to run a Welch’s test).
+However, if I notice that the variances are equal when I visualize my
+data, I still run a regular t-test.</p>
+</div>
+</div>
+<div id="final-thoughts" class="section level4">
+<h4>Final thoughts</h4>
+<p>Deciding how to handle violations of assumptions can be challenging
+because, to a large degree, the process requires judgement calls about
+whether the problem is big enough that it needs to be addressed and what
+the best approach is to handle the problem. To a large degree, good
+judgement about assumptions comes with experience. However, I do have
+some tips to help you with the decision making process. Here are some
+things you should be thinking about as you work through the process:</p>
+<ol style="list-style-type: decimal">
+<li>What is the sample size? The larger the sample size, the more robust
+the test are to violations of the assumptions.</li>
+<li>For the residuals: What is the specific shape of the residuals. If
+they are skewed, that is a bigger problem. If they just have fat or thin
+tails, but are still symmetrical, it is probably fine to run the
+test.</li>
+<li>For the variances: Are the sample sizes of the group equal. Unequal
+variances are a bigger problem is the sample sizes of the groups are
+very different from each other.</li>
+<li>How easy is it to improve the problem, and what are the consequences
+of the fix? Data transformations are an easy fix, and you don’t lose
+power, so if the distribution is a little off and/or the variances are
+different, it can be worth a try to do a transformation to see it it
+improves things. A Welch’s test doesn’t result in a major loss of power
+either, so I wouldn’t hesitate to use that if I was unsure of the
+variances. A Mann-Whitney U test, on the other hand, involves a loss of
+information, so I would only use this approach if I was pretty
+concerned.</li>
+</ol>
+<p>Finally, there can be circumstances where nothing seems like a great
+option. There are other options out there that you can explore, but in
+this class, it would be acceptable to run the test but interpret the
+results with some skepticism and be clear about the problems. In
+general, when you are making judgement calls about the data analysis
+process (remember that there are usually subjective decisions that go
+into the process, particularly with more complex analyses), you should
+clearly document your process and your reasoning. Other researchers
+might not always agree with your approach, but if you are honest and
+thorough with your explanations, they can use their own judgement in
+interpreting your results.</p>
+</div>
+</div>
 </div>
 <div id="testing-assumptions-in-r" class="section level2">
 <h2>12.2 Testing assumptions in R</h2>
@@ -646,7 +869,7 @@ I am calling the data object “grass” for this example.</p>
 lesson, so load that package now as well:</p>
 <pre class="r"><code>library(ggplot2)</code></pre>
 <div id="testing-for-normality" class="section level3">
-<h3>12.1 Testing for normality</h3>
+<h3>Testing for normality</h3>
 <p>The assumption normality for t-tests is that the residuals (the
 leftover variation that is not explained by our model) are normally
 distributed. Therefore, in order to test this assumption, we need to
@@ -734,7 +957,7 @@ sample size.</p>
 </div>
 </div>
 <div id="the-log-transform" class="section level3">
-<h3>12.2 The log transform</h3>
+<h3>The log transform</h3>
 <p>We have established that our data are normally distributed, but what
 if they weren’t? What would we do about it?</p>
 <p>If our residuals are not normally-distributed, particularly when we
@@ -802,7 +1025,7 @@ the un-transformed data so far, but we need to check our other
 assumption first.</p>
 </div>
 <div id="testing-for-equal-variances" class="section level3">
-<h3>12.3 Testing for equal variances</h3>
+<h3>Testing for equal variances</h3>
 <p>Another assumption of linear models is that the variance of our
 dependent variable is equal for different values of our independent
 variable.</p>
@@ -851,7 +1074,7 @@ p-value, are the variances equal?</p>
 </div>
 </div>
 <div id="the-square-root-transform" class="section level3">
-<h3>12.4 The square root transform</h3>
+<h3>The square root transform</h3>
 <p>We have established that we don’t have equal variance between our
 categories, so what can we do? The first thing we can try is
 transforming our data. If our data are skewed (not normally
@@ -882,17 +1105,13 @@ too.</p>
 t-test using the square-root-transformed data.</p>
 </div>
 <div id="running-the-test" class="section level3">
-<h3>12.5 Running the test</h3>
-<p>At this point, we can test the model using either a classical
-frequentist approach or a maximum likelihood approach. I will show both
-methods here, but, again, note that this is just for the purposes of
-demonstration. Normally, you would just choose one approach to use.</p>
-<div id="classical-frequentist" class="section level4">
-<h4>Classical frequentist</h4>
-<p>To run a t-test using the classical frequentist approach, we will use
-the same t.test function that we learned in the last lesson. Note,
-however, that we now want to use the square-root-transformed variable
-(“sqrt_Grass_cover”) instead of the raw grass cover variable.</p>
+<h3>Running the test</h3>
+<p>At this point, we can run the test with our square-root transformed
+data. We can use the same <code>t.test</code> function that we learned
+in the last lesson (or the <code>lm</code> function that we used when
+saving the residuals in this lesson). Note, however, that we now want to
+use the square-root-transformed variable (“sqrt_Grass_cover”) instead of
+the raw grass cover variable.</p>
 <pre class="r"><code>grass_ttest_sqrt &lt;- t.test(sqrt_Grass_cover~Weed, data=grass,var.equal=TRUE)
 grass_ttest_sqrt</code></pre>
 <pre><code>## 
@@ -909,33 +1128,31 @@ grass_ttest_sqrt</code></pre>
 <p>Based on the p-value, would you reject the null hypothesis that weed
 removal does not affect end-of-season grass cover?</p>
 </div>
-<div id="maximum-likelihood-approach" class="section level4">
-<h4>Maximum likelihood approach</h4>
-<p>Just like the last lesson, to use the maximum likelihood approach, we
-start by using the ‘lm’ function to build both the null and alternative
-models. Then we use the ‘AIC’ function to compare the AIC values for the
-two models. Remember, the model with the lower AIC value is the better
-model for our data.</p>
-<pre class="r"><code># Build models
-grass_null &lt;- lm(sqrt_Grass_cover~1, data=grass)
-grass_alt &lt;- lm(sqrt_Grass_cover~Weed, data=grass)
-
-# Compare AIC values
-AIC(grass_null, grass_alt)</code></pre>
-<pre><code>##            df       AIC
-## grass_null  2 17.502090
-## grass_alt   3 -4.935758</code></pre>
-<p>Which model is best? Is it significantly better than the other
-model?</p>
-</div>
+<div id="mann-whitney-u-test-1" class="section level3">
+<h3>Mann-Whitney U test</h3>
+<p>The distribution of our residuals looked fine from the beginning, but
+if we decided they were too skewed to run a regular t-test and a
+transformation didn’t work, we could run a Mann-Whitney U test instead.
+Remember, this test compares the rank of the data points between our two
+groups. The code for this test is shown below. (The function name is
+<code>wilcox.test</code>, but the Wilcox test for unpaired samples is
+equivalent to the Mann-Whitney U test)</p>
+<pre class="r"><code>wilcox.test(Grass_cover~Weed,data = grass)</code></pre>
+<pre><code>## Warning in wilcox.test.default(x = DATA[[1L]], y = DATA[[2L]], ...): cannot
+## compute exact p-value with ties</code></pre>
+<pre><code>## 
+##  Wilcoxon rank sum test with continuity correction
+## 
+## data:  Grass_cover by Weed
+## W = 231, p-value = 0.0001075
+## alternative hypothesis: true location shift is not equal to 0</code></pre>
 </div>
 <div id="welchs-tests" class="section level3">
-<h3>12.6 Welch’s tests</h3>
+<h3>Welch’s tests</h3>
 <p>If the variances still aren’t equal after transforming the data, we
 can use a test, called the Welch’s test, that doesn’t assume equal
-variances. This will work for both a t-test and and ANOVA. Even though
-our square root transform did work in this example, let’s practice how
-to do a Welch’s test.</p>
+variances. Even though our square root transform did work in this
+example, let’s practice how to do a Welch’s test.</p>
 <p>To run the Welch’s test, we will use the same ‘t.test’ function that
 we used for a regular t-test, but we will change one argument. Instead
 of using the “var.equal=TRUE” setting, we will change it to
@@ -990,7 +1207,6 @@ maximum likelihood when you run this test.</li>
 <li>Write you conclusions, including any necessary statistics backing
 them up.</li>
 </ol>
-<p>I will post an answer key to these questions next week.</p>
 </div>
 </div>
 </div>
