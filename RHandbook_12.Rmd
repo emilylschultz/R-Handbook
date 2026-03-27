@@ -396,13 +396,4 @@ The output is similar to what you have seen before. You should see the t statist
 
 Note that the conclusion you would draw based on the Welch's test using the un-transformed grass cover data is the same conclusion you would draw using the regular t-test on the square root transformed grass data.
 
-### Practice problems
-Use the steps below to test out this process on a different data set! You will work with data on the impact of mycorrhizal inoculation on plant density. Download the mycorrhizae.csv file from Canvas. When you are ready to start working with the data in R, be sure to set your working directly, load the data set, and load the **ggplot2** package before proceeding.
 
-1. What are your null and alternative hypotheses for this question?
-2. Build model using the 'lm' function. Save the model residuals.
-3. Use a histogram and a qqplot to determine if the residuals are normally-distributed. You may also use a Shapiro-Wilk's test as a formal test, if you would like.
-4. Use a boxplot and a Levene's test to check for equal variances.
-5. Based on your exploration in questions 3 and 4, select an approach for addressing any violations of the assumptions.
-6. Run an appropriate test (addressing any violations of assumptions) to answer the original question (Does mycorrhizal inoculation affect plant density?). You may choose between a classical frequentist or maximum likelihood when you run this test.
-7. Write you conclusions, including any necessary statistics backing them up.

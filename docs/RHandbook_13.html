@@ -15,7 +15,7 @@
 
 <title>ESS 3500 R Handbook, Lesson 13</title>
 
-<script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
@@ -261,13 +261,13 @@ $(document).ready(function () {
       <a href="RHandbook_2.html">Lesson 2: Data management</a>
     </li>
     <li>
-      <a href="RHandbook_3.html">Lesson 3: Graphs</a>
+      <a href="RHandbook_3.html">Lesson 3: R basics</a>
     </li>
     <li>
-      <a href="RHandbook_4.html">Lesson 4: R basics</a>
+      <a href="RHandbook_4.html">Lesson 4: Data frames</a>
     </li>
     <li>
-      <a href="RHandbook_5.html">Lesson 5: Data frames</a>
+      <a href="RHandbook_5.html">Lesson 5: Data visualization</a>
     </li>
     <li>
       <a href="RHandbook_6.html">Lesson 6: Graphing in R</a>
@@ -327,17 +327,37 @@ $(document).ready(function () {
 <li><a href="#lesson-13-anovas" id="toc-lesson-13-anovas">Lesson 13:
 ANOVAs</a>
 <ul>
-<li><a href="#frequentist-approach" id="toc-frequentist-approach">13.1
-Frequentist approach</a></li>
-<li><a href="#maximum-likelihood-approach"
-id="toc-maximum-likelihood-approach">13.2 Maximum likelihood
-approach</a></li>
+<li><a href="#conceptual-overview-of-anvoas"
+id="toc-conceptual-overview-of-anvoas">13.1 Conceptual overview of
+ANVOAs</a>
+<ul>
+<li><a href="#why-cant-we-just-run-multiple-t-tests"
+id="toc-why-cant-we-just-run-multiple-t-tests">Why can’t we just run
+multiple t-tests?</a></li>
+<li><a href="#the-overall-anova" id="toc-the-overall-anova">The overall
+ANOVA</a></li>
+<li><a href="#post-hoc-tests-pairwise-comparisons"
+id="toc-post-hoc-tests-pairwise-comparisons">Post-hoc tests: pairwise
+comparisons</a></li>
+<li><a href="#assumptions-of-anovas-and-post-hoc-tests"
+id="toc-assumptions-of-anovas-and-post-hoc-tests">Assumptions of ANOVAs
+and post-hoc tests</a></li>
+</ul></li>
+<li><a href="#anovas-in-r" id="toc-anovas-in-r">13.2 ANOVAs in R</a>
+<ul>
+<li><a href="#checking-assumptions"
+id="toc-checking-assumptions">Checking assumptions</a></li>
+<li><a href="#running-the-overall-anova"
+id="toc-running-the-overall-anova">Running the overall ANOVA</a></li>
+</ul></li>
+<li><a href="#post-hoc-tests" id="toc-post-hoc-tests">Post-hoc
+tests</a></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="lesson-13-anovas" class="section level2">
-<h2>Lesson 13: ANOVAs</h2>
+<div id="lesson-13-anovas" class="section level1">
+<h1>Lesson 13: ANOVAs</h1>
 <p>In the previous lessons, we have been working with t-tests, which are
 used when you have a categorical independent variable with only 2 values
 and a continuous dependent variable. In this lesson, we will build on
@@ -346,6 +366,159 @@ but they can be used when the categorical independent variable has
 <strong>2 or more</strong> values. In other words, they are are
 generalization of the t-test. They can be used in for the same type of
 data as a t-test, but in some additional circumstances as well.</p>
+<div id="conceptual-overview-of-anvoas" class="section level2">
+<h2>13.1 Conceptual overview of ANVOAs</h2>
+<div id="why-cant-we-just-run-multiple-t-tests" class="section level3">
+<h3>Why can’t we just run multiple t-tests?</h3>
+<p>One option for analyzing the effects of a categorical independent
+variable with more than two values would be to run two-sample t-test for
+each pair of values of the categorical values. For example, if we had
+categories A, B, and C, we could run a t-test comparing categories A and
+B, then run a second t-test comparing categories B and C, and then run a
+final t-test comparing categories A and C. Aside from being tedious,
+particularly if you have many possible values for your categories, why
+is this not the best idea?</p>
+<p>This gets back to the concept of type I error that we discussed when
+we covered hypothesis testing. Type I error is when you reject the null
+hypothesis when the null hypothesis is true. We control this type of
+error with our threshold p-value. The lower we set the threshold, the
+lower the probability that we commit type I error. With our standard
+threshold of p=0.05, we would have a 5% chance of type I error. But what
+happens to this error rate if we conduct multiple tests (such as
+multiple t-tests) on the same data set? The short answer is that it
+increases. If we have a 5% chance of type I error for each individual
+test, then the chance of committing type I error on <strong>at least
+one</strong> test when we run multiple tests will be higher than 5%.
+Specifically, the probability will be <span
+class="math inline">\(1-(1-\alpha)^m\)</span>, where <span
+class="math inline">\(\alpha\)</span> is the threshold p-value and <span
+class="math inline">\(m\)</span> is the number of tests (this formula is
+based on our basic laws of probability). Scientists like to be
+conservative about committing type I error, so we try to avoid running
+multiple tests and inflating our type I error rate.</p>
+<p>ANOVAs are one solution to this problem. With an ANOVA, we run a
+single test to do an overall comparison across all of our categories. If
+we find a significant difference in an ANOVA, we can then follow that
+with pairwise comparisons between the categories to see which specific
+pair differ from each other.</p>
+</div>
+<div id="the-overall-anova" class="section level3">
+<h3>The overall ANOVA</h3>
+<p>The general process for an ANOVA is very similar to a t-test. We
+start by identifying our hypotheses. Then we calculate a test statistic
+that summarizes the signal (strength of the pattern) and noise
+(variation) in our data. Finally, we use the test statistic and
+associated probability distribution to calculate a p-value</p>
+<div id="hypotheses" class="section level4">
+<h4>Hypotheses</h4>
+<p>Our null and alternative hypotheses for an ANOVA are almost identical
+to those for a two-sample t-test, with a slight twist in the alternative
+hypothesis.</p>
+<ul>
+<li><p>Null: The means of all groups are equal.</p></li>
+<li><p>Alternative: The mean of at least one group is
+different.</p></li>
+</ul>
+<p>Note the phrasing in the alternative hypothesis. We are not testing
+whether all of the groups differ from each other, or which specific
+groups differ from each other. In the ANOVA itself, we are simply
+testing if at least one group is different.</p>
+</div>
+<div id="the-f-statistic-for-anovas" class="section level4">
+<h4>The F-statistic for ANOVAs</h4>
+<p>The test statistic for an ANOVA (the F-statistic) is conceptually
+similar to the t-statistic that we calculated for t-tests. It is, on the
+whole, a signal to noise ratio. It tells us how strong the pattern in
+our data is relative to the amount of variation in our data. The main
+difference is that when we have more than two groups that we are
+comparing to each other, the calculations for the signal and noise are
+slightly more complicated. I won’t provide the full formula for the
+F-statistic here. We will just go over the general concept.</p>
+<p>The F-statistic is essentially a ratio of two variances: the
+between-group variance and the within-group variance. The numerator for
+the statistic is the between-group variance. It is a measure of the
+average difference between the means of each pair of groups. This is our
+measure of the signal. The bigger the difference in means, the higher
+the value of the F-statistic. The denominator for the statistic is the
+within-group variance. It is a measure of the average variance within
+each group, after accounting for any differences in means. This is our
+measure of the noise. The lower the variation within each group ,the
+higher the values of the F-statistic. This aligns with our expectations
+for what should lead to a statistically-significant result. If we have a
+stronger pattern and less variation, the F-statistic will be higher, and
+we will be more likely to get a statistically significant result.</p>
+<p>Once you have the F-statistic, the process for calculating the
+p-value is the same process that we have covered for previous tests. You
+use a probability distribution (in this case, the F-distribution) to
+calculate the probability of getting an F-statistic equal to or more
+extreme that yours, assuming the null hypothesis is true. This is, once
+again, the p-value, and if the p-value is less than 0.05, you reject the
+null hypothesis.</p>
+<p>Like with our other probability distributions for test statistics,
+the shape of the F-distribution depends on the degrees of freedom. For
+an ANOVA, we have two degrees of freedom: the between categories degrees
+of freedom (number of categories - 1) and the within categories degrees
+of freedom (total sample size - number of categories).</p>
+<p>If, when we run an ANOVA, we decide to reject our null hypothesis,
+meaning there is a significant difference in at least one of the groups,
+we often want to follow the ANOVA with post-hoc tests, which will do
+pairwise comparisons between our groups to determine which specific
+groups differ from the other.</p>
+</div>
+</div>
+<div id="post-hoc-tests-pairwise-comparisons" class="section level3">
+<h3>Post-hoc tests: pairwise comparisons</h3>
+<p>Post-hoc tests can be used as a follow-up to an ANOVA to do pairwise
+comparisons between groups, while accounting for the inflated type I
+error that comes from doing multiple comparisons. Different types of
+post-hoc tests handle the problem in different ways, but a common
+strategy, and the one used by the post-hoc tests we will cover in this
+class, is to adjust the p-value itself to reduce the chance of type I
+error. Essentially the p-value will be higher than what you would get
+from a normal t-test, so you will be less likely to reject the null
+hypothesis, and therefore less likely to commit type I error. One
+advantage of this strategy is that you can interpret the results in the
+same way that you would for a t-test. The null and alternative
+hypothesis are the same as what they would be for a t-test, and you
+would still reject the null hypothesis if p &lt; 0.05.</p>
+</div>
+<div id="assumptions-of-anovas-and-post-hoc-tests"
+class="section level3">
+<h3>Assumptions of ANOVAs and post-hoc tests</h3>
+<p>The assumptions of an ANOVA and the associated post-hoc tests are the
+same as they are for a t-test:</p>
+<ol style="list-style-type: decimal">
+<li>Samples are random</li>
+<li>Samples are independent</li>
+<li>Residuals are normally distributed</li>
+<li>Variances are equal</li>
+</ol>
+<p>We can use the same methods to test the latter two assumptions
+(graphical visualizations and formal tests) and if the assumptions are
+not met, we can address the problem in the same way. Data
+transformations (such as the log or square root transform) can often
+correct the problem, and, if not, there are alternative tests we can
+use.</p>
+<p>Here are alternative tests that can be used for ANOVAs and post-hoc
+pairwise comparisons when assumptions are not met:</p>
+<ol style="list-style-type: decimal">
+<li>Welch’s test: like with t-tests, the Welch’s test can be used as an
+alternative for both the ANOVA and pairwise comparisons when variances
+are not equal.</li>
+<li>Kruskal-Wallis test: the Kruskal-Wallis test is a rank test that can
+be used in place of an ANOVA when the residuals are not
+normally-distributed, similarly to the Mann-Whitney U test in place of a
+t-test.</li>
+<li>Wilcox test: the Wilcox test can be used for pairwise comparisons
+following a Kruskal-Wallis test when the residuals are not
+normally-distributed.</li>
+</ol>
+<p>In the next section, you will learn how to use R to run ANOVAs,
+pairwise comparisons, and their alternatives.</p>
+</div>
+</div>
+<div id="anovas-in-r" class="section level2">
+<h2>13.2 ANOVAs in R</h2>
 <p>For this lesson, we will work with a new data set on the Coachella
 Valley fringe-toed lizard. This lizard is very endangered, so we are
 interested in how to best manage the species to improve the chances of
@@ -356,16 +529,18 @@ network (“network”).</p>
 <p>First, download the lizard data and load the data into R (don’t worry
 if you get a warning message when you do this - it’s not a problem).</p>
 <pre class="r"><code>lizard &lt;- read.csv(&quot;lizard.csv&quot;)</code></pre>
+<div id="checking-assumptions" class="section level3">
+<h3>Checking assumptions</h3>
 <p>Because when we checked assumptions, we determined that we needed to
 work with the log-transformed extinction times, we will add the
 log-transformed variable to our data set:</p>
 <pre class="r"><code>lizard$log_TTE &lt;- log(lizard$TTE)</code></pre>
 <p>Also, load the ggplot2 package:</p>
 <pre class="r"><code>library(ggplot2)</code></pre>
-<p>Now, we are ready to get started. We will learn both the classical
-frequentist and likelihood approach.</p>
-<div id="frequentist-approach" class="section level3">
-<h3>13.1 Frequentist approach</h3>
+<p>Now, we are ready to get started.</p>
+</div>
+<div id="running-the-overall-anova" class="section level3">
+<h3>Running the overall ANOVA</h3>
 <p>To run an ANOVA with the frequentist approach, the structure is
 similar to a t-test, but we will use a different function:
 <code>aov</code>. However, the arguments (input) of the function are the
@@ -382,11 +557,10 @@ summary(lizard_anova)</code></pre>
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
 <p>As with the t-test, when we view the output, we can see the degrees
-of freedom (Df), the F value, and the p-value (Pr(&gt;F)). Note that for
-an ANOVA, we have two degrees of freedom: the between categories degrees
-of freedom (number of categories - 1) and the within categories degrees
-of freedom (total sample size - number of categories). We report both
-when we report our results.</p>
+of freedom (Df), the F value, and the p-value (Pr(&gt;F)). Note the two
+values for the degrees of freedom. These are the between-category and
+within-category degrees of freedom that were discussed in the conceptual
+overview of ANOVAs above. We report both when we report our results.</p>
 <p>Looking at the p-value, we can see that it is below 0.05, so we
 reject the null hypothesis and tentatively accept that at least one of
 our categories has a different time to extinction than the rest.</p>
@@ -405,8 +579,10 @@ which would look like this:</p>
 <p>Again, you don’t need to run these tests in addition to the normal
 ANOVA. You would run one of these as an alternative to the ANOVA if the
 assumption is not met.</p>
-<div id="post-hoc-tests" class="section level4">
-<h4>Post-hoc tests</h4>
+</div>
+</div>
+<div id="post-hoc-tests" class="section level2">
+<h2>Post-hoc tests</h2>
 <p>If we want to know specifically which pairs of treatments differ from
 each other, we can use post-hoc tests to do pairwise comparisons between
 our categories. This is like running t-tests between each pair of
@@ -482,77 +658,6 @@ this function on the lizard data, it would look like this:</p>
 ## P value adjustment method: holm</code></pre>
 <p>We interpret the output of these test in the same way we would for
 the normal pairwise comparisons.</p>
-</div>
-</div>
-<div id="maximum-likelihood-approach" class="section level3">
-<h3>13.2 Maximum likelihood approach</h3>
-<p>To use the maximum likelihood approach for an ANOVA, we use exactly
-the same procedure that we used for a t-test.</p>
-<p>We start by building our null and alternative models, using the
-<code>lm</code> function:</p>
-<pre class="r"><code>lizard_null &lt;- lm(log_TTE ~ 1, data=lizard)
-lizard_alt &lt;- lm(log_TTE ~ Plan, data=lizard)</code></pre>
-<p>To compare the models, we again use the <code>AIC</code>
-function:</p>
-<pre class="r"><code>AIC(lizard_null,lizard_alt)</code></pre>
-<pre><code>##             df      AIC
-## lizard_null  2 267.0508
-## lizard_alt   4 250.2030</code></pre>
-<p>What is your conclusion based on the AIC comparison?</p>
-<p>If we want to view more information about our models, such as the
-values of extinction time for each category, we can use the
-<code>summary</code> function. Let’s try it just for the alternative
-model:</p>
-<pre class="r"><code>summary(lizard_alt)</code></pre>
-<pre><code>## 
-## Call:
-## lm(formula = log_TTE ~ Plan, data = lizard)
-## 
-## Residuals:
-##     Min      1Q  Median      3Q     Max 
-## -1.1710 -0.3913 -0.0580  0.4827  1.4904 
-## 
-## Coefficients:
-##             Estimate Std. Error t value Pr(&gt;|t|)    
-## (Intercept)  4.38991    0.07872  55.769  &lt; 2e-16 ***
-## Plannone    -0.51831    0.11076  -4.679  6.5e-06 ***
-## Plansingle  -0.24550    0.11076  -2.216   0.0282 *  
-## ---
-## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
-## 
-## Residual standard error: 0.551 on 146 degrees of freedom
-## Multiple R-squared:  0.1306, Adjusted R-squared:  0.1187 
-## F-statistic: 10.96 on 2 and 146 DF,  p-value: 3.665e-05</code></pre>
-<p>At the top, you can see the formula you used to build the model, and
-below that is a table showing the quartiles of your model residuals.
-Then you can see the coefficients table. The first column of this table
-(“Estimate”) can be used to figure our the time to extinction for each
-category. The first row in the estimate column (the “intercept” row) is
-the time to extinction for the network category. We can tell by process
-of elimination, because the other two row names are “Plannone” and
-“Plansingle”. To calculate the time to extinction for the no reserve
-category, we take the estimate value in the “Plan none” row and add it
-to the estimate from the intercept row:</p>
-<pre class="r"><code>-0.51831 + 4.38991</code></pre>
-<pre><code>## [1] 3.8716</code></pre>
-<p>You would then use a similar approach to calculate the time to
-extinction for the single reserve category.</p>
-<p>You don’t need to understand all of the rest of the output here (but
-I am happy to answer any questions you have if you are curious!),
-however, I will point out that the final line provides an F statistic,
-degrees of freedom, and a p-value that should match the ones from the
-<code>aov</code> function you used for the classical frequentist
-approach. So you can use the <code>lm</code> function for the
-frequentist approach as well, and just look at the final line from the
-summary of the alternative model to get the output!</p>
-<p>With the maximum likelihood approach, we do not typically follow up
-with post-hoc tests. This has to do with differences in the philosophy
-of the two approaches. Maximum likelihood approaches are more about
-identifying important explanatory variables for our data and not so much
-about digging into the nitty-gritty differences between the different
-categories within a variable. Therefore, if it is important to your
-question to test for those pairwise differences, you should use the
-classical frequentist approach.</p>
 </div>
 </div>
 

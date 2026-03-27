@@ -363,8 +363,6 @@ test</a></li>
 <li><a href="#mann-whitney-u-test-1"
 id="toc-mann-whitney-u-test-1">Mann-Whitney U test</a></li>
 <li><a href="#welchs-tests" id="toc-welchs-tests">Welch’s tests</a></li>
-<li><a href="#practice-problems" id="toc-practice-problems">Practice
-problems</a></li>
 </ul></li>
 </ul></li>
 </ul>
@@ -425,11 +423,10 @@ alternative hypotheses for a two-sample t-test, shown below. In these
 models, we specifically fit normal distributions to the data and test
 whether the data are best represented by a single normal distribution or
 two distributions with different means for each treatment group.</p>
-<div class="float">
-<img src="DistributionAssumptions.png" style="width:80.0%"
-alt="Distributions representing the null and alternative models for a t-test." />
-<div class="figcaption">Distributions representing the null and
-alternative models for a t-test.</div>
+<div class="figure">
+<img src="DistributionAssumptions.png" style="width:80.0%" alt="" />
+<p class="caption">Distributions representing the null and alternative
+models for a t-test.</p>
 </div>
 <p><br></p>
 <p>The the math behind the t-distribution we use to determine the
@@ -474,12 +471,11 @@ bars show the mean for each group, and the arrow showing the difference
 between the mean and each point represent the values of the residuals.
 When we run a statistical test, we can save the residuals from the
 output of the test to determine if they are normally-distributed.</p>
-<div class="float">
-<img src="Residuals.png" style="width:60.0%"
-alt="The residuals for two sample groups. For each group, the value of the residuals is the difference between each data point and the mean of the group." />
-<div class="figcaption">The residuals for two sample groups. For each
-group, the value of the residuals is the difference between each data
-point and the mean of the group.</div>
+<div class="figure">
+<img src="Residuals.png" style="width:60.0%" alt="" />
+<p class="caption">The residuals for two sample groups. For each group,
+the value of the residuals is the difference between each data point and
+the mean of the group.</p>
 </div>
 <p><br></p>
 </div>
@@ -522,24 +518,21 @@ the high end. Of the distributions shown, it is the skewed distribution
 that is the biggest problem. If the residuals are not
 normally-distributed, but the shape of the distribution is symmetrical,
 such as in the third set of graphs, it is usually not a big problem.</p>
-<div class="float">
-<img src="NormalResiduals.png" style="width:80.0%"
-alt="Histogram and q-q plot of normally-distributed data." />
-<div class="figcaption">Histogram and q-q plot of normally-distributed
-data.</div>
+<div class="figure">
+<img src="NormalResiduals.png" style="width:80.0%" alt="" />
+<p class="caption">Histogram and q-q plot of normally-distributed
+data.</p>
 </div>
 <p><br></p>
-<div class="float">
-<img src="SkewedResiduals.png" style="width:80.0%"
-alt="Histogram and q-q plot of skewed data." />
-<div class="figcaption">Histogram and q-q plot of skewed data.</div>
+<div class="figure">
+<img src="SkewedResiduals.png" style="width:80.0%" alt="" />
+<p class="caption">Histogram and q-q plot of skewed data.</p>
 </div>
 <p><br></p>
-<div class="float">
-<img src="UniformResiduals.png" style="width:80.0%"
-alt="Histogram and q-q plot of a distribution with thick tails." />
-<div class="figcaption">Histogram and q-q plot of a distribution with
-thick tails.</div>
+<div class="figure">
+<img src="UniformResiduals.png" style="width:80.0%" alt="" />
+<p class="caption">Histogram and q-q plot of a distribution with thick
+tails.</p>
 </div>
 <p><br></p>
 </div>
@@ -596,11 +589,10 @@ whiskers between your groups to make sure they are roughly equal. The
 graphs below show an example of what a boxplot would look like for
 groups with equal variances compared to groups with unequal
 variances.</p>
-<div class="float">
-<img src="Variances.png" style="width:80.0%"
-alt="Examples of boxplots showing groups with equal variances and unequal variances" />
-<div class="figcaption">Examples of boxplots showing groups with equal
-variances and unequal variances</div>
+<div class="figure">
+<img src="Variances.png" style="width:80.0%" alt="" />
+<p class="caption">Examples of boxplots showing groups with equal
+variances and unequal variances</p>
 </div>
 <p><br></p>
 </div>
@@ -908,7 +900,7 @@ residuals that we saved from our model in the previous section.</p>
   geom_histogram() +
   labs(x=&quot;Grass cover&quot;, y=&quot;Frequency&quot;) +
   theme_classic()</code></pre>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <p><img src="RHandbook_12_files/figure-html/residalt_hist-1.png" alt="" width="672" /></p>
 <p>Do the residuals look normally distributed?</p>
 </div>
@@ -1005,7 +997,7 @@ histograms:</p>
   geom_histogram() +
   labs(x=&quot;log Grass Cover&quot;, y=&quot;Frequency&quot;) +
   theme_classic()</code></pre>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick better value `binwidth`.</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
 <p><img src="RHandbook_12_files/figure-html/residlog_hist-1.png" alt="" width="672" /></p>
 <p>Next, make the qqplots:</p>
 <pre class="r"><code>qqnorm(resid_log)
@@ -1057,6 +1049,7 @@ package, so install (<code>install.packages("car")</code>) and load that
 package first.</p>
 <pre class="r"><code>library(car)</code></pre>
 <pre><code>## Loading required package: carData</code></pre>
+<pre><code>## Warning: package &#39;carData&#39; was built under R version 4.2.3</code></pre>
 <p>Now we can run the test:</p>
 <pre class="r"><code>leveneTest(Grass_cover ~ Weed, data = grass)</code></pre>
 <pre><code>## Warning in leveneTest.default(y = y, group = group, ...): group coerced to
@@ -1146,6 +1139,8 @@ equivalent to the Mann-Whitney U test)</p>
 ## data:  Grass_cover by Weed
 ## W = 231, p-value = 0.0001075
 ## alternative hypothesis: true location shift is not equal to 0</code></pre>
+<p>Based on the rank test, we would still find a signifcant difference
+between the groups.</p>
 </div>
 <div id="welchs-tests" class="section level3">
 <h3>Welch’s tests</h3>
@@ -1159,7 +1154,7 @@ of using the “var.equal=TRUE” setting, we will change it to
 “var.equal=FALSE”. Notice that we can run this test will the
 un-transformed Grass_cover variable because with this test, it is fine
 if the variances are not equal.</p>
-<pre class="r"><code>t.test(Grass_cover~Weed,grass,var.equal=FALSE)</code></pre>
+<pre class="r"><code>t.test(Grass_cover~Weed,data = grass,var.equal=FALSE)</code></pre>
 <pre><code>## 
 ##  Welch Two Sample t-test
 ## 
@@ -1181,32 +1176,6 @@ group.</p>
 using the un-transformed grass cover data is the same conclusion you
 would draw using the regular t-test on the square root transformed grass
 data.</p>
-</div>
-<div id="practice-problems" class="section level3">
-<h3>Practice problems</h3>
-<p>Use the steps below to test out this process on a different data set!
-You will work with data on the impact of mycorrhizal inoculation on
-plant density. Download the mycorrhizae.csv file from Canvas. When you
-are ready to start working with the data in R, be sure to set your
-working directly, load the data set, and load the
-<strong>ggplot2</strong> package before proceeding.</p>
-<ol style="list-style-type: decimal">
-<li>What are your null and alternative hypotheses for this
-question?</li>
-<li>Build model using the ‘lm’ function. Save the model residuals.</li>
-<li>Use a histogram and a qqplot to determine if the residuals are
-normally-distributed. You may also use a Shapiro-Wilk’s test as a formal
-test, if you would like.</li>
-<li>Use a boxplot and a Levene’s test to check for equal variances.</li>
-<li>Based on your exploration in questions 3 and 4, select an approach
-for addressing any violations of the assumptions.</li>
-<li>Run an appropriate test (addressing any violations of assumptions)
-to answer the original question (Does mycorrhizal inoculation affect
-plant density?). You may choose between a classical frequentist or
-maximum likelihood when you run this test.</li>
-<li>Write you conclusions, including any necessary statistics backing
-them up.</li>
-</ol>
 </div>
 </div>
 </div>
