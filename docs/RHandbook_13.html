@@ -345,8 +345,6 @@ and post-hoc tests</a></li>
 </ul></li>
 <li><a href="#anovas-in-r" id="toc-anovas-in-r">13.2 ANOVAs in R</a>
 <ul>
-<li><a href="#checking-assumptions"
-id="toc-checking-assumptions">Checking assumptions</a></li>
 <li><a href="#running-the-overall-anova"
 id="toc-running-the-overall-anova">Running the overall ANOVA</a></li>
 </ul></li>
@@ -529,18 +527,15 @@ network (“network”).</p>
 <p>First, download the lizard data and load the data into R (don’t worry
 if you get a warning message when you do this - it’s not a problem).</p>
 <pre class="r"><code>lizard &lt;- read.csv(&quot;lizard.csv&quot;)</code></pre>
-<div id="checking-assumptions" class="section level3">
-<h3>Checking assumptions</h3>
+<p>Also, load the ggplot2 package:</p>
+<pre class="r"><code>library(ggplot2)</code></pre>
+<p>Now, we are ready to get started.</p>
+<div id="running-the-overall-anova" class="section level3">
+<h3>Running the overall ANOVA</h3>
 <p>Because when we checked assumptions, we determined that we needed to
 work with the log-transformed extinction times, we will add the
 log-transformed variable to our data set:</p>
 <pre class="r"><code>lizard$log_TTE &lt;- log(lizard$TTE)</code></pre>
-<p>Also, load the ggplot2 package:</p>
-<pre class="r"><code>library(ggplot2)</code></pre>
-<p>Now, we are ready to get started.</p>
-</div>
-<div id="running-the-overall-anova" class="section level3">
-<h3>Running the overall ANOVA</h3>
 <p>To run an ANOVA with the frequentist approach, the structure is
 similar to a t-test, but we will use a different function:
 <code>aov</code>. However, the arguments (input) of the function are the

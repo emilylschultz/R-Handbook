@@ -77,23 +77,21 @@ First, download the lizard data and load the data into R (don't worry if you get
 lizard <- read.csv("lizard.csv")
 ```
 
-### Checking assumptions
-
-Because when we checked assumptions, we determined that we needed to work with the log-transformed extinction times, we will add the log-transformed variable to our data set:
-
-```{r log}
-lizard$log_TTE <- log(lizard$TTE)
-```
-
 Also, load the ggplot2 package:
 
 ```{r ggplot}
 library(ggplot2)
 ```
 
-Now, we are ready to get started. 
+Now, we are ready to get started.
 
 ### Running the overall ANOVA
+Because when we checked assumptions, we determined that we needed to work with the log-transformed extinction times, we will add the log-transformed variable to our data set:
+
+```{r log}
+lizard$log_TTE <- log(lizard$TTE)
+```
+
 To run an ANOVA with the frequentist approach, the structure is similar to a t-test, but we will use a different function: `aov`. However, the arguments (input) of the function are the same as what we use for a t-test: our independent and dependent variable (don't forget to use the log of TTE) and the data set. To view the output of the test, instead of just typing the name of the test object, we will use the `summary` function, with the test object as the input of the function.
 
 ```{r aov}
