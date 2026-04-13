@@ -15,7 +15,7 @@
 
 <title>ESS 3500 R Handbook, Lesson 15</title>
 
-<script src="site_libs/header-attrs-2.19/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.30/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
@@ -261,13 +261,13 @@ $(document).ready(function () {
       <a href="RHandbook_2.html">Lesson 2: Data management</a>
     </li>
     <li>
-      <a href="RHandbook_3.html">Lesson 3: Graphs</a>
+      <a href="RHandbook_3.html">Lesson 3: R basics</a>
     </li>
     <li>
-      <a href="RHandbook_4.html">Lesson 4: R basics</a>
+      <a href="RHandbook_4.html">Lesson 4: Data frames</a>
     </li>
     <li>
-      <a href="RHandbook_5.html">Lesson 5: Data frames</a>
+      <a href="RHandbook_5.html">Lesson 5: Data visualization</a>
     </li>
     <li>
       <a href="RHandbook_6.html">Lesson 6: Graphing in R</a>
@@ -328,21 +328,36 @@ $(document).ready(function () {
 id="toc-lesson-15-multiple-predictors">Lesson 15: Multiple
 Predictors</a>
 <ul>
-<li><a href="#two-categorical-variables-two-way-anova"
-id="toc-two-categorical-variables-two-way-anova">15.1 Two categorical
-variables (Two-way ANOVA)</a></li>
-<li><a href="#continuous-and-categorial-predictors-ancova"
-id="toc-continuous-and-categorial-predictors-ancova">15.2 Continuous and
-categorial predictors (ANCOVA)</a></li>
+<li><a href="#conceptual-background" id="toc-conceptual-background">15.1
+Conceptual background</a>
+<ul>
+<li><a href="#an-information-criterion-approach"
+id="toc-an-information-criterion-approach">An information criterion
+approach</a></li>
+<li><a href="#hypotheses-for-multiple-predictors"
+id="toc-hypotheses-for-multiple-predictors">Hypotheses for multiple
+predictors</a></li>
+<li><a href="#testing-the-hypotheses"
+id="toc-testing-the-hypotheses">Testing the hypotheses</a></li>
+</ul></li>
+<li><a href="#running-the-tests-in-r"
+id="toc-running-the-tests-in-r">15.2 Running the tests in R</a>
+<ul>
+<li><a href="#two-categorical-variables"
+id="toc-two-categorical-variables">Two categorical variables</a></li>
+<li><a href="#continuous-and-categorial-predictors"
+id="toc-continuous-and-categorial-predictors">Continuous and categorial
+predictors</a></li>
 <li><a href="#two-continuous-predictors-multiple-regression"
-id="toc-two-continuous-predictors-multiple-regression">15.3 Two
-continuous predictors (multiple regression)</a></li>
+id="toc-two-continuous-predictors-multiple-regression">Two continuous
+predictors (multiple regression)</a></li>
+</ul></li>
 </ul></li>
 </ul>
 </div>
 
-<div id="lesson-15-multiple-predictors" class="section level2">
-<h2>Lesson 15: Multiple Predictors</h2>
+<div id="lesson-15-multiple-predictors" class="section level1">
+<h1>Lesson 15: Multiple Predictors</h1>
 <p>In the previous lessons, we have worked with models that have only
 one independent and one dependent variable. However, it is common to
 have more than one independent variable that we would like the test.
@@ -351,19 +366,161 @@ there are a whole suite of variables that might affect the response we
 measure. In this lesson, we will cover models with multiple predictors.
 We will focus on examples with only two predictors, but the methods can
 easily be extended to include more than two predictors as well.</p>
-<p>For these examples, we will only look at the likelihood approach,
-which can be more powerful for testing multiple alternative hypothesis.
-However, similar tests can be done with a classic frequentist approach,
-using two-way ANOVAs, ANCOVAs, and stepwise (multiple) regression, for
-the three examples, respectively.</p>
+<p>For these examples, we will switch our statistical approach and use
+an information criterion approach, which can be more powerful for
+testing multiple alternative hypothesis. However, similar tests can be
+done with a classic frequentist approach, using two-way ANOVAs, ANCOVAs,
+and stepwise (multiple) regression, for the three examples,
+respectively. We will review the information criterion approach, and
+then work through three examples with different types of predictor
+variables.</p>
+<div id="conceptual-background" class="section level2">
+<h2>15.1 Conceptual background</h2>
+<div id="an-information-criterion-approach" class="section level3">
+<h3>An information criterion approach</h3>
+<p>The classical frequentist approach to statistical testing that we
+have covered so far (Chi-square test, t-test, ANOVA, etc.) is focused on
+testing the null hypothesis. When we draw our conclusion we either
+decide to reject the null hypothesis or fail to reject the null
+hypothesis. This approach is most useful when you have a specific null
+hypothesis that you want to test, compared to a single alternative
+hypothesis. It does not work as well when you have multiple alternative
+hypotheses that you are trying to compare, which is the case when we
+have multiple predictor variables.</p>
+<p>Information-criterion statistics information criterion statistics
+work by comparing multiple hypotheses to each other rather than just
+testing the null hypothesis. If you have multiple hypothesis about
+different predictor variables, you can simultaneously compare those
+hypotheses to each other. Because of this, information-criterion
+statistics are often better suited for questions involving multiple
+independent variables or different model structures.</p>
+<p>Information-criterion statistics work by testing each of your
+hypotheses one at a time and calculating the probability of observing
+your specific data set, assuming that hypothesis is true. This
+probability is known as the likelihood value. The higher the likelihood
+value, the better the hypothesis is for explaining your data. These
+statistics also penalize for the complexity of the model (because a more
+complex model will always result in at least a slightly higher
+probability), so ultimately the model deemed as best is the simplest
+model that has the highest probability of leading to your data. The
+likelihood and the complexity of the model are combined together into a
+single value called an information criterion. The specific type of
+information criterion that we will work with in this class is called
+Akaike’s Information Criterion (AIC).</p>
+<p>Because this type of statistics considers all of your hypotheses, not
+just the null hypothesis, it can be used to rank your hypotheses from
+best to worst. However, you can also use a threshold to select one model
+as the best. Usually if there is a difference of two or more in the AIC
+values between two models, the model with the <strong>lower</strong>
+value is selected as significantly better (lower information criterion
+means higher likelihood and lower complexity of the model). If one of
+your alternative models comes out on top, you can then conclude that the
+independent variables included in that model have a significant effect
+on your dependent variable.</p>
+</div>
+<div id="hypotheses-for-multiple-predictors" class="section level3">
+<h3>Hypotheses for multiple predictors</h3>
+<p>Just like when we used classical frequentist statistics for models
+with a single independent variable, when we test models with multiple
+predictors, we start by identifying our hypotheses. The main difference
+here is that, when we have multiple predictors, we also have multiple
+alternative hypotheses. In this class, we will only work with models
+that have two predictor variables, so here we will focus on the
+hypotheses for two predictor variables. However, this could be extended
+to include more than two predictors.</p>
+<p>Let’s say we have two predictor variables that we will call “Variable
+1” and “Variable 2”. As usual, our null hypothesis is the hypothesis of
+no effect. When we have two predictor variables, our null hypothesis is
+that <em>neither</em> of our two predictor variables affect our
+dependent variable. We then have four different alternative hypothesis
+about our two different predictors and how they relate to each
+other:</p>
+<ol style="list-style-type: decimal">
+<li>Variable 1 has an effect (but not Variable 2)</li>
+<li>Variable 2 has an affect (but not Variable 1)</li>
+<li>Variable 1 and 2 have effects, but they do not interact</li>
+<li>Variable 1 and 2 have effects, and they interact</li>
+</ol>
+<p>The first two hypotheses are pretty straightforward, but what do we
+mean by the variables interacting (or not) in our third and fourth
+hypotheses? When our predictor variables do not interact, that means the
+effect of one variable is the same, regardless of the values of the
+other variable. If they do interact, that means the effect of one
+variable depends on the value of the other variable. When you run models
+with multiple predictors in R, you will get coefficient values that
+represent possible interaction effects. However, I find them much easier
+to interpret visually, so let’s look at some examples of graphs with and
+without interaction effects.</p>
+<p>The boxplot on the left below shows the effect of sex and species on
+the size of millipedes. Both sex and species affect the size, but they
+do not interact with each other. Regardless of the sex, species B is
+larger than species, and regardless of species, females are larger than
+males. Therefore the effect of each variable does not depend on the
+other variable. The boxplot on the right shows the effect of nitrogen
+and phosphorus on the number of fruits produced by a plant. This plot
+shows an interaction affect. When nitrogen is low, there is not effect
+of phosphorus. However, when nitrogen is high, more fruits are produced
+when phosphorus is also high. Similarly, when phosphorus is low,
+nitrogen has no effect, but high nitrogen leads to higher fruit
+production when phosphorus is high. The effect of one variable therefore
+depends on the the other variable, meaning the two variables interact
+with each other.</p>
+<p><img src="Multiple1.png" style="width:80.0%"
+alt="Boxplots showing the effect of two predictors with no interaction between the predictors (left) or an interaction between the predictors (right)." />
+<br></p>
+<p>In the scatter plots below, the graph on the left shows no
+interaction between how size and food consumption affect the growth rate
+of mice. For all sizes, an increase in food consumption leads to an
+increase in growth rate, and for all levels of food consumption, smaller
+mice have a higher growth rate. The graph on the right shows the effect
+of temperature and precipitation on plant size, with an interaction
+between the two effects. When precipitation is low, an increase in
+temperature has a negative effect on plant size. However, when
+precipitation is high, an increase in temperature has a positive effect
+on plant size. At low temperatures, precipitation has no effect on plant
+size, but at high temperatures, precipitation has a a positive effect on
+plant size. The effect of both variables depends on the value of the
+other variable.</p>
+<p><img src="Multiple2.png" style="width:80.0%"
+alt="Scatter plots showing the effect of two predictors with no interaction between the predictors (left) or an interaction between the predictors (right)." />
+<br></p>
+<p>Because of the potential for the effect of one variable to depend on
+another when we have multiple predictors, it is therefore important to
+check for both the main effects of our predictors as well as possible
+interactions between the variables.</p>
+</div>
+<div id="testing-the-hypotheses" class="section level3">
+<h3>Testing the hypotheses</h3>
+<p>Once we have identified the hypotheses for our question, we can use
+the Akaike’s Information Criterion (AIC) to compare our models. Because
+we compare all of the hypotheses to each other instead of just testing
+the null hypothesis, we do this by building a model to represent each of
+the hypotheses and calculate an AIC value for each model. Models with a
+higher probability of producing the data and lower complexity (e.g.,
+fewer predictors) are considered to be the better models, and they will
+have lower AIC values. If a model has an AIC value that is more than 2
+lower than another model, it is significantly better than the other
+model. We can then determine the significance of the effects of the
+predictors, and any interaction between the predictors, based on the
+effects that are included in the best model. For example, if the model
+with both predictors and an interaction effect is the best, then we can
+conclude that both predictors have a significant effect, and the effect
+of one predictor depends on the others. If the best model includes just
+one predictor, then we can conclude that the variable included in that
+model has a significant effect, but the other predictor has not.</p>
+<p>Below you will learn how to graph data with multiple predictors and
+build and test the models.</p>
+</div>
+</div>
+<div id="running-the-tests-in-r" class="section level2">
+<h2>15.2 Running the tests in R</h2>
 <p>We will use both the <strong>ggplot2</strong> and
 <strong>dplyr</strong> packages in this lesson, so load those before you
 get started.</p>
 <pre class="r"><code>library(ggplot2)
 library(dplyr)</code></pre>
-<div id="two-categorical-variables-two-way-anova"
-class="section level3">
-<h3>15.1 Two categorical variables (Two-way ANOVA)</h3>
+<div id="two-categorical-variables" class="section level3">
+<h3>Two categorical variables</h3>
 <p>For our first example, we will work with two categorical predictor
 variables. We will use a data set from a medical test related to
 hyptertension. One common cause of hypertension is high sodium levels,
@@ -377,8 +534,10 @@ are the rat strain (normal or hypertensive) and the kidney site (DCT,
 CCD, or OMC).</p>
 <div id="visualizing-and-building-the-models" class="section level4">
 <h4>Visualizing and building the models</h4>
-<p>We’ll start off by loading and visualizing our data. Be sure your
-working directory is set to the location of the kidney data file.</p>
+<p>We’ll start off by loading and visualizing our data. Download the
+<strong>kidney.csv</strong> file from Canvas. Be sure your working
+directory is set to the location of the kidney data file and load the
+data set.</p>
 <pre class="r"><code>kidney &lt;- read.csv(&quot;kidney.csv&quot;)</code></pre>
 <p>Now, let’s make a box plot to visualize our data set. We will put
 site on the x-axis and group and color our boxes by lab rat strain
@@ -388,7 +547,7 @@ site on the x-axis and group and color our boxes by lab rat strain
   scale_fill_manual(values=c(&quot;#ce9642&quot;,&quot;#3b7c70&quot;)) +
   labs(x=&quot;Kidney Site&quot;, y=&quot;Enzyme levels&quot;, fill = &quot;Strain&quot;) +
   theme_classic()</code></pre>
-<p><img src="RHandbook_15_files/figure-html/kidney_boxplot-1.png" width="672" /></p>
+<p><img src="RHandbook_15_files/figure-html/kidney_boxplot-1.png" alt="" width="672" /></p>
 <p>Based just on the graph, what patterns do you see in the data. Do the
 strains differ in their enzyme activity? What the kidney sites? Does
 there appear to be an interaction between the two variables?</p>
@@ -439,19 +598,19 @@ resid_both &lt;- resid(kidney_both)
 resid_int &lt;- resid(kidney_int)</code></pre>
 <pre class="r"><code>qqnorm(resid_null)
 qqline(resid_null)</code></pre>
-<p><img src="RHandbook_15_files/figure-html/kidney_qq-1.png" width="672" /></p>
+<p><img src="RHandbook_15_files/figure-html/kidney_qq-1.png" alt="" width="672" /></p>
 <pre class="r"><code>qqnorm(resid_hyper)
 qqline(resid_hyper)</code></pre>
-<p><img src="RHandbook_15_files/figure-html/kidney_qq-2.png" width="672" /></p>
+<p><img src="RHandbook_15_files/figure-html/kidney_qq-2.png" alt="" width="672" /></p>
 <pre class="r"><code>qqnorm(resid_site)
 qqline(resid_site)</code></pre>
-<p><img src="RHandbook_15_files/figure-html/kidney_qq-3.png" width="672" /></p>
+<p><img src="RHandbook_15_files/figure-html/kidney_qq-3.png" alt="" width="672" /></p>
 <pre class="r"><code>qqnorm(resid_both)
 qqline(resid_both)</code></pre>
-<p><img src="RHandbook_15_files/figure-html/kidney_qq-4.png" width="672" /></p>
+<p><img src="RHandbook_15_files/figure-html/kidney_qq-4.png" alt="" width="672" /></p>
 <pre class="r"><code>qqnorm(resid_int)
 qqline(resid_int)</code></pre>
-<p><img src="RHandbook_15_files/figure-html/kidney_qq-5.png" width="672" /></p>
+<p><img src="RHandbook_15_files/figure-html/kidney_qq-5.png" alt="" width="672" /></p>
 <p>When you check the residuals for multiple competing models like this,
 you might find they look good for all of the models, they look bad for
 all of the models, or they look good for some models but bad for others.
@@ -471,8 +630,8 @@ don’t look great, but (I can tell you because I tried it), both square
 root and log transforms will make it worse, and our sample sizes are
 equal, so I recommend proceeding with the test.</p>
 </div>
-<div id="testing-the-models-likelihood" class="section level4">
-<h4>Testing the models: Likelihood</h4>
+<div id="testing-the-models" class="section level4">
+<h4>Testing the models</h4>
 <p>Now we will use the likelihood approach and <code>AIC</code> function
 to compare our models, just like we did with the millipede models.</p>
 <pre class="r"><code>AIC(kidney_null,kidney_hyper,kidney_site,kidney_both,kidney_int)</code></pre>
@@ -482,22 +641,25 @@ to compare our models, just like we did with the millipede models.</p>
 ## kidney_site   4 183.5836
 ## kidney_both   5 179.7022
 ## kidney_int    7 175.1477</code></pre>
-<p>Based on the output table, which model was the best? Was it
-significantly better than the next best model? What do the differences
-in AIC values tell you about the effects of each predictor and their
-interaction?</p>
+<p>Based on the output table, we can see that the interaction model has
+the lowest AIC values, by more than two points. That tells us that both
+site and strain matter, and they interact. From looking at the graph, we
+can see that the two strains have similar enzyme levels at the OMC site,
+but hypertensive strains have slightly higher levels at the CCD site and
+much higher levels at the DCT site.</p>
 </div>
 </div>
-<div id="continuous-and-categorial-predictors-ancova"
-class="section level3">
-<h3>15.2 Continuous and categorial predictors (ANCOVA)</h3>
-<p>For our final example, we will look at a blend of the previous two
+<div id="continuous-and-categorial-predictors" class="section level3">
+<h3>Continuous and categorial predictors</h3>
+<p>For our next example, we will look at a blend of the previous two
 types of predictors and consider a case where we have one continuous and
 one categorical predictor. We will use an example of butterfly endurance
 and how it is affected by both temperature and the genotype of the
 butterfly.</p>
 <div id="visualizing-and-building-the-models-1" class="section level4">
 <h4>Visualizing and building the models</h4>
+<p>Download the <strong>butterlfy.csv</strong> file from Canvas and load
+it into R.</p>
 <pre class="r"><code>butterfly &lt;- read.csv(&quot;butterfly.csv&quot;)</code></pre>
 <pre class="r"><code>ggplot(data=butterfly, aes(x=Temp,y=Endurance,color=Genotype)) +
   geom_point() +
@@ -506,7 +668,7 @@ butterfly.</p>
   labs(x=&quot;Temperature&quot;) +
   theme_classic()</code></pre>
 <pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
-<p><img src="RHandbook_15_files/figure-html/butterfly_scat-1.png" width="672" /></p>
+<p><img src="RHandbook_15_files/figure-html/butterfly_scat-1.png" alt="" width="672" /></p>
 <p>What is your initial interpretation for how temperature and genotype
 affect the endurance of butterflies, based on the graph? Does unequal
 variances seem to be a problem?</p>
@@ -518,13 +680,12 @@ butter_geno &lt;- lm(Endurance ~ Genotype, data=butterfly)
 butter_both &lt;- lm(Endurance ~ Temp + Genotype, data=butterfly)
 butter_int &lt;- lm(Endurance ~ Temp*Genotype, data=butterfly)</code></pre>
 <p>For the sake of time, we won’t check the residuals here (I can tell
-you that they aren’t quite normal but are also not particularly skewed),
-but normally that is something you should do, following the same
-procedure you used for the kidney example. From the scatterplot we made,
-you can see the the variances are roughly equal. Therefore, let’s go
-ahead and proceed with the test.</p>
+you that they look good enough), but normally that is something you
+should do, following the same procedure you used for the kidney example.
+From the scatter plot we made, you can see the the variances are roughly
+equal. Therefore, let’s go ahead and proceed with the test.</p>
 </div>
-<div id="testing-the-models" class="section level4">
+<div id="testing-the-models-1" class="section level4">
 <h4>Testing the models</h4>
 <p>Using the likelihood approach, we can again just use the
 <code>AIC</code> function to compare our five models:</p>
@@ -535,30 +696,25 @@ ahead and proceed with the test.</p>
 ## butter_geno  4 105.64924
 ## butter_both  5  55.27518
 ## butter_int   7  58.88042</code></pre>
-<p>Based on these AIC values, what can you conclude about the effects of
-temperature, genotype, and their interaction on butterfly endurance?</p>
+<p>Based on these AIC values, temperature and genotype both affect
+endurance, but there is no interaction. Homozygous recessive individuals
+have a higher endurance regardless of the temperature, and temperature
+increases endurance for all genotypes.</p>
 </div>
 </div>
 <div id="two-continuous-predictors-multiple-regression"
 class="section level3">
-<h3>15.3 Two continuous predictors (multiple regression)</h3>
+<h3>Two continuous predictors (multiple regression)</h3>
 <p>For our next example, we will work with two continuous predictor
-variables, sometimes called a multiple regression. We will use the
-climate and plant cover data we used for our simple regression
-lesson.</p>
-<p>In the simple, we ran two regressions: one for each of our two
-models. However, we have discussed the problems with running multiple
-tests on the same data set. Furthermore, if we run separate tests for
-our different predictors, we can’t look for interactions between the
-variables. To address this, we can instead run a multiple regression, in
-which we will account for both mean temperature and maximum temperature
-at the same time.</p>
-<p>First, load the data set. Be sure your working directory is set
-correctly.</p>
-<pre class="r"><code>plant &lt;- read.csv(&quot;PlantSumm.csv&quot;)</code></pre>
+variables, sometimes called a multiple regression. We will use a data
+set on the lifespan of mammals. We will test how body size and the
+amount of sleep each mammal species gets affects lifespan.</p>
+<p>First, download the <strong>mammals.csv</strong> file and load the
+data set.</p>
+<pre class="r"><code>mammals &lt;- read.csv(&quot;mammals.csv&quot;)</code></pre>
 <div id="visualizing-and-building-the-models-2" class="section level4">
 <h4>Visualizing and building the models</h4>
-<p>It is challenging to visualize two continuous predictor variable at
+<p>It is challenging to visualize two continuous predictor variables at
 the same time (I think 3D graphs are hard to read). One option is just
 to make separate scatter plots for each predictor, like we did above for
 our single regressions, but that does not allow you to see interactions
@@ -567,78 +723,63 @@ predictors to a categorical variable (just for the graph, not for the
 test), and graph both of the predictors at the same time. We’ll try
 that.</p>
 <p>First, we will use the <code>mutate</code> function to create a new
-variable that converts maximum temperature to a category. We will just
-use two categories: high and low. High maximum temperature will be
-anything above the median maximum temperature from our data set, and low
-maximum temperature will be anything less than or equal to the median.
-To to this, we will use the <code>ifelse</code> function. This function
-allows us to set a value for something <strong>if</strong> it matches
-certain criteria (in this case, if the maximum temperature is greater
-than the median) and set a different values if it does not match the
-criteria.</p>
-<pre class="r"><code>med &lt;- median(plant$Max_tempC)
-plant &lt;- mutate(plant,MaxT_cat = ifelse(Max_tempC &gt; med, &quot;High&quot;, &quot;Low&quot;))</code></pre>
+variable that converts the amount of sleep to a category. We will just
+use two categories: high and low. High sleep will be anything above the
+median hours of sleep from our data set, and low sleep will be anything
+less than or equal to the median. To to this, we will use the
+<code>ifelse</code> function. This function allows us to set a value for
+something <strong>if</strong> it matches certain criteria (in this case,
+if the sleep amount is greater than the median) and set a different
+values if it does not match the criteria.</p>
+<pre class="r"><code>med &lt;- median(mammals$Total_sleep)
+mammals &lt;- mutate(mammals,Sleep_cat = ifelse(Total_sleep &gt; med, &quot;High&quot;, &quot;Low&quot;))</code></pre>
 <p>If you view the data set, you will now see a new variable called
-“MaxT_cat” that we will use to graph our data. Let’s make that graph
-now. We will use “Mean_tempC” as our x variable, and we will use two
-different colors to represent our two maximum temperature
-categories.</p>
-<pre class="r"><code>ggplot(data=plant, aes(x=Mean_tempC,y=tot_cover,color=MaxT_cat)) +
+“Sleep_cat” that we will use to graph our data. Let’s make that graph
+now. We will use “log_Weight” as our x variable, and we will use two
+different colors to represent our two sleep categories. The reason we
+are using body weight on a log scale is that there are a few outliers
+with very large body weights compared to the other species, which makes
+it hard to see the patterns on the original scale.</p>
+<pre class="r"><code>ggplot(data=mammals, aes(x=log_Weight,y=Lifespan,color=Sleep_cat)) +
   geom_point() +
   geom_smooth(method=&quot;lm&quot;) +
   scale_color_manual(values=c(&quot;#ce9642&quot;,&quot;#3b7c70&quot;)) +
-  labs(x=&quot;Mean temperature&quot;, y=&quot;Total plant cover&quot;,color=&quot;Maximum temperature&quot;) +
+  labs(x=&quot;Body weight (kg)&quot;, y=&quot;Lifespan&quot;,color=&quot;Sleep&quot;) +
   theme_classic()</code></pre>
 <pre><code>## `geom_smooth()` using formula = &#39;y ~ x&#39;</code></pre>
-<pre><code>## Warning: Removed 6 rows containing non-finite values (`stat_smooth()`).</code></pre>
-<pre><code>## Warning: Removed 6 rows containing missing values (`geom_point()`).</code></pre>
-<p><img src="RHandbook_15_files/figure-html/temp_scat-1.png" width="672" /></p>
-<p>What is your initial interpretation of the effects of mean and
-maximum temperature, based on the graph?</p>
-<p>Now let’s build our null and alternative models:</p>
-<pre class="r"><code>plant_null &lt;- lm(tot_cover ~ 1, plant)
-plant_mean &lt;- lm(tot_cover ~ Mean_tempC, plant)
-plant_max &lt;- lm(tot_cover ~ Max_tempC, plant)
-plant_both &lt;- lm(tot_cover ~ Mean_tempC + Max_tempC, plant)
-plant_int &lt;- lm(tot_cover ~ Mean_tempC * Max_tempC, plant)</code></pre>
-<p>Once again, your all-knowing advisor (me) tells you that your data
-satifactorily meet the assumptions of normality and equal variance, so
-go ahead and move on to the test.</p>
+<p><img src="RHandbook_15_files/figure-html/mammal_scat-1.png" alt="" width="672" /></p>
+<p>What is your initial interpretation of the effects of body weight and
+sleep, based on the graph?</p>
+<p>Now let’s build our null and alternative models. Once again, I have
+checked the assumptions for you, and they look good as long as we use a
+log transformation on all of our variables. I have already added the
+log-transformed variables to the data set, so we will use them in the
+models below.</p>
+<pre class="r"><code>mammals_null &lt;- lm(log_Lifespan ~ 1, mammals)
+mammals_weight &lt;- lm(log_Lifespan ~ log_Weight, mammals)
+mammals_sleep &lt;- lm(log_Lifespan ~ log_Sleep, mammals)
+mammals_both &lt;- lm(log_Lifespan ~ log_Weight + log_Sleep, mammals)
+mammals_int &lt;- lm(log_Lifespan ~ log_Weight * log_Sleep, mammals)</code></pre>
 </div>
-<div id="maximum-likelihood-approach" class="section level4">
-<h4>Maximum likelihood approach</h4>
+<div id="testing-the-models-2" class="section level4">
+<h4>Testing the models</h4>
 <p>You know the drill here. As usual, which just have to compare the AIC
 values between all of our models.</p>
-<pre class="r"><code>AIC(plant_null, plant_mean, plant_max, plant_both, plant_int)</code></pre>
-<pre><code>##            df      AIC
-## plant_null  2 110.3634
-## plant_mean  3 111.9256
-## plant_max   3 108.9372
-## plant_both  4 104.6580
-## plant_int   5 105.2864</code></pre>
-<p>Based on the AIC values, which model(s) is(are) the best? What does
-this tell you about which predictor are important for explaining plant
-cover?</p>
+<pre class="r"><code>AIC(mammals_null, mammals_weight, mammals_sleep, mammals_both, mammals_int)</code></pre>
+<pre><code>##                df      AIC
+## mammals_null    2 111.9775
+## mammals_weight  3 103.4677
+## mammals_sleep   3 108.1696
+## mammals_both    4 104.1913
+## mammals_int     5 100.3867</code></pre>
+<p>Based on the AIC values, the model with both variables and their
+interaction is the best. Along with the graph, we can see that in mammal
+species that get a high amount of sleep, body weight does not impact
+their lifespan, but in species that get a low amount of sleep, larger
+species have a longer lifespan. Another way of looking at it is that
+sleep has a positive affect on lifespan for small mammal species but a
+negative affect on lifespan for large species.</p>
 </div>
-<div id="comparison-between-simple-and-multiple-regression"
-class="section level4">
-<h4>Comparison between simple and multiple regression</h4>
-<p>Look back at the conclusions you drew about the effects of your
-predictor variables from your simple and multiple regressions (you can
-always go back to Lesson 9 in the R Handbook to see the results from the
-simple regression if your own code isn’t easy to access). Do your
-conclusions match? Why do you think this might be?</p>
-<p>We’ll discuss this as a class, but think on your own/and or discuss
-in small groups first.</p>
-<p>As a hint, it might help to consider the relationship between the two
-independent variables (mean temperature and maximum temperature). You
-can see the relationship between the two in the scatterplot I create
-below.</p>
-<pre class="r"><code>ggplot(data=plant, aes(x=Mean_tempC, y=Max_tempC))+
-  geom_point()+
-  labs(x=&quot;Mean temperature (C)&quot;, y=&quot;Max temperature (C)&quot;)+
-  theme_classic()</code></pre>
-<p><img src="RHandbook_15_files/figure-html/correlation-1.png" width="672" /></p>
 </div>
 </div>
 </div>
